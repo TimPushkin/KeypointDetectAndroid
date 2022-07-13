@@ -1,4 +1,4 @@
-package me.alexdtat.featuredetectandroid.ui.theme
+package com.github.featuredetectandroid.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
