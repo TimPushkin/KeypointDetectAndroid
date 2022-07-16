@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.22.3)
 #project(source)
-#set(MY_SOURCE_LIB main.cpp)
+#set(MY_SOURCE_LIB featurelib.cpp)
 #add_library(source STATIC ${MY_SOURCE_LIB})
 #include_directories(source)
-set(SOURCE_FLS main.cpp)
+set(SOURCE_FLS featurelib.cpp)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FLS})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/source)

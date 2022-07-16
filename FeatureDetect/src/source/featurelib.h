@@ -1,9 +1,6 @@
-//
-// Created by paul on 16.07.22.
-//
 
-#ifndef FEATUREDETECT_MAIN_H
-#define FEATUREDETECT_MAIN_H
+#ifndef FEATUREDETECT_FEATURELIB_H
+#define FEATUREDETECT_FEATURELIB_H
 
 #include <vector>
 #include <iostream>
@@ -19,12 +16,12 @@
 #include <opencv2/core/utility.hpp>
 #include <opencv2/core/ocl.hpp>
 
-class main {
+class featurelib  {
 public:
-
+    void testMethod();
 private:
-
+    cv::Ptr<cv::Feature2D> sift = cv::SIFT::create();
 };
 
 
-#endif //FEATUREDETECT_MAIN_H
+#endif //FEATUREDETECT_FEATURELIB_H
