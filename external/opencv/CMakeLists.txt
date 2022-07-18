@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.18.1)
 message(STATUS "Configuring OpenCV")
 
 set(OPENCV_VERSION 4.6.0)

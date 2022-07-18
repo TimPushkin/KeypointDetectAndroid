@@ -8,7 +8,7 @@
 #include <opencv2/features2d.hpp>
 #include <opencv2/imgproc.hpp>
 
-class featurelib  {
+class featurelib {
  public:
   featurelib();
 
