@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -28,7 +29,7 @@ import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
-    private val imageViewModel = GrayscaleViewModel()
+    private val imageViewModel by viewModels<GrayscaleViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,10 +119,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private class PhotoAnalyzer(val imageViewModel: GrayscaleViewModel) : ImageAnalysis.Analyzer {
-        var grayScaleByteArray: ByteArray = byteArrayOf()
-        var width: Int = 0
-        var height: Int = 0
-
         private fun ByteBuffer.toByteArray(): ByteArray {
             rewind()
             val data = ByteArray(remaining())
@@ -130,10 +127,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun analyze(image: ImageProxy) {
-            width = image.width
-            height = image.height
+            val width = image.width
+            val height = image.height
             val buffer = image.planes[0].buffer
-            grayScaleByteArray = buffer.toByteArray()
+            val grayScaleByteArray = buffer.toByteArray()
             imageViewModel.setPicture(grayScaleByteArray, width, height)
             image.close()
         }
@@ -142,13 +139,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "CameraXApp"
         private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS =
-            mutableListOf(
-                Manifest.permission.CAMERA
-            ).apply {
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
-            }.toTypedArray()
+        private val REQUIRED_PERMISSIONS = mutableListOf(Manifest.permission.CAMERA).toTypedArray()
     }
 }
