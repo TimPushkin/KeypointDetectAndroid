@@ -3,10 +3,6 @@ project(featureDetect)
 
 add_subdirectory(examples)
 
-add_subdirectory(source)
+add_subdirectory(src)
 
 add_subdirectory(external)
-
-
-
-

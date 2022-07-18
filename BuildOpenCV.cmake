@@ -78,7 +78,7 @@ set(
 #        -DBUILD_OBJC=OFF
 #        -DBUILD_opencv_python2=OFF
 #        -DBUILD_opencv_python3=OFF
-        # Disabled dependencies            TODO: disable the unwanted dependencies(2)
+        # Disabled dependencies            TODO: enable  dependencies which will be needed
 #        -DWITH_1394=OFF
 #        -DWITH_AVFOUNDATION=OFF
 #        -DWITH_CAP_IOS=OFF
@@ -98,11 +98,11 @@ set(
 #        -DWITH_QUIRC=OFF
 #        -DWITH_ANDROID_MEDIANDK=OFF
 #        -DWITH_ANDROID_NATIVE_CAMERA=OFF]]
-        # Enabled dependencies
-        -DWITH_OPENCL=ON
-        -DWITH_OPENVX=ON                  # TODO: install OpenVX and set OPENVX_ROOT
-        -DWITH_EIGEN=ON                   # TODO: install Eigen (and probably use EIGEN_INCLUDE_PATH)
-        -DWITH_IPP=ON
+        # Enabled dependencies             # TODO: disable the unwanted dependencies(2)
+#        -DWITH_OPENCL=ON
+#        -DWITH_OPENVX=ON                  # TODO: install OpenVX and set OPENVX_ROOT
+#        -DWITH_EIGEN=ON                   # TODO: install Eigen (and probably use EIGEN_INCLUDE_PATH)
+#        -DWITH_IPP=ON
         # Cross-compilation handling
         -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY
         ${TOOLCHAIN_ARGS}

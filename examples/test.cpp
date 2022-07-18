@@ -1,4 +1,4 @@
-#include "../source/featurelib.h"
+#include "../include/featurelib.h"
 
 int main() {
 featurelib instance();

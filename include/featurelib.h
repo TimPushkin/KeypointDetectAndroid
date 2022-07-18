@@ -15,4 +15,4 @@ private:
      cv::Ptr<cv::Feature2D> sift = cv::SIFT::create();
 };
 
-#endif //FEATUREDETECT_FEATURELIB_H_
+#endif // FEATUREDETECT_FEATURELIB_H_
