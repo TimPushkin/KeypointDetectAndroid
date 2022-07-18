@@ -1,7 +1,9 @@
 set(PROJECT_BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
 
 set(OPENCV_VERSION 4.6.0)
+# TODO: remove unused modules
 set(OPENCV_MODULES core,calib3d,imgproc,imgcodecs,features2d,highgui)
+
 set(OPENCV_DOWNLOAD_DIR ${PROJECT_BUILD_DIR}/opencv-download)
 set(OPENCV_BUILD_DIR ${PROJECT_BUILD_DIR}/opencv-build)
 
@@ -50,44 +52,52 @@ if (CMAKE_CXX_COMPILER)
     list(APPEND TOOLCHAIN_ARGS -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER})
 endif ()
 
+# Set Android-related flags
+if (ANDROID_ABI)
+    list(APPEND ANDROID_ARGS -DANDROID_ABI=${ANDROID_ABI})
+endif ()
+if (ANDROID_ARM_NEON)
+    list(APPEND ANDROID_ARGS -DANDROID_ARM_NEON=${ANDROID_ARM_NEON})
+endif ()
+
 # Configure OpenCV build
 set(
-        OPENCV_CMAKE_ARGS  # https://docs.opencv.org/4.5.5/db/d05/tutorial_config_reference.html
+        OPENCV_CMAKE_ARGS  # https://docs.opencv.org/4.6.0/db/d05/tutorial_config_reference.html
         # General
         -DBUILD_LIST=${OPENCV_MODULES}
-        # Bundled components
-        # -DWITH_GTK=ON
-        -DBUILD_TESTS=OFF
-        -DBUILD_PERF_TESTS=OFF
-        -DBUILD_ANDROID_PROJECTS=OFF
-        -DBUILD_ANDROID_EXAMPLES=OFF
-        -DBUILD_opencv_apps=OFF
-        -DBUILD_JAVA=OFF
-        -DBUILD_FAT_JAVA_LIB=OFF
-        -DBUILD_KOTLIN_EXTENSIONS=OFF
-        -DBUILD_OBJC=OFF
-        -DBUILD_opencv_python2=OFF
-        -DBUILD_opencv_python3=OFF
-        # Disabled dependencies
-        -DWITH_1394=OFF
-        -DWITH_AVFOUNDATION=OFF
-        -DWITH_CAP_IOS=OFF
-        -DWITH_VTK=OFF
-        -DWITH_GSTREAMER=OFF
-        -DWITH_GTK=OFF
-        -DWITH_WIN32UI=OFF
-        -DWITH_FFMPEG=OFF
-        -DWITH_V4L=OFF
-        -DWITH_DSHOW=OFF
-        -DWITH_MSMF=OFF
-        -DWITH_DIRECTX=OFF
-        -DWITH_VA=OFF
-        -DWITH_VA_INTEL=OFF
-        -DWITH_LAPACK=OFF                 # TODO: make sure it's not used
-        -DWITH_PROTOBUF=OFF               # TODO: make sure it's not used
-        -DWITH_QUIRC=OFF
-        -DWITH_ANDROID_MEDIANDK=OFF
-        -DWITH_ANDROID_NATIVE_CAMERA=OFF
+        # Bundled components              TODO: disable the unwanted dependencies(1)
+#        -DWITH_GTK=OFF
+#        -DBUILD_TESTS=OFF
+#        -DBUILD_PERF_TESTS=OFF
+#        -DBUILD_ANDROID_PROJECTS=OFF
+#        -DBUILD_ANDROID_EXAMPLES=OFF
+#        -DBUILD_opencv_apps=OFF
+#        -DBUILD_JAVA=OFF
+#        -DBUILD_FAT_JAVA_LIB=OFF
+#        -DBUILD_KOTLIN_EXTENSIONS=OFF
+#        -DBUILD_OBJC=OFF
+#        -DBUILD_opencv_python2=OFF
+#        -DBUILD_opencv_python3=OFF
+        # Disabled dependencies            TODO: disable the unwanted dependencies(2)
+#        -DWITH_1394=OFF
+#        -DWITH_AVFOUNDATION=OFF
+#        -DWITH_CAP_IOS=OFF
+#        -DWITH_VTK=OFF
+#        -DWITH_GSTREAMER=OFF
+#        -DWITH_GTK=OFF
+#        -DWITH_WIN32UI=OFF
+#        -DWITH_FFMPEG=OFF
+#        -DWITH_V4L=OFF
+#        -DWITH_DSHOW=OFF
+#        -DWITH_MSMF=OFF
+#        -DWITH_DIRECTX=OFF
+#        -DWITH_VA=OFF
+#        -DWITH_VA_INTEL=OFF
+#        -DWITH_LAPACK=OFF
+#        -DWITH_PROTOBUF=OFF
+#        -DWITH_QUIRC=OFF
+#        -DWITH_ANDROID_MEDIANDK=OFF
+#        -DWITH_ANDROID_NATIVE_CAMERA=OFF]]
         # Enabled dependencies
         -DWITH_OPENCL=ON
         -DWITH_OPENVX=ON                  # TODO: install OpenVX and set OPENVX_ROOT
@@ -95,9 +105,8 @@ set(
         -DWITH_IPP=ON
         # Cross-compilation handling
         -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY
-        -DANDROID_ABI=${ANDROID_ABI}
-        -DANDROID_ARM_NEON=${ANDROID_ARM_NEON}
         ${TOOLCHAIN_ARGS}
+        ${ANDROID_ARGS}
 )
 execute_process(COMMAND ${CMAKE_COMMAND} ${OPENCV_CMAKE_ARGS} -S ${OPENCV_DOWNLOAD_DIR}/opencv-${OPENCV_VERSION} -B ${OPENCV_BUILD_DIR})
 message(STATUS "Configuring OpenCV build - done")
