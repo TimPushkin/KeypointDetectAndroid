@@ -1,6 +1,6 @@
 #include "../include/featurelib.h"
 
 int main() {
-featurelib instance();
+    featurelib instance;
     return 0;
 }

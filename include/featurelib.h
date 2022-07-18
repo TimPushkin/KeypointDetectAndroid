@@ -9,10 +9,11 @@
 #include <opencv2/imgproc.hpp>
 
 class featurelib  {
-public:
-     featurelib();
-private:
-     cv::Ptr<cv::Feature2D> sift = cv::SIFT::create();
+ public:
+  featurelib();
+
+ private:
+  cv::Ptr<cv::Feature2D> sift = cv::SIFT::create();
 };
 
 #endif // FEATUREDETECT_FEATURELIB_H_
