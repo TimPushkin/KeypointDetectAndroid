@@ -11,25 +11,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888
-import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.FloatingActionButton
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
+import com.github.featuredetectandroid.ui.GrayscaleViewModel
 import com.github.featuredetectandroid.ui.theme.Theme
-import com.github.featuredetectandroid.ui.theme.ViewGrayscale
 import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
+    private val imageViewModel = GrayscaleViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             Theme {
                 Box(Modifier.fillMaxSize()) {
+                    imageViewModel.ViewGrayscale()
                     FloatingActionButton(
                         onClick = { /*TODO*/ },
                         modifier = Modifier.align(Alignment.BottomEnd)
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                 .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_YUV_420_888)
                 .build()
                 .also {
-                    it.setAnalyzer(cameraExecutor, PhotoAnalyzer())
+                    it.setAnalyzer(cameraExecutor, PhotoAnalyzer(imageViewModel))
                 }
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private class PhotoAnalyzer : ImageAnalysis.Analyzer {
+    private class PhotoAnalyzer(val imageViewModel: GrayscaleViewModel) : ImageAnalysis.Analyzer {
         var grayScaleByteArray: ByteArray = byteArrayOf()
         var width: Int = 0
         var height: Int = 0
@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity() {
             height = image.height
             val buffer = image.planes[0].buffer
             grayScaleByteArray = buffer.toByteArray()
-            ViewGrayscale(grayScaleByteArray, width, height)
+            imageViewModel.setPicture(grayScaleByteArray, width, height)
             image.close()
         }
     }
