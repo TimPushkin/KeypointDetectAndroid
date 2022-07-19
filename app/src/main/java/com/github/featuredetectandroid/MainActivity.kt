@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 Box(Modifier.fillMaxSize()) {
                     imageViewModel.ViewGrayscale()
+
                     FloatingActionButton(
                         onClick = { /*TODO*/ },
                         modifier = Modifier.align(Alignment.BottomEnd)

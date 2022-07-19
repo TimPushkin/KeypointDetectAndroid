@@ -1,10 +1,12 @@
 package com.github.featuredetectandroid.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import com.github.featuredetectandroid.grayscaleByteArrayToBitmap
@@ -24,9 +26,11 @@ class GrayscaleViewModel : ViewModel() {
         )
         Image(
             bitmap = grayscaleBitmap.asImageBitmap(),
+            modifier = Modifier.fillMaxSize(),
             contentDescription = "Grayscale photo"
         )
     }
+
     fun setPicture(newByteArray: ByteArray, newWidth: Int, newHeight: Int) {
         grayscaleByteArray = newByteArray
         width = newWidth
