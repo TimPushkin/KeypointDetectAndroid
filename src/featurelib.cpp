@@ -2,6 +2,7 @@
 
 FeatureLib::FeatureLib(const std::vector<std::uint8_t> &inputVector, int Width, int Height) {
   Image = VectorToMat(inputVector, Height, Width);
+  cv::cvtColor( Image, Image, cv::COLOR_BGR2GRAY );
 }
 
 cv::Mat FeatureLib::VectorToMat(const std::vector<std::uint8_t> &inputVector, int Height, int Width) {
