@@ -16,9 +16,7 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.github.featuredetectandroid.ui.GrayscaleViewModel
@@ -39,11 +37,6 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 Box(Modifier.fillMaxSize()) {
                     imageViewModel.ViewGrayscale()
-
-                    FloatingActionButton(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier.align(Alignment.BottomEnd)
-                    ) { }
                 }
             }
         }
@@ -113,8 +106,10 @@ class MainActivity : ComponentActivity() {
                     cameraSelector,
                     imageAnalyzer
                 )
-            } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
+            } catch (illegalState: IllegalStateException) {
+                Log.e(TAG, "Use case binding failed: ", illegalState)
+            } catch (illegalArgument: IllegalArgumentException) {
+                Log.e(TAG, "Use case binding failed: ", illegalArgument)
             }
         }, ContextCompat.getMainExecutor(this))
     }
@@ -127,12 +122,26 @@ class MainActivity : ComponentActivity() {
             return data
         }
 
+        private fun rotateRightOn90Deg(
+            grayscaleByteArray: ByteArray,
+            width: Int,
+            height: Int
+        ) = ByteArray(width * height).apply {
+            for (i in 0 until width) {
+                for (j in 0 until height) {
+                    this[i * height + j] = grayscaleByteArray[i + (height - 1 - j) * width]
+                }
+            }
+        }
+
+        // Here was hardcoded the 90 deg right rotation because of wrong orientation of images got from camera.
         override fun analyze(image: ImageProxy) {
             val width = image.width
             val height = image.height
             val buffer = image.planes[0].buffer
             val grayScaleByteArray = buffer.toByteArray()
-            imageViewModel.setPicture(grayScaleByteArray, width, height)
+            val rotated = rotateRightOn90Deg(grayScaleByteArray, width, height)
+            imageViewModel.setPicture(rotated, height, width)
             image.close()
         }
     }

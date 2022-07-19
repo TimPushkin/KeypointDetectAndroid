@@ -1,4 +1,4 @@
-package com.github.featuredetectandroid
+package com.github.featuredetectandroid.utils
 
 import android.graphics.Bitmap
 import android.util.Log
