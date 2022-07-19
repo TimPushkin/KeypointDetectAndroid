@@ -10,7 +10,6 @@
 #include <opencv2/imgproc.hpp>
 namespace libstructs {
 struct KeyPoint {
-  float x;
   float y;
   float size;
   float angle;
