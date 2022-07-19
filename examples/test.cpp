@@ -10,7 +10,7 @@ std::vector<uint8_t> matToVector(const cv::Mat &mat) {
 }
 int main() {
   std::string image_path = cv::samples::findFile("church.jpg");
-  cv::Mat img = imread(image_path, cv::IMREAD_GRAYSCALE);
+  cv::Mat img = imread(image_path, cv::IMREAD_COLOR);
   std::vector<uint8_t> testVector = matToVector(img);
 
   int width = img.cols;
