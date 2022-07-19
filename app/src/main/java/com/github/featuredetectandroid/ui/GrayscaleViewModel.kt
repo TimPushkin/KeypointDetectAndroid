@@ -16,6 +16,7 @@ class GrayscaleViewModel : ViewModel() {
 
     @Composable
     fun ViewGrayscale() {
+        if (width == 0 || height == 0) return
         val grayscaleBitmap = grayscaleByteArrayToBitmap(
             grayscaleByteArray,
             width,

@@ -15,8 +15,6 @@ private const val MAX_COLOR = 0xff
 private const val MAX_A = MAX_COLOR shl ALPHA_SHIFT
 
 fun grayscaleByteArrayToBitmap(grayscaleByteArray: ByteArray, width: Int, height: Int): Bitmap {
-    Log.i(TAG, "Converting byte array of size $width x $height to a Bitmap")
-
     val byteList = grayscaleByteArray.toList()
     val buffer = IntBuffer.allocate(grayscaleByteArray.size).apply {
         byteList.forEach { byte ->

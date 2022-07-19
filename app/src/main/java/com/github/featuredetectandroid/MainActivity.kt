@@ -2,13 +2,13 @@ package com.github.featuredetectandroid
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888
@@ -17,35 +17,26 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
 import com.github.featuredetectandroid.ui.GrayscaleViewModel
-import com.github.featuredetectandroid.ui.theme.Theme
 import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private val imageViewModel by viewModels<GrayscaleViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
-            requestPermissions(
-                this,
-                REQUIRED_PERMISSIONS,
-                REQUEST_CODE_PERMISSIONS
-            )
-        }
 
+        checkPermissions()
         cameraExecutor = Executors.newSingleThreadExecutor()
         setContent {
-            Theme {
+            MaterialTheme {
                 Box(Modifier.fillMaxSize()) {
                     imageViewModel.ViewGrayscale()
                     FloatingActionButton(
@@ -62,30 +53,39 @@ class MainActivity : AppCompatActivity() {
         cameraExecutor.shutdown()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults:
-            IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                startCamera()
-            } else {
-                Toast.makeText(
-                    this,
-                    "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                finish()
+    private val cameraPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            when {
+                granted -> {
+                    Toast.makeText(
+                        this,
+                        "Permissions granted.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                    Log.d(TAG, "Permission was granted successfully.")
+                    startCamera()
+                } else -> {
+                    Toast.makeText(
+                        this,
+                        "Permissions not granted by the user.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                }
             }
         }
-    }
 
+    private fun checkPermissions() {
+        if (allPermissionsGranted()) {
+            startCamera()
+        } else {
+            cameraPermission.launch(Manifest.permission.CAMERA)
+        }
+    }
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
-            baseContext,
+            this,
             it
         ) == PackageManager.PERMISSION_GRANTED
     }
@@ -137,8 +137,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val TAG = "CameraXApp"
-        private const val REQUEST_CODE_PERMISSIONS = 10
+        private const val TAG = "FeatureDetectApp"
         private val REQUIRED_PERMISSIONS = mutableListOf(Manifest.permission.CAMERA).toTypedArray()
     }
 }
