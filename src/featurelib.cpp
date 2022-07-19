@@ -2,7 +2,6 @@
 
 FeatureLib::FeatureLib(const std::vector<std::uint8_t> &inputVector, int Width, int Height) {
   Image = VectorToMat(inputVector, Height, Width);
-
 }
 
 cv::Mat FeatureLib::VectorToMat(const std::vector<std::uint8_t> &inputVector, int Height, int Width) {

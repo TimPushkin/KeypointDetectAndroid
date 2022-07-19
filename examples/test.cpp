@@ -1,7 +1,4 @@
 #include "../include/FeatureLib.h"
-#include <vector>
-#include <iostream>
-#include <cstdint>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
