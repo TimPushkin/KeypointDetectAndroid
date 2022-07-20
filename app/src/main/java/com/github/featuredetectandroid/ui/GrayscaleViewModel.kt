@@ -9,18 +9,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
-import com.github.featuredetectandroid.utils.grayscaleByteArrayToBitmap
+import com.github.featuredetectandroid.utils.grayscaleArrayToBitmap
 
 class GrayscaleViewModel : ViewModel() {
     private var grayscaleByteArray by mutableStateOf(byteArrayOf())
     private var width by mutableStateOf(0)
     private var height by mutableStateOf(0)
 
-    @Suppress("FunctionNaming")
     @Composable
+    @Suppress("FunctionNaming")
     fun ViewGrayscale() {
         if (width == 0 || height == 0) return
-        val grayscaleBitmap = grayscaleByteArrayToBitmap(
+        val grayscaleBitmap = grayscaleArrayToBitmap(
             grayscaleByteArray,
             width,
             height

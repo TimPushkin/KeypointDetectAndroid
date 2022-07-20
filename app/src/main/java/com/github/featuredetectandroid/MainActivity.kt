@@ -4,6 +4,10 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.view.Surface.ROTATION_0
+import android.view.Surface.ROTATION_180
+import android.view.Surface.ROTATION_270
+import android.view.Surface.ROTATION_90
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,25 +20,29 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.github.featuredetectandroid.ui.GrayscaleViewModel
+import com.github.featuredetectandroid.ui.theme.Theme
+import com.github.featuredetectandroid.utils.PhotoAnalyzer
 import java.nio.ByteBuffer
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+private const val TAG = "MainActivity"
+
 class MainActivity : ComponentActivity() {
-    private lateinit var cameraExecutor: ExecutorService
+    // private lateinit var cameraExecutor: ExecutorService
+    private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val imageViewModel by viewModels<GrayscaleViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         checkPermissions()
-        cameraExecutor = Executors.newSingleThreadExecutor()
+        // cameraExecutor = Executors.newSingleThreadExecutor()
         setContent {
-            MaterialTheme {
+            Theme {
                 Box(Modifier.fillMaxSize()) {
                     imageViewModel.ViewGrayscale()
                 }
@@ -49,24 +57,22 @@ class MainActivity : ComponentActivity() {
 
     private val cameraPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            when {
-                granted -> {
-                    Toast.makeText(
-                        this,
-                        "Permissions granted.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    finish()
-                    Log.d(TAG, "Permission was granted successfully.")
-                    startCamera()
-                } else -> {
-                    Toast.makeText(
-                        this,
-                        "Permissions not granted by the user.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    finish()
-                }
+            if (granted) {
+                Toast.makeText(
+                    this,
+                    "Permissions granted.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                finish()
+                Log.d(TAG, "Permission was granted successfully.")
+                startCamera()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Permissions not granted by the user.",
+                    Toast.LENGTH_SHORT
+                ).show()
+                finish()
             }
         }
 
@@ -77,12 +83,10 @@ class MainActivity : ComponentActivity() {
             cameraPermission.launch(Manifest.permission.CAMERA)
         }
     }
-    private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
-        ContextCompat.checkSelfPermission(
-            this,
-            it
-        ) == PackageManager.PERMISSION_GRANTED
-    }
+    private fun allPermissionsGranted() = ContextCompat.checkSelfPermission(
+        this,
+        Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -93,8 +97,8 @@ class MainActivity : ComponentActivity() {
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_YUV_420_888)
                 .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, PhotoAnalyzer(imageViewModel))
+                .apply {
+                    setAnalyzer(cameraExecutor, PhotoAnalyzer(imageViewModel))
                 }
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -112,42 +116,5 @@ class MainActivity : ComponentActivity() {
                 Log.e(TAG, "Use case binding failed: ", illegalArgument)
             }
         }, ContextCompat.getMainExecutor(this))
-    }
-
-    private class PhotoAnalyzer(val imageViewModel: GrayscaleViewModel) : ImageAnalysis.Analyzer {
-        private fun ByteBuffer.toByteArray(): ByteArray {
-            rewind()
-            val data = ByteArray(remaining())
-            get(data)
-            return data
-        }
-
-        private fun rotateRightOn90Deg(
-            grayscaleByteArray: ByteArray,
-            width: Int,
-            height: Int
-        ) = ByteArray(width * height).apply {
-            for (i in 0 until width) {
-                for (j in 0 until height) {
-                    this[i * height + j] = grayscaleByteArray[i + (height - 1 - j) * width]
-                }
-            }
-        }
-
-        // Here was hardcoded the 90 deg right rotation because of wrong orientation of images got from camera.
-        override fun analyze(image: ImageProxy) {
-            val width = image.width
-            val height = image.height
-            val buffer = image.planes[0].buffer
-            val grayScaleByteArray = buffer.toByteArray()
-            val rotated = rotateRightOn90Deg(grayScaleByteArray, width, height)
-            imageViewModel.setPicture(rotated, height, width)
-            image.close()
-        }
-    }
-
-    companion object {
-        private const val TAG = "FeatureDetectApp"
-        private val REQUIRED_PERMISSIONS = mutableListOf(Manifest.permission.CAMERA).toTypedArray()
     }
 }
