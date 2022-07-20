@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.github.featuredetectandroid.utils.grayscaleArrayToBitmap
+import com.github.featuredetectandroid.utils.luminanceArrayToBitmap
 
 class GrayscaleViewModel : ViewModel() {
     var grayscaleBitmap: Bitmap? by mutableStateOf(null)
@@ -15,7 +15,7 @@ class GrayscaleViewModel : ViewModel() {
     fun setPicture(grayscaleByteArray: ByteArray, newWidth: Int, newHeight: Int) {
         width = newWidth
         height = newHeight
-        grayscaleBitmap = grayscaleArrayToBitmap(
+        grayscaleBitmap = luminanceArrayToBitmap(
             grayscaleByteArray,
             width,
             height

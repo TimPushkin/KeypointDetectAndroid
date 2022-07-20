@@ -16,11 +16,12 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import com.github.featuredetectandroid.ui.GrayscaleView
 import com.github.featuredetectandroid.ui.GrayscaleViewModel
-import com.github.featuredetectandroid.ui.theme.Theme
+import com.github.featuredetectandroid.ui.theme.FeatureDetectAppTheme
 import com.github.featuredetectandroid.utils.PhotoAnalyzer
 import java.util.concurrent.Executors
 
@@ -35,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
         tryStartCamera()
         setContent {
-            Theme {
+            FeatureDetectAppTheme {
                 Box(Modifier.fillMaxSize()) {
                     if (ContextCompat.checkSelfPermission(
                             this@MainActivity,
@@ -48,7 +49,10 @@ class MainActivity : ComponentActivity() {
                             imageViewModel.height
                         )
                     } else {
-                        Text(text = "Camera permission required")
+                        Text(
+                            text = "Camera permission required",
+                            modifier = Modifier.align(Alignment.Center)
+                        )
                     }
                 }
             }
@@ -81,20 +85,15 @@ class MainActivity : ComponentActivity() {
 
     private fun tryStartCamera() {
         when {
-            cameraPermissionGranted() -> {
-                startCamera()
-            }
-            rationaleSDKVersionCheck() &&
-                shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
+            cameraPermissionGranted() -> startCamera()
+            tryShowRequestPermissionRationale() -> {
                 Toast.makeText(
                     this,
                     "Without camera permission app can't get and display keypoints.",
                     Toast.LENGTH_SHORT
                 ).show()
             }
-            else -> {
-                cameraPermission.launch(Manifest.permission.CAMERA)
-            }
+            else -> cameraPermission.launch(Manifest.permission.CAMERA)
         }
     }
 
@@ -105,6 +104,9 @@ class MainActivity : ComponentActivity() {
 
     private fun rationaleSDKVersionCheck() =
         android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
+
+    private fun tryShowRequestPermissionRationale() = rationaleSDKVersionCheck() &&
+        shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)

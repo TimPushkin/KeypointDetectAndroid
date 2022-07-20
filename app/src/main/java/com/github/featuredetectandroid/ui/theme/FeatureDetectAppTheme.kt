@@ -22,7 +22,10 @@ private val LightColorPalette = lightColors(
 
 @Composable
 @Suppress("FunctionNaming")
-fun Theme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+fun FeatureDetectAppTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
     val systemUiController = rememberSystemUiController()
     val colors = if (darkTheme) {
         DarkColorPalette
