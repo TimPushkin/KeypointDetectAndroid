@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.util.Size
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,6 +29,9 @@ import com.github.featuredetectandroid.utils.PhotoAnalyzer
 import java.util.concurrent.Executors
 
 private const val TAG = "MainActivity"
+
+private const val RESOLUTION_WIDTH = 640
+private const val RESOLUTION_HEIGHT = 360
 
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
@@ -117,6 +121,7 @@ class MainActivity : ComponentActivity() {
 
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_YUV_420_888)
+                .setTargetResolution(Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                 .build()
                 .apply {
                     setAnalyzer(cameraExecutor, PhotoAnalyzer(imageViewModel))
