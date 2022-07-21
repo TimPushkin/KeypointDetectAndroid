@@ -23,8 +23,8 @@ fun luminanceArrayToBitmap(luminanceByteArray: ByteArray, width: Int, height: In
         for (byte in luminanceByteArray) {
             val intByte = Y_SHIFT - byte.toInt()
             put(
-                MAX_ALPHA or (intByte shl RED_SHIFT)
-                    or (intByte shl GREEN_SHIFT) or (intByte shl BLUE_SHIFT)
+                MAX_ALPHA or (intByte shl RED_SHIFT) or
+                    (intByte shl GREEN_SHIFT) or (intByte shl BLUE_SHIFT)
             )
         }
         rewind()

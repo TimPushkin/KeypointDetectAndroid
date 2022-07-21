@@ -35,8 +35,8 @@ class PhotoAnalyzer(private val imageViewModel: GrayscaleViewModel) : ImageAnaly
         var height = image.height
         var oriented = image.planes[0].buffer.toByteArray()
 
-        /** Rotation of incorrectly oriented images is implemented here.
-         * TODO: Optimize rotations for 180 and 270 degrees. */
+        // Rotation of incorrectly oriented images is implemented here.
+        // TODO: Optimize rotations for 180 and 270 degrees.
         repeat(rotationDegrees / ROTATION_STEP) {
             oriented = rotateClockwiseOnRotationStep(oriented, width, height)
             width = height.also { height = width }
