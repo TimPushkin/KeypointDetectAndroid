@@ -19,23 +19,23 @@ int main(int argc, char *argv[]) {
   std::string file_path = argv[1];
   std::string image_path = cv::samples::findFile(file_path);
   cv::Mat img = imread(file_path, cv::IMREAD_COLOR);
-  std::vector<uint8_t> test_vector = matToVector(img);
 
   int width = img.cols;
   int height = img.rows;
+  libstructs::SiftDetector sift_example(width, height);
 
-  libstructs::FeatureLib featurelib(test_vector, width, height);
+  std::vector<uint8_t> test_vector = matToVector(img);
 
-  std::vector<libstructs::KeyPoint> test_vector_of_key_points = featurelib.calcSiftKeyPoints();
-  std::vector<uint8_t> test_vector_of_descriptors = featurelib.calcSiftDescriptors();
+  libstructs::SiftDetector instance(width, height);
+  libstructs::CalcOutputStruct test_output = instance.calc(test_vector);
 
   std::cout << "Printing points" << std::endl;
-  for (auto &temp_kp : test_vector_of_key_points) {
+  for (auto &temp_kp : test_output.keypoints) {
     std::cout << temp_kp.x << "\t" << temp_kp.y << std::endl;
   }
 
   std::cout << "Printing descriptors" << std::endl;
-  for (auto &temp_uint : test_vector_of_descriptors) {
+  for (auto &temp_uint : test_output.descriptors) {
     std::cout << temp_uint << std::endl;
   }
 
