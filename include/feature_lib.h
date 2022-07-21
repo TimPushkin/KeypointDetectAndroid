@@ -35,7 +35,7 @@ class SiftDetector : public FeatureDetector {
  public:
   SiftDetector(int width, int height);
 
-  virtual CalcOutputStruct calc(const std::vector<std::uint8_t> &input_vector);
+  CalcOutputStruct calc(const std::vector<std::uint8_t> &input_vector);
 
  private:
   int width;
