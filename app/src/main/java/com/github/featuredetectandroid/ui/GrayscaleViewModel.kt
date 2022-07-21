@@ -9,12 +9,9 @@ import com.github.featuredetectandroid.utils.luminanceArrayToBitmap
 
 class GrayscaleViewModel : ViewModel() {
     var grayscaleBitmap: Bitmap? by mutableStateOf(null)
+    var isCameraPermissionGranted by mutableStateOf(false)
 
     fun setPicture(grayscaleByteArray: ByteArray, newWidth: Int, newHeight: Int) {
-        grayscaleBitmap = luminanceArrayToBitmap(
-            grayscaleByteArray,
-            newWidth,
-            newHeight
-        )
+        grayscaleBitmap = luminanceArrayToBitmap(grayscaleByteArray, newWidth, newHeight)
     }
 }

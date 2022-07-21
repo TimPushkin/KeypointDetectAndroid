@@ -8,7 +8,6 @@ import android.util.Size
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.camera.core.CameraSelector
@@ -36,44 +35,35 @@ private const val RESOLUTION_HEIGHT = 360
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val imageViewModel by viewModels<GrayscaleViewModel>()
-    private lateinit var cameraPermission: ActivityResultLauncher<String>
+    private val cameraPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                Toast.makeText(this, "Permissions granted.", Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "Permission was granted successfully.")
+                startCamera()
+            } else {
+                Toast.makeText(this, "Permissions not granted.", Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "Permission was NOT granted.")
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        cameraPermission =
-            registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-                if (granted) {
-                    Toast.makeText(
-                        this,
-                        "Permissions granted.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    Log.d(TAG, "Permission was granted successfully.")
-                    startCamera()
-                } else {
-                    Toast.makeText(
-                        this,
-                        "Permissions not granted by the user.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-
+        imageViewModel.isCameraPermissionGranted = cameraPermissionGranted()
         tryStartCamera()
+
         setContent {
             FeatureDetectAppTheme {
                 Box(Modifier.fillMaxSize()) {
-                    if (ContextCompat.checkSelfPermission(
-                            this@MainActivity,
-                            Manifest.permission.CAMERA
-                        ) == PackageManager.PERMISSION_GRANTED
-                    ) {
-                        Image(
-                            bitmap = imageViewModel.grayscaleBitmap?.asImageBitmap() ?: return@Box,
-                            modifier = Modifier.fillMaxSize(),
-                            contentDescription = "Grayscale photo"
-                        )
+                    if (imageViewModel.isCameraPermissionGranted) {
+                        imageViewModel.grayscaleBitmap?.let { bitmap ->
+                            Image(
+                                bitmap = bitmap.asImageBitmap(),
+                                modifier = Modifier.fillMaxSize(),
+                                contentDescription = "Grayscale photo"
+                            )
+                        }
                     } else {
                         Text(
                             text = "Camera permission required",
@@ -85,14 +75,20 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        imageViewModel.isCameraPermissionGranted = cameraPermissionGranted()
+        tryStartCamera()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
     }
 
     private fun tryStartCamera() = when {
-        cameraPermissionGranted() -> startCamera()
-        tryShowRequestPermissionRationale() -> {
+        imageViewModel.isCameraPermissionGranted -> startCamera()
+        shouldRationalize() -> {
             Toast.makeText(
                 this,
                 "Without camera permission app can't get and display keypoints.",
@@ -107,11 +103,9 @@ class MainActivity : ComponentActivity() {
         Manifest.permission.CAMERA
     ) == PackageManager.PERMISSION_GRANTED
 
-    private fun rationaleSDKVersionCheck() =
-        android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M
-
-    private fun tryShowRequestPermissionRationale() = rationaleSDKVersionCheck() &&
-        shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
+    private fun shouldRationalize() =
+        (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) &&
+            shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
 
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -131,11 +125,7 @@ class MainActivity : ComponentActivity() {
 
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
-                    this,
-                    cameraSelector,
-                    imageAnalyzer
-                )
+                cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalyzer)
             } catch (illegalState: IllegalStateException) {
                 Log.e(TAG, "Use case binding failed: ", illegalState)
             } catch (illegalArgument: IllegalArgumentException) {

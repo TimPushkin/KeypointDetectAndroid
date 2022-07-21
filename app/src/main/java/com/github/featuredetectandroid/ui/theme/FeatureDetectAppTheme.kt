@@ -21,7 +21,6 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-@Suppress("FunctionNaming")
 fun FeatureDetectAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit

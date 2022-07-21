@@ -27,8 +27,6 @@ class PhotoAnalyzer(private val imageViewModel: GrayscaleViewModel) : ImageAnaly
         }
     }
 
-    // Rotation of incorrectly oriented images is implemented here.
-    @Suppress("ForbiddenComment")
     override fun analyze(image: ImageProxy) {
         val rotationDegrees = image.imageInfo.rotationDegrees
         Log.i(TAG, "The image is rotated on $rotationDegrees degrees.")
@@ -37,11 +35,11 @@ class PhotoAnalyzer(private val imageViewModel: GrayscaleViewModel) : ImageAnaly
         var height = image.height
         var oriented = image.planes[0].buffer.toByteArray()
 
-        // TODO: Optimize rotations for 180 and 270 degrees.
-        repeat((0 until (rotationDegrees / ROTATION_STEP)).count()) {
-            oriented = rotateClockwiseOnRotationStep(oriented, width, height).also {
-                width = height.also { height = width }
-            }
+        /** Rotation of incorrectly oriented images is implemented here.
+         * TODO: Optimize rotations for 180 and 270 degrees. */
+        repeat(rotationDegrees / ROTATION_STEP) {
+            oriented = rotateClockwiseOnRotationStep(oriented, width, height)
+            width = height.also { height = width }
         }
 
         imageViewModel.setPicture(oriented, width, height)
