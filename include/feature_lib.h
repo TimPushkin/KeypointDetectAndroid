@@ -19,39 +19,29 @@ struct KeyPoint {
   float response;
 };
 
-class FeatureLib {
+struct CalcOutputStruct {
+  std::vector<KeyPoint> keypoints;
+  std::vector<uint8_t> descriptors;
+};
+
+class FeatureDetector {
  public:
-  FeatureLib(const std::vector<std::uint8_t> &input_vector, int width, int height);
+  // pure virtual function providing interface framework.
+  virtual CalcOutputStruct calc(const std::vector<std::uint8_t> &input_vector) = 0;
 
-  std::vector<libstructs::KeyPoint> calcSiftKeyPoints();
+};
 
-  std::vector<uint8_t> calcSiftDescriptors();
+class SiftDetector : public FeatureDetector {
+ public:
+  SiftDetector(int width, int height);
 
-  std::vector<libstructs::KeyPoint> calcOrbKeyPoints();
-
-  std::vector<uint8_t> calcOrbDescriptors();
-
-  std::vector<libstructs::KeyPoint> calcSurfKeyPoints();
-
-  std::vector<uint8_t> calcSurfDescriptors();
+  virtual CalcOutputStruct calc(const std::vector<std::uint8_t> &input_vector);
 
  private:
-  std::vector<cv::KeyPoint> SiftKeyPoints;
-  std::vector<cv::KeyPoint> OrbKeyPoints;
-  std::vector<cv::KeyPoint> SurfKeyPoints;
-  cv::Mat SiftDescriptors;
-  cv::Mat OrbDescriptors;
-  cv::Mat SurfDescriptors;
-  cv::Mat Image;
+  int width;
+  int height;
+
   cv::Ptr<cv::Feature2D> sift_instance_ = cv::SIFT::create();
-  cv::Ptr<cv::Feature2D> orb_instance_ = cv::ORB::create();
-
-  static cv::Mat VectorToMat(const std::vector<std::uint8_t> &inputVector, int Height, int Width);
-
-  static std::vector<uint8_t> MatToVector(const cv::Mat &mat);
-
-  static std::vector<libstructs::KeyPoint> ConvertToStructure(const std::vector<cv::KeyPoint> &cv_key_points_vec);
-
 };
 
 }  //namespace libstructs
