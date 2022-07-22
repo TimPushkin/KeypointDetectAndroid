@@ -29,7 +29,6 @@ class PhotoAnalyzer(private val imageViewModel: GrayscaleViewModel) : ImageAnaly
 
     override fun analyze(image: ImageProxy) {
         val rotationDegrees = image.imageInfo.rotationDegrees
-        Log.i(TAG, "The image is rotated on $rotationDegrees degrees.")
 
         var width = image.width
         var height = image.height
@@ -38,6 +37,7 @@ class PhotoAnalyzer(private val imageViewModel: GrayscaleViewModel) : ImageAnaly
         // Rotation of incorrectly oriented images is implemented here.
         // TODO: Optimize rotations for 180 and 270 degrees.
         repeat(rotationDegrees / ROTATION_STEP) {
+            Log.i(TAG, "The image is rotated on $rotationDegrees degrees.")
             oriented = rotateClockwiseOnRotationStep(oriented, width, height)
             width = height.also { height = width }
         }
