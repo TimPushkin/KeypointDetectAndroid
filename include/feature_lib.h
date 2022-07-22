@@ -2,48 +2,58 @@
 #define FEATUREDETECT_FEATURELIB_H_
 
 #include <vector>
-#include <iostream>
-#include <cstdint>
-#include <opencv2/opencv.hpp>
-#include <opencv2/core/core.hpp>
 #include <opencv2/features2d.hpp>
-#include <opencv2/imgproc.hpp>
 
-namespace libstructs {
+namespace featurelib {
 
 struct KeyPoint {
   float x;
   float y;
   float size;
   float angle;
-  float response;
+  float strength;
 };
 
-struct CalcOutputStruct {
+struct DetectionResult {
   std::vector<KeyPoint> keypoints;
-  std::vector<uint8_t> descriptors;
+  std::vector<std::vector<uint8_t>> descriptors;
 };
 
 class FeatureDetector {
  public:
-  // pure virtual function providing interface framework.
-  virtual CalcOutputStruct calc(const std::vector<std::uint8_t> &input_vector) = 0;
+  virtual DetectionResult detect(const std::vector<std::uint8_t> &input_vector) = 0;
 
+  void setHeight(int h) {
+    height = h;
+  }
+
+  void setWidth(int w) {
+    width = w;
+  }
+
+  int getWidth() const {
+    return width;
+  }
+
+  int getHeight() const {
+    return height;
+  }
+
+ protected:
+  int width;
+  int height;
 };
 
 class SiftDetector : public FeatureDetector {
  public:
-  SiftDetector(int width, int height);
+  SiftDetector();
 
-  CalcOutputStruct calc(const std::vector<std::uint8_t> &input_vector);
+  DetectionResult detect(const std::vector<std::uint8_t> &input_vector) override;
 
  private:
-  int width;
-  int height;
-
-  cv::Ptr<cv::Feature2D> sift_instance_ = cv::SIFT::create();
+  cv::Ptr<cv::Feature2D> sift_ = cv::SIFT::create();
 };
 
-}  //namespace libstructs
+}  // namespace featurelib
 
 #endif // FEATUREDETECT_FEATURELIB_H_
