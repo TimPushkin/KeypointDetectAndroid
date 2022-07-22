@@ -51,10 +51,10 @@ class SuperPoint(context: Context, width: Int, height: Int) : FeatureDetector {
     @Suppress("MagicNumber")
     private fun rgbToGrayscale(pixels: ByteArray): FloatArray =
         FloatArray(width * height) { i ->
-            val r = linearizeSrgbChannel((pixels[i] + 128) / 255f)
-            val g = linearizeSrgbChannel((pixels[i + 1] + 128) / 255f)
-            val b = linearizeSrgbChannel((pixels[i + 2] + 128) / 255f)
-            return@FloatArray 0.2126f * r + 0.7152f * g + 0.0722f * b
+            val r = linearizeSrgbChannel((pixels[3 * i] + 128) / 255f)
+            val g = linearizeSrgbChannel((pixels[3 * i + 1] + 128) / 255f)
+            val b = linearizeSrgbChannel((pixels[3 * i + 2] + 128) / 255f)
+            0.2126f * r + 0.7152f * g + 0.0722f * b
         }
 
     @Suppress("MagicNumber")
