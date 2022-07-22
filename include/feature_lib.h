@@ -21,15 +21,7 @@ struct DetectionResult {
 
 class FeatureDetector {
  public:
-  virtual DetectionResult detect(const std::vector<std::uint8_t> &input_vector) = 0;
-
-  void setHeight(int h) {
-    height = h;
-  }
-
-  void setWidth(int w) {
-    width = w;
-  }
+  virtual DetectionResult detect(const std::vector<std::uint8_t> &input_vector) const = 0;
 
   int getWidth() const {
     return width;
@@ -42,18 +34,20 @@ class FeatureDetector {
  protected:
   int width;
   int height;
+  cv::Mat mask = cv::Mat(255 * cv::Mat::ones(height, width, CV_8U));
 };
 
 class SiftDetector : public FeatureDetector {
  public:
   SiftDetector();
+  SiftDetector(int width, int height);
 
-  DetectionResult detect(const std::vector<std::uint8_t> &input_vector) override;
+  DetectionResult detect(const std::vector<std::uint8_t> &input) const;
 
  private:
   cv::Ptr<cv::Feature2D> sift_ = cv::SIFT::create();
 };
 
-}  // namespace featurelib
+} // namespace featurelib
 
 #endif // FEATUREDETECT_FEATURELIB_H_
