@@ -10,9 +10,9 @@ std::vector<uint8_t> matToVector(const cv::Mat &mat) {
   return result;
 }
 
-// Calculates keypoints and image descriptors
+// Calculates key points and image descriptors
 // Takes an image file path as input
-// prints key points and image descriptors to stdout declared in associated header
+// Prints key points and image descriptors to stdout
 int main(int argc, char *argv[]) {
   if (argc != 2) {
     std::cerr << "Illegal CLI arguments num. Expected only a file path but was " << argc

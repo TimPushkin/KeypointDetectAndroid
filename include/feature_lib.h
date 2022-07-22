@@ -23,12 +23,14 @@ class FeatureDetector {
  public:
   virtual DetectionResult detect(const std::vector<std::uint8_t> &input_vector) const = 0;
 
-  void setHeight(int height) {
-    mask.reshape(1, std::vector<int>{height, width});
+  void setHeight(int value) {
+    height = value;
+    mask = cv::Mat(255 * cv::Mat::ones(height, width, CV_8U));
   }
 
-  void setWidth(int width) {
-    mask.reshape(1, std::vector<int>{height, width});
+  void setWidth(int value) {
+    width = value;
+    mask = cv::Mat(255 * cv::Mat::ones(height, width, CV_8U));
   }
 
   int getWidth() const {
@@ -40,8 +42,8 @@ class FeatureDetector {
   }
 
  protected:
-  int width;
-  int height;
+  int width = 0;
+  int height = 0;
   cv::Mat mask = cv::Mat(255 * cv::Mat::ones(height, width, CV_8U));
 };
 
