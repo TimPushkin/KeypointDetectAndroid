@@ -5,7 +5,6 @@ import org.pytorch.IValue
 import org.pytorch.LiteModuleLoader
 import org.pytorch.Tensor
 import kotlin.math.pow
-import kotlin.properties.Delegates
 
 private const val NETWORK_ASSET = "superpoint.ptl"
 private const val DECODER_ASSET = "superpoint_decoder.ptl"
@@ -20,23 +19,23 @@ class SuperPoint(context: Context, width: Int, height: Int) : FeatureDetector {
     private val net = LiteModuleLoader.loadModuleFromAsset(context.assets, NETWORK_ASSET)
     private val decoder = LiteModuleLoader.loadModuleFromAsset(context.assets, DECODER_ASSET)
 
-    private var longWidth by Delegates.notNull<Long>()
-    private lateinit var wrappedWidth: IValue
-    override var width: Int = width
+    override var width = width
         set(value) {
             field = value
             longWidth = value.toLong()
             wrappedWidth = IValue.from(longWidth)
         }
+    private var longWidth = width.toLong()
+    private var wrappedWidth = IValue.from(longWidth)
 
-    private var longHeight by Delegates.notNull<Long>()
-    private lateinit var wrappedHeight: IValue
-    override var height: Int = height
+    override var height = height
         set(value) {
             field = value
             longHeight = value.toLong()
             wrappedHeight = IValue.from(longHeight)
         }
+    private var longHeight = height.toLong()
+    private var wrappedHeight = IValue.from(longHeight)
 
     override fun detect(image: ByteArray): Pair<List<KeyPoint>, List<Descriptor>> {
         val input = Tensor.fromBlob(rgbToGrayscale(image), longArrayOf(1, 1, longHeight, longWidth))
@@ -51,7 +50,7 @@ class SuperPoint(context: Context, width: Int, height: Int) : FeatureDetector {
 
     @Suppress("MagicNumber")
     private fun rgbToGrayscale(pixels: ByteArray): FloatArray =
-        FloatArray((width / 3) * height) { i ->
+        FloatArray(width * height) { i ->
             val r = linearizeSrgbChannel((pixels[i] + 128) / 255f)
             val g = linearizeSrgbChannel((pixels[i + 1] + 128) / 255f)
             val b = linearizeSrgbChannel((pixels[i + 2] + 128) / 255f)
