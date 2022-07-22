@@ -7,12 +7,12 @@ typealias Descriptor = List<Float>
  */
 interface FeatureDetector {
     /**
-     * Width of the images to be processed.
+     * Width of the passed images to be processed.
      */
     var width: Int
 
     /**
-     * Height of the passed to be processed.
+     * Height of the passed images to be processed.
      */
     var height: Int
 
