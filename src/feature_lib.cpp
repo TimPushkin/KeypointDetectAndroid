@@ -14,15 +14,15 @@ featurelib::DetectionResult SiftDetector::detect(const std::vector<std::uint8_t>
   cv::Mat image = vectorToMat(input, height, width);
   cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);
 
-  std::vector<cv::KeyPoint> key_points;
-  cv::Mat descriptors;
+  std::vector<cv::KeyPoint> sift_key_points;
+  cv::Mat sift_descriptors;
 
-  sift_->detectAndCompute(image, mask, key_points, descriptors);
+  sift_->detectAndCompute(image, mask, sift_key_points, sift_descriptors);
 
-  std::vector<KeyPoint> key_points_output = convertToStructure(key_points);
-  std::vector<std::vector<uint8_t>> descriptors_output = matTo2DVector(descriptors);
+  std::vector<KeyPoint> key_points = convertToStructure(sift_key_points);
+  std::vector<std::vector<uint8_t>> descriptors = matTo2DVector(sift_descriptors);
 
-  return {key_points_output, descriptors_output};
+  return {key_points, descriptors};
 }
 
 } // namespace featurelib
