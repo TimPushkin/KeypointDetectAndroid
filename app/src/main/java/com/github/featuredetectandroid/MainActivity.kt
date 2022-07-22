@@ -40,7 +40,7 @@ private const val RESOLUTION_HEIGHT = 360
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val imageViewModel by viewModels<GrayscaleViewModel>()
-    private lateinit var currentKeypointExtractionMethod: SharedPreferences
+    private lateinit var currentAlgorithm: SharedPreferences
     private val cameraPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        currentKeypointExtractionMethod = this.getPreferences(Context.MODE_PRIVATE)
+        currentAlgorithm = this.getPreferences(Context.MODE_PRIVATE)
 
         imageViewModel.isCameraPermissionGranted = cameraPermissionGranted()
         tryStartCamera()
@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
             FeatureDetectAppTheme {
                 Scaffold(
                     scaffoldState = scaffoldState,
-                    drawerContent = { Menu(currentKeypointExtractionMethod) }
+                    drawerContent = { Menu(currentAlgorithm) }
                 ) {
                     Box(Modifier.fillMaxSize()) {
                         if (imageViewModel.isCameraPermissionGranted) {

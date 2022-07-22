@@ -26,10 +26,10 @@ import com.github.featuredetectandroid.utils.stringToAlgorithmMap
 private const val TAG = "Menu"
 
 @Composable
-fun Menu(currentKeypointExtractionMethod: SharedPreferences) {
+fun Menu(currentAlgorithm: SharedPreferences) {
     val radioOptions = stringToAlgorithmMap().keys.toList()
     var selectedAlgorithm by remember {
-        mutableStateOf(currentKeypointExtractionMethod.getString("method", "None"))
+        mutableStateOf(currentAlgorithm.getString("algorithm", "None"))
     }
 
     Row(horizontalArrangement = Arrangement.Center) {
@@ -45,16 +45,16 @@ fun Menu(currentKeypointExtractionMethod: SharedPreferences) {
             Modifier.fillMaxWidth().selectable(
                 selected = (text == selectedAlgorithm),
                 onClick = {
-                    currentKeypointExtractionMethod.edit {
-                        putString("method", text)
+                    currentAlgorithm.edit {
+                        putString("algorithm", text)
                         apply()
                     }
                     selectedAlgorithm = text
                     Log.i(
                         TAG,
                         "${
-                        currentKeypointExtractionMethod.getString(
-                            "method",
+                        currentAlgorithm.getString(
+                            "algorithm",
                             "None"
                         )
                         } was selected."
@@ -67,8 +67,8 @@ fun Menu(currentKeypointExtractionMethod: SharedPreferences) {
                 selected = (text == selectedAlgorithm),
                 modifier = Modifier.padding(horizontal = 8.dp),
                 onClick = {
-                    currentKeypointExtractionMethod.edit {
-                        putString("method", text)
+                    currentAlgorithm.edit {
+                        putString("algorithm", text)
                         apply()
                     }
                     selectedAlgorithm = text
