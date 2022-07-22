@@ -2,6 +2,7 @@
 #define FEATUREDETECT_SRC_CONVERSIONS_H_
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
 #include "feature_lib.h"
 
 cv::Mat vectorToMat(const std::vector<std::uint8_t> &input_vector, int height, int width) {
@@ -17,7 +18,7 @@ std::vector<std::vector<uint8_t>> matTo2DVector(const cv::Mat &mat) {
   auto rowLen = cont.cols * cont.channels();
   for (auto i = 0; i < cont.rows; i++) {
     const auto *rowPtr = cont.ptr<uint8_t>(i);
-    result.push_back(std::vector<uint8_t>(rowPtr, rowPtr + rowLen));
+    result.emplace_back(rowPtr, rowPtr + rowLen);
   }
 
   return result;

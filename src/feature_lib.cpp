@@ -1,5 +1,6 @@
 #include "feature_lib.h"
 #include "conversions.h"
+#include <opencv2/imgproc.hpp>
 
 namespace featurelib {
 

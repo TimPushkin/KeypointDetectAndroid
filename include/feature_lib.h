@@ -23,6 +23,14 @@ class FeatureDetector {
  public:
   virtual DetectionResult detect(const std::vector<std::uint8_t> &input_vector) const = 0;
 
+  void setHeight(int height) {
+    mask.reshape(1, std::vector<int>{height, width});
+  }
+
+  void setWidth(int width) {
+    mask.reshape(1, std::vector<int>{height, width});
+  }
+
   int getWidth() const {
     return width;
   }
@@ -40,9 +48,10 @@ class FeatureDetector {
 class SiftDetector : public FeatureDetector {
  public:
   SiftDetector();
+
   SiftDetector(int width, int height);
 
-  DetectionResult detect(const std::vector<std::uint8_t> &input) const;
+  DetectionResult detect(const std::vector<std::uint8_t> &input) const override;
 
  private:
   cv::Ptr<cv::Feature2D> sift_ = cv::SIFT::create();
