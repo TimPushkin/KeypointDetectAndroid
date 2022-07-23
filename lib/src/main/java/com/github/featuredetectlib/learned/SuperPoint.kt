@@ -1,6 +1,9 @@
-package com.github.featuredetectlib
+package com.github.featuredetectlib.learned
 
 import android.content.Context
+import com.github.featuredetectlib.Descriptor
+import com.github.featuredetectlib.FeatureDetector
+import com.github.featuredetectlib.Keypoint
 import org.pytorch.IValue
 import org.pytorch.LiteModuleLoader
 import org.pytorch.Tensor
@@ -37,15 +40,15 @@ class SuperPoint(context: Context, width: Int, height: Int) : FeatureDetector {
     private var longHeight = height.toLong()
     private var wrappedHeight = IValue.from(longHeight)
 
-    override fun detect(image: ByteArray): Pair<List<KeyPoint>, List<Descriptor>> {
+    override fun detect(image: ByteArray): Pair<List<Keypoint>, List<Descriptor>> {
         val input = Tensor.fromBlob(rgbToGrayscale(image), longArrayOf(1, 1, longHeight, longWidth))
         val output = net.forward(IValue.from(input)).toTuple()
         val decoded = decoder.forward(output[0], output[1], wrappedHeight, wrappedWidth).toTuple()
 
-        val keyPoints = keyPointTensorToKeyPointList(decoded[0].toTensor())
+        val keypoints = keypointTensorToKeypointList(decoded[0].toTensor())
         val descriptors = descriptorTensorToDescriptorList(decoded[1].toTensor())
 
-        return keyPoints to descriptors
+        return keypoints to descriptors
     }
 
     @Suppress("MagicNumber")
@@ -61,12 +64,12 @@ class SuperPoint(context: Context, width: Int, height: Int) : FeatureDetector {
     private fun linearizeSrgbChannel(value: Float): Float =
         if (value <= 0.04045) value / 12.92f else ((value + 0.055f) / 1.055f).pow(2.4f)
 
-    private fun keyPointTensorToKeyPointList(tensor: Tensor): List<KeyPoint> {
+    private fun keypointTensorToKeypointList(tensor: Tensor): List<Keypoint> {
         val data = tensor.dataAsFloatArray
         val keyPointsNum = tensor.shape()[1].toInt()
         val list =
             List(keyPointsNum) { i ->
-                KeyPoint(
+                LearnedKeypoint(
                     x = data[i],
                     y = data[keyPointsNum + i],
                     strength = data[2 * keyPointsNum + i]
