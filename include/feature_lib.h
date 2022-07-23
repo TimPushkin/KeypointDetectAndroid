@@ -38,7 +38,7 @@ class FeatureDetector {
   int height = 0;
   // You can limit your search to a set of regions with a mask.
   // It must be a 8-bit integer matrix with non-zero values in the region of interest.
-  cv::Mat mask = cv::Mat(255 * cv::Mat::ones(height, width, CV_8U));
+  cv::Mat mask = cv::Mat(height, width, CV_8U, cv::Scalar(255));
 };
 
 class SiftDetector : public FeatureDetector {
