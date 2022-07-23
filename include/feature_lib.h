@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <opencv2/features2d.hpp>
+#include <opencv2/xfeatures2d.hpp>
 
 namespace featurelib {
 
@@ -68,7 +69,7 @@ class SurfDetector : public FeatureDetector {
   DetectionResult detect(const std::vector<std::uint8_t> &input) const override;
 
  private:
-  cv::Ptr<cv::Feature2D> surf_ = cv::SIFT::create();
+  cv::Ptr<cv::Feature2D> surf_ = cv::xfeatures2d::SURF::create();
 };
 
 } // namespace featurelib
