@@ -8,8 +8,10 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -21,9 +23,12 @@ import com.github.featuredetectandroid.utils.KeypointExtractionAlgorithm
 @Composable
 fun Menu(currentAlgorithm: String, changeSelectedAlgorithmIntPreferences: (String) -> Unit) {
     val radioOptions = KeypointExtractionAlgorithm.names
-    val (selectedAlgorithm, onAlgorithmSelection) = remember { mutableStateOf(currentAlgorithm) }
+    var selectedAlgorithm by remember { mutableStateOf(currentAlgorithm) }
 
-    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.Bottom) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Bottom
+    ) {
         Text(
             text = "Keypoint detection algorithm:",
             modifier = Modifier.padding(all = 20.dp),
@@ -31,6 +36,7 @@ fun Menu(currentAlgorithm: String, changeSelectedAlgorithmIntPreferences: (Strin
             style = Typography.body1
         )
     }
+
     radioOptions.forEach { text ->
         Row(
             Modifier
@@ -39,9 +45,9 @@ fun Menu(currentAlgorithm: String, changeSelectedAlgorithmIntPreferences: (Strin
                     selected = (text == selectedAlgorithm),
                     onClick = {
                         onClickChangeSelectedAlgorithm(
-                            changeSelectedAlgorithmIntPreferences,
-                            onAlgorithmSelection,
-                            text
+                            changeSelectedAlgorithmIntPreferences = changeSelectedAlgorithmIntPreferences,
+                            onAlgorithmSelection = { selectedAlgorithm = text },
+                            buttonText = text
                         )
                     }
                 ),
@@ -53,9 +59,9 @@ fun Menu(currentAlgorithm: String, changeSelectedAlgorithmIntPreferences: (Strin
                 modifier = Modifier.padding(horizontal = 8.dp),
                 onClick = {
                     onClickChangeSelectedAlgorithm(
-                        changeSelectedAlgorithmIntPreferences,
-                        onAlgorithmSelection,
-                        text
+                        changeSelectedAlgorithmIntPreferences = changeSelectedAlgorithmIntPreferences,
+                        onAlgorithmSelection = { selectedAlgorithm = text },
+                        buttonText = text
                     )
                 }
             )
