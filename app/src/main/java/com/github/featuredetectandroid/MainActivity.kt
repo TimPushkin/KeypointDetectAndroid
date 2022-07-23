@@ -1,8 +1,6 @@
 package com.github.featuredetectandroid
 
 import android.Manifest
-import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -25,11 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.ContextCompat
-import androidx.core.content.edit
 import com.github.featuredetectandroid.ui.GrayscaleViewModel
 import com.github.featuredetectandroid.ui.Menu
 import com.github.featuredetectandroid.ui.theme.FeatureDetectAppTheme
 import com.github.featuredetectandroid.utils.PhotoAnalyzer
+import com.github.featuredetectandroid.utils.PreferencesManager
 import java.util.concurrent.Executors
 
 private const val TAG = "MainActivity"
@@ -40,7 +38,8 @@ private const val RESOLUTION_HEIGHT = 360
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val imageViewModel by viewModels<GrayscaleViewModel>()
-    private lateinit var preferences: SharedPreferences
+    private lateinit var preferencesManager: PreferencesManager
+
     private val cameraPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
@@ -56,18 +55,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        preferences = getPreferences(Context.MODE_PRIVATE)
-
         imageViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
+        preferencesManager = PreferencesManager(this)
 
         setContent {
             FeatureDetectAppTheme {
                 Scaffold(
                     drawerContent = {
                         Menu(
-                            preferences.getString("algorithm", "None") ?: "None",
-                            ::selectAlgorithm
+                            preferencesManager.getAlgorithm(),
+                            preferencesManager::selectAlgorithm
                         )
                     }
                 ) {
@@ -147,14 +145,5 @@ class MainActivity : ComponentActivity() {
                 Log.e(TAG, "Use case binding failed: ", illegalArgument)
             }
         }, ContextCompat.getMainExecutor(this))
-    }
-
-    private fun selectAlgorithm(newAlgorithm: String) {
-        preferences.edit {
-            putString("algorithm", newAlgorithm)
-            apply()
-        }
-
-        Log.i(TAG, "$newAlgorithm algorithm was selected.")
     }
 }
