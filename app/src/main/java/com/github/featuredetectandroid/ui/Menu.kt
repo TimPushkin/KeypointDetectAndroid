@@ -34,19 +34,19 @@ fun Menu(
         )
     }
 
-    options.forEach { text ->
+    options.forEach { option ->
         Row(
             Modifier
                 .fillMaxWidth()
                 .selectable(
-                    selected = (text == selectedOption),
-                    onClick = { onSelected(text) }
+                    selected = (option == selectedOption),
+                    onClick = { onSelected(option) }
                 ),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = CenterVertically
         ) {
             RadioButton(
-                selected = (text == selectedOption),
+                selected = (option == selectedOption),
                 modifier = Modifier.padding(
                     vertical = 10.dp,
                     horizontal = 20.dp
@@ -54,7 +54,7 @@ fun Menu(
                 onClick = null
             )
             Text(
-                text = text,
+                text = option,
                 textAlign = TextAlign.Start,
                 style = MaterialTheme.typography.body1
             )
