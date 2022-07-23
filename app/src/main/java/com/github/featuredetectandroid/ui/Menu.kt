@@ -16,11 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.github.featuredetectandroid.ui.theme.Typography
-import com.github.featuredetectandroid.utils.algorithmsNamesAsList
+import com.github.featuredetectandroid.utils.KeypointExtractionAlgorithm
 
 @Composable
 fun Menu(currentAlgorithm: String, changeSelectedAlgorithmIntPreferences: (String) -> Unit) {
-    val radioOptions = algorithmsNamesAsList()
+    val radioOptions = KeypointExtractionAlgorithm.names
     val (selectedAlgorithm, onAlgorithmSelection) = remember { mutableStateOf(currentAlgorithm) }
 
     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.Bottom) {

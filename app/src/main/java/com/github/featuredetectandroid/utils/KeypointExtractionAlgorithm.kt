@@ -5,13 +5,15 @@ enum class KeypointExtractionAlgorithm {
     SIFT,
     SURF,
     ORB,
-    SUPERPOINT
-}
+    SUPERPOINT;
 
-fun algorithmsNamesAsList() = enumValues<KeypointExtractionAlgorithm>().map {
-    when (it) {
-        KeypointExtractionAlgorithm.NONE -> "None"
-        KeypointExtractionAlgorithm.SUPERPOINT -> "SuperPoint"
-        else -> it.name
+    companion object {
+        val names = values().map {
+            when (it) {
+                NONE -> "None"
+                SUPERPOINT -> "SuperPoint"
+                else -> it.name
+            }
+        }
     }
 }
