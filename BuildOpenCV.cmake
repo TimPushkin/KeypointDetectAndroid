@@ -16,23 +16,24 @@ endif ()
 if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-${OPENCV_VERSION}/CMakeLists.txt)
     message(STATUS "OpenCV not extracted into ${OPENCV_DOWNLOAD_DIR}")
 
-    if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/${OPENCV_VERSION}.zip)
+    if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-${OPENCV_VERSION}.zip)
         message(STATUS "OpenCV not downloaded into ${OPENCV_DOWNLOAD_DIR}")
 
         message(STATUS "Downloading OpenCV")
         file(
                 DOWNLOAD
                 https://github.com/opencv/opencv/archive/refs/tags/${OPENCV_VERSION}.zip
-                ${OPENCV_DOWNLOAD_DIR}/${OPENCV_VERSION}.zip
+                ${OPENCV_DOWNLOAD_DIR}/opencv-${OPENCV_VERSION}.zip
                 SHOW_PROGRESS
         )
         message(STATUS "Downloading OpenCV - done")
+
     endif ()
 
     message(STATUS "Extracting OpenCV")
     file(
             ARCHIVE_EXTRACT
-            INPUT ${OPENCV_DOWNLOAD_DIR}/${OPENCV_VERSION}.zip
+            INPUT ${OPENCV_DOWNLOAD_DIR}/opencv-${OPENCV_VERSION}.zip
             DESTINATION ${OPENCV_DOWNLOAD_DIR}
     )
     message(STATUS "Extracting OpenCV - done")
