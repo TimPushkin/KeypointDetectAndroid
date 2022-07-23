@@ -4,16 +4,31 @@
 
 namespace featurelib {
 
-SiftDetector::SiftDetector() = default;
+FeatureDetector::FeatureDetector(int width, int height) : width(width), height(height) {}
 
-SiftDetector::SiftDetector(int width, int height) {
-  this->width = width;
-  this->height = height;
+void FeatureDetector::setHeight(int value) {
+  height = value;
+  mask = cv::Mat(height, width, CV_8U, cv::Scalar(255));
 }
+
+void FeatureDetector::setWidth(int value) {
+  width = value;
+  mask = cv::Mat(height, width, CV_8U, cv::Scalar(255));
+}
+
+int FeatureDetector::getWidth() const {
+  return width;
+}
+
+int FeatureDetector::getHeight() const {
+  return height;
+}
+
+SiftDetector::SiftDetector(int width, int height) : FeatureDetector(width, height) {}
 
 featurelib::DetectionResult SiftDetector::detect(const std::vector<std::uint8_t> &input) const {
   auto image = vectorToMat(input, height, width);
-  cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);//
+  cv::cvtColor(image, image, cv::COLOR_RGB2GRAY);
 
   std::vector<cv::KeyPoint> sift_key_points;
   cv::Mat sift_descriptors;

@@ -5,7 +5,7 @@
 #include "feature_lib.h"
 
 cv::Mat vectorToMat(const std::vector<std::uint8_t> &input_vector, int height, int width) {
-  return {height, width, CV_8UC3, (std::uint8_t *) input_vector.data()};
+  return {height, width, CV_8UC3, const_cast<std::uint8_t *>(input_vector.data())};
 }
 
 std::vector<std::vector<uint8_t>> matTo2DVector(const cv::Mat &mat) {
@@ -27,8 +27,7 @@ std::vector<featurelib::KeyPoint> convertToStructure(const std::vector<cv::KeyPo
   std::vector<featurelib::KeyPoint> output;
   output.reserve(key_points.size());
   for (auto &kp : key_points) {
-    featurelib::KeyPoint temp = {kp.pt.x, kp.pt.y, kp.angle, kp.response, kp.size};
-    output.push_back(temp);
+    output.push_back(featurelib::KeyPoint{kp.pt.x, kp.pt.y, kp.angle, kp.response, kp.size});
   }
   return output;
 }

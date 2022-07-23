@@ -21,36 +21,28 @@ struct DetectionResult {
 
 class FeatureDetector {
  public:
+  FeatureDetector(int width, int height);
+
   virtual DetectionResult detect(const std::vector<std::uint8_t> &input_vector) const = 0;
 
-  void setHeight(int value) {
-    height = value;
-    mask = cv::Mat(255 * cv::Mat::ones(height, width, CV_8U));
-  }
+  void setHeight(int value);
 
-  void setWidth(int value) {
-    width = value;
-    mask = cv::Mat(255 * cv::Mat::ones(height, width, CV_8U));
-  }
+  void setWidth(int value);
 
-  int getWidth() const {
-    return width;
-  }
+  int getWidth() const;
 
-  int getHeight() const {
-    return height;
-  }
+  int getHeight() const;
 
  protected:
   int width = 0;
   int height = 0;
+  // You can limit your search to a set of regions with a mask.
+  // It must be a 8-bit integer matrix with non-zero values in the region of interest.
   cv::Mat mask = cv::Mat(255 * cv::Mat::ones(height, width, CV_8U));
 };
 
 class SiftDetector : public FeatureDetector {
  public:
-  SiftDetector();
-
   SiftDetector(int width, int height);
 
   DetectionResult detect(const std::vector<std::uint8_t> &input) const override;

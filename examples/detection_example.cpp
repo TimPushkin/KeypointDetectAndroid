@@ -1,7 +1,7 @@
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
-#include "../include/feature_lib.h"
+#include "feature_lib.h"
 
 std::vector<uint8_t> matToVector(const cv::Mat &mat) {
   std::vector<uint8_t> result;
