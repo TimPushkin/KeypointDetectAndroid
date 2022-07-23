@@ -7,11 +7,3 @@ enum class KeypointExtractionAlgorithm {
     ORB,
     SUPERPOINT
 }
-
-fun stringToAlgorithmMap() = mapOf(
-    "None" to KeypointExtractionAlgorithm.NONE,
-    "SIFT" to KeypointExtractionAlgorithm.SIFT,
-    "SURF" to KeypointExtractionAlgorithm.SURF,
-    "ORB" to KeypointExtractionAlgorithm.ORB,
-    "SuperPoint" to KeypointExtractionAlgorithm.SUPERPOINT
-)
