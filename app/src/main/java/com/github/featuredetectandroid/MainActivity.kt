@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import com.github.featuredetectandroid.ui.GrayscaleViewModel
 import com.github.featuredetectandroid.ui.Menu
 import com.github.featuredetectandroid.ui.theme.FeatureDetectAppTheme
@@ -40,7 +41,7 @@ private const val RESOLUTION_HEIGHT = 360
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val imageViewModel by viewModels<GrayscaleViewModel>()
-    private lateinit var currentAlgorithm: SharedPreferences
+    private lateinit var preferences: SharedPreferences
     private val cameraPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
@@ -56,17 +57,22 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        currentAlgorithm = this.getPreferences(Context.MODE_PRIVATE)
+        preferences = getPreferences(Context.MODE_PRIVATE)
 
         imageViewModel.isCameraPermissionGranted = cameraPermissionGranted()
         tryStartCamera()
 
         setContent {
-            val scaffoldState = rememberScaffoldState()
             FeatureDetectAppTheme {
+                val scaffoldState = rememberScaffoldState()
                 Scaffold(
                     scaffoldState = scaffoldState,
-                    drawerContent = { Menu(currentAlgorithm) }
+                    drawerContent = {
+                        Menu(
+                            preferences.getString("algorithm", "None") ?: "None",
+                            ::changeSelectedAlgorithmInPreferences
+                        )
+                    }
                 ) {
                     Box(Modifier.fillMaxSize()) {
                         if (imageViewModel.isCameraPermissionGranted) {
@@ -144,5 +150,12 @@ class MainActivity : ComponentActivity() {
                 Log.e(TAG, "Use case binding failed: ", illegalArgument)
             }
         }, ContextCompat.getMainExecutor(this))
+    }
+
+    private fun changeSelectedAlgorithmInPreferences(newAlgorithm: String) {
+        preferences.edit {
+            putString("algorithm", newAlgorithm)
+            apply()
+        }
     }
 }

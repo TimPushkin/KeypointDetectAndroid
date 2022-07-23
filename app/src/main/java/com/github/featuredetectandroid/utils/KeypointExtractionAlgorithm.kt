@@ -5,7 +5,7 @@ enum class KeypointExtractionAlgorithm {
     SIFT,
     SURF,
     ORB,
-    SUPER_POINT
+    SUPERPOINT
 }
 
 fun stringToAlgorithmMap() = mapOf(
@@ -13,5 +13,5 @@ fun stringToAlgorithmMap() = mapOf(
     "SIFT" to KeypointExtractionAlgorithm.SIFT,
     "SURF" to KeypointExtractionAlgorithm.SURF,
     "ORB" to KeypointExtractionAlgorithm.ORB,
-    "SuperPoint" to KeypointExtractionAlgorithm.SUPER_POINT
+    "SuperPoint" to KeypointExtractionAlgorithm.SUPERPOINT
 )

@@ -1,7 +1,5 @@
 package com.github.featuredetectandroid.ui
 
-import android.content.SharedPreferences
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,75 +8,70 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment.Companion.Bottom
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.edit
 import com.github.featuredetectandroid.utils.stringToAlgorithmMap
 
-private const val TAG = "Menu"
-
 @Composable
-fun Menu(currentAlgorithm: SharedPreferences) {
+fun Menu(currentAlgorithm: String, changeSelectedAlgorithmIntPreferences: (String) -> Unit) {
     val radioOptions = stringToAlgorithmMap().keys.toList()
-    var selectedAlgorithm by remember {
-        mutableStateOf(currentAlgorithm.getString("algorithm", "None"))
-    }
+    val (selectedAlgorithm, onAlgorithmSelection) = remember { mutableStateOf(currentAlgorithm) }
 
-    Row(horizontalArrangement = Arrangement.Center) {
+    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.Bottom) {
         Text(
             text = "Keypoint detection algorithm:",
-            modifier = Modifier.padding(all = 20.dp).align(Bottom),
+            modifier = Modifier.padding(all = 20.dp),
             textAlign = TextAlign.Start,
             fontSize = 20.sp
         )
     }
     radioOptions.forEach { text ->
         Row(
-            Modifier.fillMaxWidth().selectable(
-                selected = (text == selectedAlgorithm),
-                onClick = {
-                    currentAlgorithm.edit {
-                        putString("algorithm", text)
-                        apply()
-                    }
-                    selectedAlgorithm = text
-                    Log.i(
-                        TAG,
-                        "${
-                        currentAlgorithm.getString(
-                            "algorithm",
-                            "None"
+            Modifier
+                .fillMaxWidth()
+                .selectable(
+                    selected = (text == selectedAlgorithm),
+                    onClick = {
+                        onClickChangeSelectedAlgorithm(
+                            changeSelectedAlgorithmIntPreferences,
+                            onAlgorithmSelection,
+                            text
                         )
-                        } was selected."
-                    )
-                }
-            ),
-            horizontalArrangement = Arrangement.Start
+                    }
+                ),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = CenterVertically
         ) {
             RadioButton(
                 selected = (text == selectedAlgorithm),
                 modifier = Modifier.padding(horizontal = 8.dp),
                 onClick = {
-                    currentAlgorithm.edit {
-                        putString("algorithm", text)
-                        apply()
-                    }
-                    selectedAlgorithm = text
+                    onClickChangeSelectedAlgorithm(
+                        changeSelectedAlgorithmIntPreferences,
+                        onAlgorithmSelection,
+                        text
+                    )
                 }
             )
             Text(
                 text = text,
-                modifier = Modifier.align(CenterVertically),
                 textAlign = TextAlign.Start
             )
         }
     }
+}
+
+fun onClickChangeSelectedAlgorithm(
+    changeSelectedAlgorithmIntPreferences: (String) -> Unit,
+    onAlgorithmSelection: (String) -> Unit,
+    buttonText: String
+) {
+    changeSelectedAlgorithmIntPreferences(buttonText)
+    onAlgorithmSelection(buttonText)
 }
