@@ -14,37 +14,39 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
 
 @Composable
-fun Menu(selectedAlgorithm: String, onAlgorithmSelected: (String) -> Unit) {
-    val radioOptions = KeypointDetectionAlgorithm.names
-
+fun Menu(
+    header: String,
+    options: List<String>,
+    selectedOption: String,
+    onSelected: (String) -> Unit
+) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.Bottom
     ) {
         Text(
-            text = "Keypoint detection algorithm:",
+            text = header,
             modifier = Modifier.padding(all = 20.dp),
             textAlign = TextAlign.Start,
             style = MaterialTheme.typography.h6
         )
     }
 
-    radioOptions.forEach { text ->
+    options.forEach { text ->
         Row(
             Modifier
                 .fillMaxWidth()
                 .selectable(
-                    selected = (text == selectedAlgorithm),
-                    onClick = { onAlgorithmSelected(text) }
+                    selected = (text == selectedOption),
+                    onClick = { onSelected(text) }
                 ),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = CenterVertically
         ) {
             RadioButton(
-                selected = (text == selectedAlgorithm),
+                selected = (text == selectedOption),
                 modifier = Modifier.padding(
                     vertical = 10.dp,
                     horizontal = 20.dp

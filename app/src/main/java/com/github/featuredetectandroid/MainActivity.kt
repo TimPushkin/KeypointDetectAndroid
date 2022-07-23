@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat
 import com.github.featuredetectandroid.ui.GrayscaleViewModel
 import com.github.featuredetectandroid.ui.Menu
 import com.github.featuredetectandroid.ui.theme.FeatureDetectAppTheme
+import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
 import com.github.featuredetectandroid.utils.PhotoAnalyzer
 import com.github.featuredetectandroid.utils.PreferencesManager
 import java.util.concurrent.Executors
@@ -71,8 +72,10 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     drawerContent = {
                         Menu(
-                            selectedAlgorithm = selectedAlgorithm,
-                            onAlgorithmSelected = { algorithmName ->
+                            header = "Keypoint detection algorithm:",
+                            options = KeypointDetectionAlgorithm.names,
+                            selectedOption = selectedAlgorithm,
+                            onSelected = { algorithmName ->
                                 preferencesManager.putSelectedAlgorithm(algorithmName)
                                 selectedAlgorithm = algorithmName
                             }
