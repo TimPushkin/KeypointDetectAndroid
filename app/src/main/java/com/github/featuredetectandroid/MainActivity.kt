@@ -155,14 +155,6 @@ class MainActivity : ComponentActivity() {
             apply()
         }
 
-        Log.i(
-            TAG,
-            "${
-            preferences.getString(
-                "algorithm",
-                "None"
-            )
-            } was selected. Algorithm name as selection argument: $newAlgorithm"
-        )
+        Log.i(TAG, "$newAlgorithm algorithm was selected.")
     }
 }
