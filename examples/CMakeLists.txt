@@ -1,3 +1,3 @@
-add_executable(test test.cpp)
+add_executable(test detection_example.cpp)
 
 target_link_libraries(test ${PROJECT_NAME})
