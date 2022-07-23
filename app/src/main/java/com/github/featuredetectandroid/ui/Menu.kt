@@ -44,11 +44,8 @@ fun Menu(currentAlgorithm: String, onAlgorithmSelected: (String) -> Unit) {
                 .selectable(
                     selected = (text == selectedAlgorithm),
                     onClick = {
-                        onClickChangeSelectedAlgorithm(
-                            changeSelectedAlgorithmInPreferences = onAlgorithmSelected,
-                            onClickSelectAlgorithm = { selectedAlgorithm = text },
-                            buttonText = text
-                        )
+                        onAlgorithmSelected(text)
+                        selectedAlgorithm = text
                     }
                 ),
             horizontalArrangement = Arrangement.Start,
@@ -56,14 +53,11 @@ fun Menu(currentAlgorithm: String, onAlgorithmSelected: (String) -> Unit) {
         ) {
             RadioButton(
                 selected = (text == selectedAlgorithm),
-                modifier = Modifier.padding(horizontal = 8.dp),
-                onClick = {
-                    onClickChangeSelectedAlgorithm(
-                        changeSelectedAlgorithmInPreferences = onAlgorithmSelected,
-                        onClickSelectAlgorithm = { selectedAlgorithm = text },
-                        buttonText = text
-                    )
-                }
+                modifier = Modifier.padding(
+                    vertical = 10.dp,
+                    horizontal = 20.dp
+                ),
+                onClick = null
             )
             Text(
                 text = text,
@@ -72,13 +66,4 @@ fun Menu(currentAlgorithm: String, onAlgorithmSelected: (String) -> Unit) {
             )
         }
     }
-}
-
-fun onClickChangeSelectedAlgorithm(
-    changeSelectedAlgorithmInPreferences: (String) -> Unit,
-    onClickSelectAlgorithm: (String) -> Unit,
-    buttonText: String
-) {
-    changeSelectedAlgorithmInPreferences(buttonText)
-    onClickSelectAlgorithm(buttonText)
 }
