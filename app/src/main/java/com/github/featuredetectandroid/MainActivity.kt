@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
 
         preferences = getPreferences(Context.MODE_PRIVATE)
 
-        imageViewModel.isCameraPermissionGranted = cameraPermissionGranted()
+        imageViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
 
         setContent {
@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                     drawerContent = {
                         Menu(
                             preferences.getString("algorithm", "None") ?: "None",
-                            ::changeSelectedAlgorithmInPreferences
+                            ::selectAlgorithm
                         )
                     }
                 ) {
@@ -94,7 +94,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        imageViewModel.isCameraPermissionGranted = cameraPermissionGranted()
+        imageViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
     }
 
@@ -115,7 +115,7 @@ class MainActivity : ComponentActivity() {
         else -> cameraPermission.launch(Manifest.permission.CAMERA)
     }
 
-    private fun cameraPermissionGranted() = ContextCompat.checkSelfPermission(
+    private fun isCameraPermissionGranted() = ContextCompat.checkSelfPermission(
         this,
         Manifest.permission.CAMERA
     ) == PackageManager.PERMISSION_GRANTED
@@ -149,7 +149,7 @@ class MainActivity : ComponentActivity() {
         }, ContextCompat.getMainExecutor(this))
     }
 
-    private fun changeSelectedAlgorithmInPreferences(newAlgorithm: String) {
+    private fun selectAlgorithm(newAlgorithm: String) {
         preferences.edit {
             putString("algorithm", newAlgorithm)
             apply()

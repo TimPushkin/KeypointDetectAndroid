@@ -1,6 +1,6 @@
 package com.github.featuredetectandroid.utils
 
-enum class KeypointExtractionAlgorithm {
+enum class KeypointDetectionAlgorithm {
     NONE,
     SIFT,
     SURF,
