@@ -70,10 +70,13 @@ class MainActivity : ComponentActivity() {
                 }
                 Scaffold(
                     drawerContent = {
-                        Menu(selectedAlgorithm) { algorithmName ->
-                            preferencesManager.putSelectedAlgorithm(algorithmName)
-                            selectedAlgorithm = algorithmName
-                        }
+                        Menu(
+                            selectedAlgorithm = selectedAlgorithm,
+                            onAlgorithmSelected = { algorithmName ->
+                                preferencesManager.putSelectedAlgorithm(algorithmName)
+                                selectedAlgorithm = algorithmName
+                            }
+                        )
                     }
                 ) {
                     Box(Modifier.fillMaxSize()) {
