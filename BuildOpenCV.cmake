@@ -94,6 +94,7 @@ set(
         # General
         -DBUILD_LIST=${OPENCV_MODULES}
         -DOPENCV_EXTRA_MODULES_PATH=${OPENCV_DOWNLOAD_DIR}/opencv_contrib-${OPENCV_VERSION}/modules
+        -D OPENCV_ENABLE_NONFREE=ON
         # Bundled components              TODO: disable the unwanted dependencies(1)
         #        -DWITH_GTK=OFF
         #        -DBUILD_TESTS=OFF
