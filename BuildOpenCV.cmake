@@ -49,7 +49,7 @@ if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-extra-${OPENCV_VERSION})
         message(STATUS "Downloading OpenCV extra")
         file(
                 DOWNLOAD
-                https://github.com/opencv/opencv_contrib/archive/refs/heads/4.x.zip
+                https://github.com/opencv/opencv_contrib/archive/refs/tags/${OPENCV_VERSION}.zip
                 ${OPENCV_DOWNLOAD_DIR}/opencv-extra-${OPENCV_VERSION}.zip
                 SHOW_PROGRESS
         )
@@ -61,7 +61,7 @@ if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-extra-${OPENCV_VERSION})
     file(
             ARCHIVE_EXTRACT
             INPUT ${OPENCV_DOWNLOAD_DIR}/opencv-extra-${OPENCV_VERSION}.zip
-            DESTINATION ${OPENCV_DOWNLOAD_DIR}/opencv-extra-${OPENCV_VERSION}
+            DESTINATION ${OPENCV_DOWNLOAD_DIR}
     )
     message(STATUS "Extracting OpenCV extra - done")
 endif ()
@@ -93,7 +93,7 @@ set(
         OPENCV_CMAKE_ARGS  # https://docs.opencv.org/4.6.0/db/d05/tutorial_config_reference.html
         # General
         -DBUILD_LIST=${OPENCV_MODULES}
-        -DOPENCV_EXTRA_MODULES_PATH=${OPENCV_DOWNLOAD_DIR}/opencv-extra-${OPENCV_VERSION}/modules
+        -DOPENCV_EXTRA_MODULES_PATH=${OPENCV_DOWNLOAD_DIR}/opencv_contrib-${OPENCV_VERSION}/modules
         # Bundled components              TODO: disable the unwanted dependencies(1)
         #        -DWITH_GTK=OFF
         #        -DBUILD_TESTS=OFF
