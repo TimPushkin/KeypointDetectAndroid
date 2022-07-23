@@ -9,10 +9,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -21,9 +17,8 @@ import androidx.compose.ui.unit.dp
 import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
 
 @Composable
-fun Menu(currentAlgorithm: String, onAlgorithmSelected: (String) -> Unit) {
+fun Menu(selectedAlgorithm: String, onAlgorithmSelected: (String) -> Unit) {
     val radioOptions = KeypointDetectionAlgorithm.names
-    var selectedAlgorithm by remember { mutableStateOf(currentAlgorithm) }
 
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -43,10 +38,7 @@ fun Menu(currentAlgorithm: String, onAlgorithmSelected: (String) -> Unit) {
                 .fillMaxWidth()
                 .selectable(
                     selected = (text == selectedAlgorithm),
-                    onClick = {
-                        onAlgorithmSelected(text)
-                        selectedAlgorithm = text
-                    }
+                    onClick = { onAlgorithmSelected(text) }
                 ),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = CenterVertically
