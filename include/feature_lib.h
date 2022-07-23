@@ -51,6 +51,26 @@ class SiftDetector : public FeatureDetector {
   cv::Ptr<cv::Feature2D> sift_ = cv::SIFT::create();
 };
 
+class OrbDetector : public FeatureDetector {
+ public:
+  OrbDetector(int width, int height);
+
+  DetectionResult detect(const std::vector<std::uint8_t> &input) const override;
+
+ private:
+  cv::Ptr<cv::Feature2D> orb_ = cv::ORB::create();
+};
+
+class SurfDetector : public FeatureDetector {
+ public:
+  SurfDetector(int width, int height);
+
+  DetectionResult detect(const std::vector<std::uint8_t> &input) const override;
+
+ private:
+  cv::Ptr<cv::Feature2D> surf_ = cv::SIFT::create();
+};
+
 } // namespace featurelib
 
 #endif // FEATUREDETECT_FEATURELIB_H_
