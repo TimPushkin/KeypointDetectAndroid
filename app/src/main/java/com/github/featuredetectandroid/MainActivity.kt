@@ -64,8 +64,8 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     drawerContent = {
                         Menu(
-                            preferencesManager.getAlgorithm(),
-                            preferencesManager::selectAlgorithm
+                            preferencesManager.getSelectedAlgorithm(),
+                            preferencesManager::putSelectedAlgorithm
                         )
                     }
                 ) {

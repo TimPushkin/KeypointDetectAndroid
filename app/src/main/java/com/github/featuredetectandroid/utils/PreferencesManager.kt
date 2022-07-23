@@ -1,22 +1,23 @@
 package com.github.featuredetectandroid.utils
 
+import android.app.Activity
 import android.content.Context
 import android.util.Log
 import androidx.core.content.edit
-import com.github.featuredetectandroid.MainActivity
 
 private const val TAG = "PreferencesManager"
-private const val KEY = "algorithm"
-private const val NONE = "None"
+private const val ALGORITHM_KEY = "algorithm"
+private const val ALGORITHM_DEFAULT = "None"
 
-class PreferencesManager(mainActivity: MainActivity) {
-    private val preferences = mainActivity.getPreferences(Context.MODE_PRIVATE)
+class PreferencesManager(activity: Activity) {
+    private val preferences = activity.getPreferences(Context.MODE_PRIVATE)
 
-    fun getAlgorithm() = preferences.getString(KEY, NONE) ?: NONE
+    fun getSelectedAlgorithm() = preferences.getString(ALGORITHM_KEY, ALGORITHM_DEFAULT)
+        ?: ALGORITHM_DEFAULT
 
-    fun selectAlgorithm(newAlgorithm: String) {
+    fun putSelectedAlgorithm(newAlgorithm: String) {
         preferences.edit {
-            putString(KEY, newAlgorithm)
+            putString(ALGORITHM_KEY, newAlgorithm)
             apply()
         }
 
