@@ -84,7 +84,7 @@ class SuperPoint(context: Context, width: Int, height: Int) : FeatureDetector {
         val list =
             List(descriptorsNum) { j ->
                 List(DESCRIPTOR_SIZE) { i ->
-                    data[DESCRIPTOR_SIZE * i + j]
+                    data[descriptorsNum * i + j]
                 }
             }
         return list
