@@ -40,30 +40,29 @@ if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-${OPENCV_VERSION}/CMakeLists.txt)
 endif ()
 
 # Download and extract OpenCV-contrib sources
-if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-extra-${OPENCV_VERSION})
-    message(STATUS "OpenCV extra not extracted into ${OPENCV_DOWNLOAD_DIR}")
+if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-contrib-${OPENCV_VERSION})
+    message(STATUS "OpenCV-contrib not extracted into ${OPENCV_DOWNLOAD_DIR}")
 
-    if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-extra-${OPENCV_VERSION}.zip)
-        message(STATUS "OpenCV extra not downloaded into ${OPENCV_DOWNLOAD_DIR}")
+    if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-contrib-${OPENCV_VERSION}.zip)
+        message(STATUS "OpenCV-contrib not downloaded into ${OPENCV_DOWNLOAD_DIR}")
 
-        message(STATUS "Downloading OpenCV extra")
+        message(STATUS "Downloading OpenCV-contrib")
         file(
                 DOWNLOAD
                 https://github.com/opencv/opencv_contrib/archive/refs/tags/${OPENCV_VERSION}.zip
-                ${OPENCV_DOWNLOAD_DIR}/opencv-extra-${OPENCV_VERSION}.zip
+                ${OPENCV_DOWNLOAD_DIR}/opencv-contrib-${OPENCV_VERSION}.zip
                 SHOW_PROGRESS
         )
-        message(STATUS "Downloading OpenCV extra - done")
-
+        message(STATUS "Downloading OpenCV-contrib - done")
     endif ()
 
-    message(STATUS "Extracting OpenCV extra")
+    message(STATUS "Extracting OpenCV-contrib")
     file(
             ARCHIVE_EXTRACT
-            INPUT ${OPENCV_DOWNLOAD_DIR}/opencv-extra-${OPENCV_VERSION}.zip
+            INPUT ${OPENCV_DOWNLOAD_DIR}/opencv-contrib-${OPENCV_VERSION}.zip
             DESTINATION ${OPENCV_DOWNLOAD_DIR}
     )
-    message(STATUS "Extracting OpenCV extra - done")
+    message(STATUS "Extracting OpenCV-contrib - done")
 endif ()
 
 # Set toolchain-related flags
@@ -94,7 +93,7 @@ set(
         # General
         -DBUILD_LIST=${OPENCV_MODULES}
         -DOPENCV_EXTRA_MODULES_PATH=${OPENCV_DOWNLOAD_DIR}/opencv_contrib-${OPENCV_VERSION}/modules
-        -D OPENCV_ENABLE_NONFREE=ON
+        -DOPENCV_ENABLE_NONFREE=ON
         # Bundled components              TODO: disable the unwanted dependencies(1)
         #        -DWITH_GTK=OFF
         #        -DBUILD_TESTS=OFF
