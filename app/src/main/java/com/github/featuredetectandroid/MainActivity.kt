@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.util.Size
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,7 +15,9 @@ import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.getValue
@@ -26,23 +27,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.github.featuredetectandroid.ui.GrayscaleViewModel
 import com.github.featuredetectandroid.ui.Menu
 import com.github.featuredetectandroid.ui.theme.FeatureDetectAppTheme
 import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
+import com.github.featuredetectandroid.utils.KeypointsDrawer
 import com.github.featuredetectandroid.utils.PhotoAnalyzer
 import com.github.featuredetectandroid.utils.PreferencesManager
+import com.github.featuredetectandroid.utils.selectFeatureDetector
 import java.util.concurrent.Executors
 
 private const val TAG = "MainActivity"
 
 private const val RESOLUTION_WIDTH = 640
-private const val RESOLUTION_HEIGHT = 360
+private const val RESOLUTION_HEIGHT = 480
 
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val imageViewModel by viewModels<GrayscaleViewModel>()
+    private val keypointsDrawer = KeypointsDrawer()
     private lateinit var preferencesManager: PreferencesManager
 
     private val cameraPermission =
@@ -78,24 +83,62 @@ class MainActivity : ComponentActivity() {
                             onSelected = { algorithmName ->
                                 preferencesManager.putSelectedAlgorithm(algorithmName)
                                 selectedAlgorithm = algorithmName
-                            }
-                        )
-                    }
-                ) {
-                    Box(Modifier.fillMaxSize()) {
-                        if (imageViewModel.isCameraPermissionGranted) {
-                            imageViewModel.grayscaleBitmap?.let { bitmap ->
-                                Image(
-                                    bitmap = bitmap.asImageBitmap(),
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentDescription = "Grayscale photo"
+                                imageViewModel.featureDetector = selectFeatureDetector(
+                                    this@MainActivity,
+                                    algorithmName,
+                                    imageViewModel.getSize().first,
+                                    imageViewModel.getSize().second
                                 )
                             }
-                        } else {
-                            Text(
-                                text = "Camera permission required",
-                                modifier = Modifier.align(Alignment.Center)
-                            )
+                        )
+                    },
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                            if (imageViewModel.isCameraPermissionGranted) {
+                                imageViewModel.grayscaleBitmap?.let { bitmap ->
+                                    Image(
+                                        bitmap = bitmap.asImageBitmap(), /*
+                                        modifier = Modifier.size(
+                                            width = imageViewModel.getSize().first.dp,
+                                            height = imageViewModel.getSize().second.dp
+                                        ), */
+                                        contentDescription = "Grayscale photo"
+                                    )
+                                }
+
+                                imageViewModel.keypointsOffset?.let { keypoints ->
+                                    keypointsDrawer.draw(
+                                        modifier = Modifier.size(
+                                            width = imageViewModel.getSize().first.dp,
+                                            height = imageViewModel.getSize().second.dp
+                                        ),
+                                        keypoints = keypoints
+                                    )
+                                }
+                                /* imageViewModel.keypointsOffset?.let { points ->
+                                    Canvas(modifier = Modifier.size(
+                                        width = imageViewModel.getSize().first.dp,
+                                        height = imageViewModel.getSize().second.dp
+                                    )) {
+                                        drawPoints(
+                                            points = points,
+                                            pointMode = PointMode.Points,
+                                            color = Color.Blue,
+                                            strokeWidth = 10f
+                                        )
+                                    }
+                                } */
+                            } else {
+                                Text(
+                                    text = "Camera permission required",
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+                            }
                         }
                     }
                 }
@@ -143,9 +186,14 @@ class MainActivity : ComponentActivity() {
 
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_YUV_420_888)
-                .setTargetResolution(Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
+                // .setTargetResolution(Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                 .build()
-                .apply { setAnalyzer(cameraExecutor, PhotoAnalyzer(imageViewModel)) }
+                .apply {
+                    setAnalyzer(
+                        cameraExecutor,
+                        PhotoAnalyzer(imageViewModel)
+                    )
+                }
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 

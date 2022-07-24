@@ -29,6 +29,7 @@ class PhotoAnalyzer(private val imageViewModel: GrayscaleViewModel) : ImageAnaly
 
     override fun analyze(image: ImageProxy) {
         val rotationDegrees = image.imageInfo.rotationDegrees
+        val featureDetector = imageViewModel.featureDetector
 
         var width = image.width
         var height = image.height
@@ -42,6 +43,17 @@ class PhotoAnalyzer(private val imageViewModel: GrayscaleViewModel) : ImageAnaly
             width = height.also { height = width }
         }
 
+        featureDetector?.width = width
+        featureDetector?.height = height
+        val keypoints = (
+            featureDetector
+                ?.detect(luminanceArrayToRGB(oriented)) ?: Pair(
+                emptyList(),
+                emptyList()
+            )
+            )
+            .first
+        imageViewModel.setKeypoints(keypoints)
         imageViewModel.setPicture(oriented, width, height)
         image.close()
     }
