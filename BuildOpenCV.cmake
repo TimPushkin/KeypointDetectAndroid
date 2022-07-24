@@ -2,10 +2,38 @@ set(PROJECT_BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
 
 set(OPENCV_VERSION 4.6.0)
 # TODO: remove unused modules
-set(OPENCV_MODULES core,calib3d,imgproc,imgcodecs,features2d,highgui)
+set(OPENCV_MODULES core,calib3d,imgproc,imgcodecs,features2d,highgui,xfeatures2d)
 
 set(OPENCV_DOWNLOAD_DIR ${PROJECT_BUILD_DIR}/opencv-download)
 set(OPENCV_BUILD_DIR ${PROJECT_BUILD_DIR}/opencv-build)
+
+# Function which downloads and extracts OpenCV sources
+function(get_opencv repo)
+    if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/${repo}-${OPENCV_VERSION}/LICENSE)
+        message(STATUS "${repo} not extracted into ${OPENCV_DOWNLOAD_DIR}")
+
+        if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/${repo}-${OPENCV_VERSION}.zip)
+            message(STATUS "${repo} not downloaded into ${OPENCV_DOWNLOAD_DIR}")
+
+            message(STATUS "Downloading ${repo}")
+            file(
+                    DOWNLOAD
+                    https://github.com/opencv/${repo}/archive/refs/tags/${OPENCV_VERSION}.zip
+                    ${OPENCV_DOWNLOAD_DIR}/${repo}-${OPENCV_VERSION}.zip
+                    SHOW_PROGRESS
+            )
+            message(STATUS "Downloading ${repo} - done")
+        endif ()
+
+        message(STATUS "Extracting ${repo}")
+        file(
+                ARCHIVE_EXTRACT
+                INPUT ${OPENCV_DOWNLOAD_DIR}/${repo}-${OPENCV_VERSION}.zip
+                DESTINATION ${OPENCV_DOWNLOAD_DIR}
+        )
+        message(STATUS "Extracting ${repo} - done")
+    endif ()
+endfunction()
 
 # Append suffix to the build directory name
 if (BUILD_DIR_SUFFIX)
@@ -13,30 +41,10 @@ if (BUILD_DIR_SUFFIX)
 endif ()
 
 # Download and extract OpenCV sources
-if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-${OPENCV_VERSION}/CMakeLists.txt)
-    message(STATUS "OpenCV not extracted into ${OPENCV_DOWNLOAD_DIR}")
+GET_OPENCV(opencv)
 
-    if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/${OPENCV_VERSION}.zip)
-        message(STATUS "OpenCV not downloaded into ${OPENCV_DOWNLOAD_DIR}")
-
-        message(STATUS "Downloading OpenCV")
-        file(
-                DOWNLOAD
-                https://github.com/opencv/opencv/archive/refs/tags/${OPENCV_VERSION}.zip
-                ${OPENCV_DOWNLOAD_DIR}/${OPENCV_VERSION}.zip
-                SHOW_PROGRESS
-        )
-        message(STATUS "Downloading OpenCV - done")
-    endif ()
-
-    message(STATUS "Extracting OpenCV")
-    file(
-            ARCHIVE_EXTRACT
-            INPUT ${OPENCV_DOWNLOAD_DIR}/${OPENCV_VERSION}.zip
-            DESTINATION ${OPENCV_DOWNLOAD_DIR}
-    )
-    message(STATUS "Extracting OpenCV - done")
-endif ()
+# Download and extract OpenCV-contrib sources
+GET_OPENCV(opencv_contrib)
 
 # Set toolchain-related flags
 if (CMAKE_GENERATOR)
@@ -65,6 +73,8 @@ set(
         OPENCV_CMAKE_ARGS  # https://docs.opencv.org/4.6.0/db/d05/tutorial_config_reference.html
         # General
         -DBUILD_LIST=${OPENCV_MODULES}
+        -DOPENCV_EXTRA_MODULES_PATH=${OPENCV_DOWNLOAD_DIR}/opencv_contrib-${OPENCV_VERSION}/modules
+        -DOPENCV_ENABLE_NONFREE=ON
         # Bundled components              TODO: disable the unwanted dependencies(1)
         #        -DWITH_GTK=OFF
         #        -DBUILD_TESTS=OFF
