@@ -54,6 +54,7 @@ if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-contrib-${OPENCV_VERSION})
                 SHOW_PROGRESS
         )
         message(STATUS "Downloading OpenCV-contrib - done")
+
     endif ()
 
     message(STATUS "Extracting OpenCV-contrib")
