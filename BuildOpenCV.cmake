@@ -7,62 +7,45 @@ set(OPENCV_MODULES core,calib3d,imgproc,imgcodecs,features2d,highgui,xfeatures2d
 set(OPENCV_DOWNLOAD_DIR ${PROJECT_BUILD_DIR}/opencv-download)
 set(OPENCV_BUILD_DIR ${PROJECT_BUILD_DIR}/opencv-build)
 
+# Function which downloads and extracts OpenCV sources
+FUNCTION(GET_OPENCV REPO)
+    if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/${REPO}-${OPENCV_VERSION}/LICENSE)
+        message(STATUS "${REPO} not extracted into ${OPENCV_DOWNLOAD_DIR}")
+
+        if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/${REPO}-${OPENCV_VERSION}.zip)
+            message(STATUS "${REPO} not downloaded into ${OPENCV_DOWNLOAD_DIR}")
+
+            message(STATUS "Downloading ${REPO}")
+            file(
+                    DOWNLOAD
+                    https://github.com/opencv/${REPO}/archive/refs/tags/${OPENCV_VERSION}.zip
+                    ${OPENCV_DOWNLOAD_DIR}/${REPO}-${OPENCV_VERSION}.zip
+                    SHOW_PROGRESS
+            )
+            message(STATUS "Downloading ${REPO} - done")
+        endif ()
+
+        message(STATUS "Extracting ${REPO}")
+        file(
+                ARCHIVE_EXTRACT
+                INPUT ${OPENCV_DOWNLOAD_DIR}/${REPO}-${OPENCV_VERSION}.zip
+                DESTINATION ${OPENCV_DOWNLOAD_DIR}
+        )
+        message(STATUS "Extracting ${REPO} - done")
+    endif ()
+
+ENDFUNCTION()
+
 # Append suffix to the build directory name
 if (BUILD_DIR_SUFFIX)
     string(APPEND OPENCV_BUILD_DIR "-${BUILD_DIR_SUFFIX}")
 endif ()
 
 # Download and extract OpenCV sources
-if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-${OPENCV_VERSION}/CMakeLists.txt)
-    message(STATUS "OpenCV not extracted into ${OPENCV_DOWNLOAD_DIR}")
-
-    if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-${OPENCV_VERSION}.zip)
-        message(STATUS "OpenCV not downloaded into ${OPENCV_DOWNLOAD_DIR}")
-
-        message(STATUS "Downloading OpenCV")
-        file(
-                DOWNLOAD
-                https://github.com/opencv/opencv/archive/refs/tags/${OPENCV_VERSION}.zip
-                ${OPENCV_DOWNLOAD_DIR}/opencv-${OPENCV_VERSION}.zip
-                SHOW_PROGRESS
-        )
-        message(STATUS "Downloading OpenCV - done")
-    endif ()
-
-    message(STATUS "Extracting OpenCV")
-    file(
-            ARCHIVE_EXTRACT
-            INPUT ${OPENCV_DOWNLOAD_DIR}/opencv-${OPENCV_VERSION}.zip
-            DESTINATION ${OPENCV_DOWNLOAD_DIR}
-    )
-    message(STATUS "Extracting OpenCV - done")
-endif ()
+GET_OPENCV(opencv)
 
 # Download and extract OpenCV-contrib sources
-if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-contrib-${OPENCV_VERSION})
-    message(STATUS "OpenCV-contrib not extracted into ${OPENCV_DOWNLOAD_DIR}")
-
-    if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/opencv-contrib-${OPENCV_VERSION}.zip)
-        message(STATUS "OpenCV-contrib not downloaded into ${OPENCV_DOWNLOAD_DIR}")
-
-        message(STATUS "Downloading OpenCV-contrib")
-        file(
-                DOWNLOAD
-                https://github.com/opencv/opencv_contrib/archive/refs/tags/${OPENCV_VERSION}.zip
-                ${OPENCV_DOWNLOAD_DIR}/opencv-contrib-${OPENCV_VERSION}.zip
-                SHOW_PROGRESS
-        )
-        message(STATUS "Downloading OpenCV-contrib - done")
-    endif ()
-
-    message(STATUS "Extracting OpenCV-contrib")
-    file(
-            ARCHIVE_EXTRACT
-            INPUT ${OPENCV_DOWNLOAD_DIR}/opencv-contrib-${OPENCV_VERSION}.zip
-            DESTINATION ${OPENCV_DOWNLOAD_DIR}
-    )
-    message(STATUS "Extracting OpenCV-contrib - done")
-endif ()
+GET_OPENCV(opencv_contrib)
 
 # Set toolchain-related flags
 if (CMAKE_GENERATOR)
