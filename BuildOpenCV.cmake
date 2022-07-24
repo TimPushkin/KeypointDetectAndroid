@@ -8,33 +8,32 @@ set(OPENCV_DOWNLOAD_DIR ${PROJECT_BUILD_DIR}/opencv-download)
 set(OPENCV_BUILD_DIR ${PROJECT_BUILD_DIR}/opencv-build)
 
 # Function which downloads and extracts OpenCV sources
-FUNCTION(GET_OPENCV REPO)
-    if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/${REPO}-${OPENCV_VERSION}/LICENSE)
-        message(STATUS "${REPO} not extracted into ${OPENCV_DOWNLOAD_DIR}")
+function(get_opencv repo)
+    if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/${repo}-${OPENCV_VERSION}/LICENSE)
+        message(STATUS "${repo} not extracted into ${OPENCV_DOWNLOAD_DIR}")
 
-        if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/${REPO}-${OPENCV_VERSION}.zip)
-            message(STATUS "${REPO} not downloaded into ${OPENCV_DOWNLOAD_DIR}")
+        if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/${repo}-${OPENCV_VERSION}.zip)
+            message(STATUS "${repo} not downloaded into ${OPENCV_DOWNLOAD_DIR}")
 
-            message(STATUS "Downloading ${REPO}")
+            message(STATUS "Downloading ${repo}")
             file(
                     DOWNLOAD
-                    https://github.com/opencv/${REPO}/archive/refs/tags/${OPENCV_VERSION}.zip
-                    ${OPENCV_DOWNLOAD_DIR}/${REPO}-${OPENCV_VERSION}.zip
+                    https://github.com/opencv/${repo}/archive/refs/tags/${OPENCV_VERSION}.zip
+                    ${OPENCV_DOWNLOAD_DIR}/${repo}-${OPENCV_VERSION}.zip
                     SHOW_PROGRESS
             )
-            message(STATUS "Downloading ${REPO} - done")
+            message(STATUS "Downloading ${repo} - done")
         endif ()
 
-        message(STATUS "Extracting ${REPO}")
+        message(STATUS "Extracting ${repo}")
         file(
                 ARCHIVE_EXTRACT
-                INPUT ${OPENCV_DOWNLOAD_DIR}/${REPO}-${OPENCV_VERSION}.zip
+                INPUT ${OPENCV_DOWNLOAD_DIR}/${repo}-${OPENCV_VERSION}.zip
                 DESTINATION ${OPENCV_DOWNLOAD_DIR}
         )
-        message(STATUS "Extracting ${REPO} - done")
+        message(STATUS "Extracting ${repo} - done")
     endif ()
-
-ENDFUNCTION()
+endfunction()
 
 # Append suffix to the build directory name
 if (BUILD_DIR_SUFFIX)
