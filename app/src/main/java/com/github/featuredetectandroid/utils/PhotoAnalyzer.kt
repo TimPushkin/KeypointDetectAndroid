@@ -3,13 +3,14 @@ package com.github.featuredetectandroid.utils
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.github.featuredetectandroid.ui.GrayscaleViewModel
+import com.github.featuredetectandroid.ui.OutputViewModel
+import com.github.featuredetectandroid.utils.conversions.luminanceArrayToRGB
 import java.nio.ByteBuffer
 
 private const val TAG = "PhotoAnalyzer"
 private const val ROTATION_STEP = 90
 
-class PhotoAnalyzer(private val imageViewModel: GrayscaleViewModel) : ImageAnalysis.Analyzer {
+class PhotoAnalyzer(private val imageViewModel: OutputViewModel) : ImageAnalysis.Analyzer {
     private fun ByteBuffer.toByteArray(): ByteArray {
         rewind()
         return ByteArray(remaining()).also { get(it) }
@@ -53,7 +54,7 @@ class PhotoAnalyzer(private val imageViewModel: GrayscaleViewModel) : ImageAnaly
             )
             )
             .first
-        imageViewModel.setKeypoints(keypoints)
+        imageViewModel.setKeypointsForOutput(keypoints)
         imageViewModel.setPicture(oriented, width, height)
         image.close()
     }

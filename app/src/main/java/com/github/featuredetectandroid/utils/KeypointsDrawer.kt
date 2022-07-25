@@ -9,17 +9,15 @@ import androidx.compose.ui.graphics.PointMode
 
 class KeypointsDrawer {
     @Composable
-    fun draw(
+    fun Draw(
         modifier: Modifier = Modifier,
-        keypoints: List<Offset>?
-    ) = keypoints?.let { points ->
-        Canvas(modifier = modifier) {
-            drawPoints(
-                points = points,
-                pointMode = PointMode.Points,
-                color = Color.Blue,
-                strokeWidth = 10f
-            )
-        }
+        keypointsOffset: List<Offset>
+    ) = Canvas(modifier = modifier) {
+        drawPoints(
+            points = keypointsOffset,
+            pointMode = PointMode.Points,
+            color = Color.Blue,
+            strokeWidth = 10f
+        )
     }
 }

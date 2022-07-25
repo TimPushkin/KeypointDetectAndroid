@@ -1,4 +1,4 @@
-package com.github.featuredetectandroid.utils
+package com.github.featuredetectandroid.utils.conversions
 
 private const val NUMBER_OF_COMPONENTS = 3
 
