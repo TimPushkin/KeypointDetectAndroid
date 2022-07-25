@@ -46,8 +46,6 @@ private const val TAG = "MainActivity"
 private const val RESOLUTION_WIDTH = 640
 private const val RESOLUTION_HEIGHT = 480
 
-private const val DEFAULT_ALGORITHM = "None"
-
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val imageViewModel by viewModels<OutputViewModel>()
@@ -71,7 +69,12 @@ class MainActivity : ComponentActivity() {
         imageViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
         preferencesManager = PreferencesManager(this)
-        preferencesManager.putSelectedAlgorithm(DEFAULT_ALGORITHM)
+        imageViewModel.featureDetector = selectFeatureDetector(
+            this@MainActivity,
+            preferencesManager.getSelectedAlgorithm(),
+            imageViewModel.getSize().first,
+            imageViewModel.getSize().second
+        )
 
         setContent {
             FeatureDetectAppTheme {
