@@ -5,6 +5,37 @@
 #include <opencv2/features2d.hpp>
 #include <opencv2/xfeatures2d.hpp>
 
+#ifdef SCAPIX_BRIDGE
+
+#include <scapix/bridge/object.h>
+
+namespace featurelib {
+
+namespace internal {
+
+template<typename T>
+using base_object = scapix::bridge::object<T>;
+
+}  // namespace internal
+
+}  // namespace featurelib
+
+#else
+
+namespace featurelib {
+
+namespace internal {
+
+template<typename T>
+class base_object {
+};
+
+}  // namespace internal
+
+}  // namespace featurelib
+
+#endif  // SCAPIX_BRIDGE
+
 namespace featurelib {
 
 struct KeyPoint {
@@ -20,7 +51,7 @@ struct DetectionResult {
   std::vector<std::vector<uint8_t>> descriptors;
 };
 
-class FeatureDetector {
+class FeatureDetector : public internal::base_object<FeatureDetector>{
  public:
   FeatureDetector(int width, int height);
 
