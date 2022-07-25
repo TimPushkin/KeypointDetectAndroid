@@ -13,29 +13,14 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PointMode
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalDensity
 import androidx.core.content.ContextCompat
-import com.github.featuredetectandroid.ui.Menu
+import com.github.featuredetectandroid.ui.AppLayout
 import com.github.featuredetectandroid.ui.OutputViewModel
 import com.github.featuredetectandroid.ui.theme.FeatureDetectAppTheme
-import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
 import com.github.featuredetectandroid.utils.PhotoAnalyzer
 import com.github.featuredetectandroid.utils.PreferencesManager
 import com.github.featuredetectandroid.utils.selectFeatureDetector
@@ -45,7 +30,7 @@ private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
-    private val imageViewModel by viewModels<OutputViewModel>()
+    private val outputViewModel by viewModels<OutputViewModel>()
     private lateinit var preferencesManager: PreferencesManager
 
     private val cameraPermission =
@@ -63,14 +48,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        imageViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
+        outputViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
         preferencesManager = PreferencesManager(this)
-        imageViewModel.featureDetector = selectFeatureDetector(
+        outputViewModel.featureDetector = selectFeatureDetector(
             this@MainActivity,
             preferencesManager.getSelectedAlgorithm(),
-            imageViewModel.getSize().first,
-            imageViewModel.getSize().second
+            outputViewModel.getSize().first,
+            outputViewModel.getSize().second
         )
 
         setContent {
@@ -79,6 +64,9 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(preferencesManager.getSelectedAlgorithm())
                 }
                 AppLayout(
+                    context = this,
+                    outputViewModel = outputViewModel,
+                    preferencesManager = preferencesManager,
                     selectedAlgorithm = selectedAlgorithm,
                     onAlgorithmSelected = { algorithmName -> selectedAlgorithm = algorithmName }
                 )
@@ -88,7 +76,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        imageViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
+        outputViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
     }
 
@@ -98,7 +86,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun tryStartCamera() = when {
-        imageViewModel.isCameraPermissionGranted -> startCamera()
+        outputViewModel.isCameraPermissionGranted -> startCamera()
         shouldRationalize() -> {
             Toast.makeText(
                 this,
@@ -130,7 +118,7 @@ class MainActivity : ComponentActivity() {
                 .apply {
                     setAnalyzer(
                         cameraExecutor,
-                        PhotoAnalyzer(imageViewModel)
+                        PhotoAnalyzer(outputViewModel)
                     )
                 }
 
@@ -145,57 +133,5 @@ class MainActivity : ComponentActivity() {
                 Log.e(TAG, "Use case binding failed: ", illegalArgument)
             }
         }, ContextCompat.getMainExecutor(this))
-    }
-
-    @Composable
-    fun AppLayout(selectedAlgorithm: String, onAlgorithmSelected: (String) -> Unit) = Scaffold(
-        drawerContent = {
-            Menu(
-                header = "Keypoint detection algorithm:",
-                options = KeypointDetectionAlgorithm.names,
-                selectedOption = selectedAlgorithm,
-                onSelected = { algorithmName ->
-                    preferencesManager.putSelectedAlgorithm(algorithmName)
-                    onAlgorithmSelected(algorithmName)
-                    imageViewModel.setKeypointsForOutput(emptyList())
-                    imageViewModel.featureDetector = selectFeatureDetector(
-                        this@MainActivity,
-                        algorithmName,
-                        imageViewModel.getSize().first,
-                        imageViewModel.getSize().second
-                    )
-                }
-            )
-        },
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            if (imageViewModel.isCameraPermissionGranted) {
-                imageViewModel.grayscaleBitmap?.let { bitmap ->
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = "Grayscale photo"
-                    )
-
-                    val (width, height) = with(LocalDensity.current) {
-                        bitmap.width.toDp() to bitmap.height.toDp()
-                    }
-
-                    Canvas(modifier = Modifier.size(width, height)) {
-                        drawPoints(
-                            points = imageViewModel.keypointsOffset,
-                            pointMode = PointMode.Points,
-                            color = Color.Blue,
-                            strokeWidth = 10f
-                        )
-                    }
-                }
-            } else {
-                Text("Camera permission required")
-            }
-        }
     }
 }
