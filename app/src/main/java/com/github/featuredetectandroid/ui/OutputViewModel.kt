@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
-import com.github.featuredetectandroid.utils.conversions.luminanceArrayToBitmap
+import com.github.featuredetectandroid.utils.luminanceArrayToBitmap
 import com.github.featuredetectlib.FeatureDetector
 
 class OutputViewModel : ViewModel() {

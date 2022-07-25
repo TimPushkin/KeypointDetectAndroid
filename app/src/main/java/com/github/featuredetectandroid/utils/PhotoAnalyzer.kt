@@ -5,7 +5,6 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.compose.ui.geometry.Offset
 import com.github.featuredetectandroid.ui.OutputViewModel
-import com.github.featuredetectandroid.utils.conversions.luminanceArrayToRGB
 import java.nio.ByteBuffer
 
 private const val TAG = "PhotoAnalyzer"
