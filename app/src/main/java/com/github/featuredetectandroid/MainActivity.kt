@@ -115,12 +115,7 @@ class MainActivity : ComponentActivity() {
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_YUV_420_888)
                 .build()
-                .apply {
-                    setAnalyzer(
-                        cameraExecutor,
-                        PhotoAnalyzer(outputViewModel)
-                    )
-                }
+                .apply { setAnalyzer(cameraExecutor, PhotoAnalyzer(outputViewModel)) }
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 

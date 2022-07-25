@@ -47,13 +47,9 @@ class PhotoAnalyzer(private val imageViewModel: OutputViewModel) : ImageAnalysis
         featureDetector?.width = width
         featureDetector?.height = height
         val keypoints = (
-            featureDetector
-                ?.detect(luminanceArrayToRGB(oriented)) ?: Pair(
-                emptyList(),
-                emptyList()
-            )
-            )
-            .first
+            featureDetector?.detect(luminanceArrayToRGB(oriented))
+                ?: Pair(emptyList(), emptyList())
+            ).first
         imageViewModel.setKeypointsForOutput(keypoints)
         imageViewModel.setPicture(oriented, width, height)
         image.close()
