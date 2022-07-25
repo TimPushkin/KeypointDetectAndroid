@@ -14,14 +14,10 @@ class OutputViewModel : ViewModel() {
     var isCameraPermissionGranted by mutableStateOf(false)
     var keypointOffsets: List<Offset> by mutableStateOf(emptyList())
     var featureDetector: FeatureDetector? by mutableStateOf(null)
-    private var width by mutableStateOf(0)
-    private var height by mutableStateOf(0)
+    var width by mutableStateOf(0)
+    var height by mutableStateOf(0)
 
-    fun setPicture(grayscaleByteArray: ByteArray, newWidth: Int, newHeight: Int) {
-        width = newWidth
-        height = newHeight
-        grayscaleBitmap = luminanceArrayToBitmap(grayscaleByteArray, newWidth, newHeight)
+    fun setPicture(grayscaleByteArray: ByteArray) {
+        grayscaleBitmap = luminanceArrayToBitmap(grayscaleByteArray, width, height)
     }
-
-    fun getSize() = Pair(width, height)
 }

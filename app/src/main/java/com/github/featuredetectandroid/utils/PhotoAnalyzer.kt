@@ -10,7 +10,7 @@ import java.nio.ByteBuffer
 private const val TAG = "PhotoAnalyzer"
 private const val ROTATION_STEP = 90
 
-class PhotoAnalyzer(private val imageViewModel: OutputViewModel) : ImageAnalysis.Analyzer {
+class PhotoAnalyzer(private val outputViewModel: OutputViewModel) : ImageAnalysis.Analyzer {
     private fun ByteBuffer.toByteArray(): ByteArray {
         rewind()
         return ByteArray(remaining()).also { get(it) }
@@ -30,7 +30,7 @@ class PhotoAnalyzer(private val imageViewModel: OutputViewModel) : ImageAnalysis
 
     override fun analyze(image: ImageProxy) {
         val rotationDegrees = image.imageInfo.rotationDegrees
-        val featureDetector = imageViewModel.featureDetector
+        val featureDetector = outputViewModel.featureDetector
 
         var width = image.width
         var height = image.height
@@ -44,14 +44,20 @@ class PhotoAnalyzer(private val imageViewModel: OutputViewModel) : ImageAnalysis
             width = height.also { height = width }
         }
 
-        featureDetector?.width = width
-        featureDetector?.height = height
+        if (outputViewModel.width != width) {
+            featureDetector?.width = width
+            outputViewModel.width = width
+        }
+        if (outputViewModel.height != height) {
+            featureDetector?.height = height
+            outputViewModel.height = height
+        }
         val keypoints = (
             featureDetector?.detect(luminanceArrayToRGB(oriented))
                 ?: Pair(emptyList(), emptyList())
             ).first
-        imageViewModel.keypointOffsets = keypoints.map { Offset(it.x, it.y) }
-        imageViewModel.setPicture(oriented, width, height)
+        outputViewModel.keypointOffsets = keypoints.map { Offset(it.x, it.y) }
+        outputViewModel.setPicture(oriented)
         image.close()
     }
 }

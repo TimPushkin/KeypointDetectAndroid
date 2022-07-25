@@ -52,10 +52,10 @@ class MainActivity : ComponentActivity() {
         tryStartCamera()
         preferencesManager = PreferencesManager(this)
         outputViewModel.featureDetector = selectFeatureDetector(
-            this@MainActivity,
-            preferencesManager.getSelectedAlgorithm(),
-            outputViewModel.getSize().first,
-            outputViewModel.getSize().second
+            context = this@MainActivity,
+            algorithmName = preferencesManager.getSelectedAlgorithm(),
+            width = outputViewModel.width,
+            height = outputViewModel.height
         )
 
         setContent {
