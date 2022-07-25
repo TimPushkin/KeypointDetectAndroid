@@ -43,9 +43,6 @@ import java.util.concurrent.Executors
 
 private const val TAG = "MainActivity"
 
-private const val RESOLUTION_WIDTH = 640
-private const val RESOLUTION_HEIGHT = 480
-
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val imageViewModel by viewModels<OutputViewModel>()
@@ -129,8 +126,6 @@ class MainActivity : ComponentActivity() {
 
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_YUV_420_888)
-                // .setTargetResolution(Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
-                // For some reason image is always 720 x 720 if this line is active.
                 .build()
                 .apply {
                     setAnalyzer(
