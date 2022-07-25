@@ -38,7 +38,7 @@ class base_object {
 
 namespace featurelib {
 
-struct KeyPoint {
+struct KeyPoint : internal::base_object<KeyPoint>{
   float x;
   float y;
   float size;
@@ -46,7 +46,7 @@ struct KeyPoint {
   float strength;
 };
 
-struct DetectionResult {
+struct DetectionResult : internal::base_object<DetectionResult>{
   std::vector<KeyPoint> keypoints;
   std::vector<std::vector<uint8_t>> descriptors;
 };
