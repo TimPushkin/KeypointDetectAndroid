@@ -3,6 +3,7 @@ package com.github.featuredetectandroid.utils
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.compose.ui.geometry.Offset
 import com.github.featuredetectandroid.ui.OutputViewModel
 import com.github.featuredetectandroid.utils.conversions.luminanceArrayToRGB
 import java.nio.ByteBuffer
@@ -50,7 +51,7 @@ class PhotoAnalyzer(private val imageViewModel: OutputViewModel) : ImageAnalysis
             featureDetector?.detect(luminanceArrayToRGB(oriented))
                 ?: Pair(emptyList(), emptyList())
             ).first
-        imageViewModel.setKeypointsForOutput(keypoints)
+        imageViewModel.keypointOffsets = keypoints.map { Offset(it.x, it.y) }
         imageViewModel.setPicture(oriented, width, height)
         image.close()
     }

@@ -6,15 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
-import com.github.featuredetectandroid.utils.conversions.keypointsToOffsetList
 import com.github.featuredetectandroid.utils.conversions.luminanceArrayToBitmap
 import com.github.featuredetectlib.FeatureDetector
-import com.github.featuredetectlib.Keypoint
 
 class OutputViewModel : ViewModel() {
     var grayscaleBitmap: Bitmap? by mutableStateOf(null)
     var isCameraPermissionGranted by mutableStateOf(false)
-    var keypointsOffset: List<Offset> by mutableStateOf(emptyList())
+    var keypointOffsets: List<Offset> by mutableStateOf(emptyList())
     var featureDetector: FeatureDetector? by mutableStateOf(null)
     private var width by mutableStateOf(0)
     private var height by mutableStateOf(0)
@@ -23,10 +21,6 @@ class OutputViewModel : ViewModel() {
         width = newWidth
         height = newHeight
         grayscaleBitmap = luminanceArrayToBitmap(grayscaleByteArray, newWidth, newHeight)
-    }
-
-    fun setKeypointsForOutput(keypoints: List<Keypoint>) {
-        keypointsOffset = keypointsToOffsetList(keypoints)
     }
 
     fun getSize() = Pair(width, height)

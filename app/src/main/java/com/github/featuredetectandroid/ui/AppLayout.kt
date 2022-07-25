@@ -36,7 +36,7 @@ fun AppLayout(
             onSelected = { algorithmName ->
                 preferencesManager.putSelectedAlgorithm(algorithmName)
                 onAlgorithmSelected(algorithmName)
-                outputViewModel.setKeypointsForOutput(emptyList())
+                outputViewModel.keypointOffsets = emptyList()
                 outputViewModel.featureDetector = selectFeatureDetector(
                     context,
                     algorithmName,
@@ -67,7 +67,7 @@ fun AppLayout(
 
                 Canvas(modifier = Modifier.size(width, height)) {
                     drawPoints(
-                        points = outputViewModel.keypointsOffset,
+                        points = outputViewModel.keypointOffsets,
                         pointMode = PointMode.Points,
                         color = Color.Blue,
                         strokeWidth = 10f
