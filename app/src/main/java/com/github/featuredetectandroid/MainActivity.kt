@@ -51,8 +51,10 @@ class MainActivity : ComponentActivity() {
         outputViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
         outputViewModel.featureDetector = KeypointDetectionAlgorithm.nameToFeatureDetector(
+            algorithmName = preferencesManager.getSelectedAlgorithm(),
             context = this,
-            algorithmName = preferencesManager.getSelectedAlgorithm()
+            width = outputViewModel.featureDetector?.width ?: 0,
+            height = outputViewModel.featureDetector?.height ?: 0
         )
 
         setContent {

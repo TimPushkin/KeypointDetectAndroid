@@ -16,8 +16,8 @@ enum class KeypointDetectionAlgorithm(val algorithmName: String) {
         fun nameToFeatureDetector(
             context: Context,
             algorithmName: String,
-            width: Int = 0,
-            height: Int = 0
+            width: Int,
+            height: Int
         ) = when (algorithmName) {
             SUPERPOINT.algorithmName -> SuperPoint(context, width, height)
             else -> null
