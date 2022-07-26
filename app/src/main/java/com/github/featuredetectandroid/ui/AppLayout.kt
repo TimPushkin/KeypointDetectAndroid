@@ -36,9 +36,12 @@ fun AppLayout(
                 preferencesManager.putSelectedAlgorithm(algorithmName)
                 onAlgorithmSelected(algorithmName)
                 outputViewModel.keypointOffsets = emptyList()
-                outputViewModel.featureDetector = KeypointDetectionAlgorithm
-                    .nameToClassConstructor(preferencesManager.getSelectedAlgorithm())
-                    ?.invoke(context, outputViewModel.width, outputViewModel.height)
+                outputViewModel.featureDetector = KeypointDetectionAlgorithm.nameToFeatureDetector(
+                    context = context,
+                    algorithmName = preferencesManager.getSelectedAlgorithm(),
+                    width = outputViewModel.width,
+                    height = outputViewModel.height
+                )
             }
         )
     },

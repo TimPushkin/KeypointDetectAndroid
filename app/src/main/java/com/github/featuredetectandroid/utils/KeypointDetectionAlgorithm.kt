@@ -1,5 +1,6 @@
 package com.github.featuredetectandroid.utils
 
+import android.content.Context
 import com.github.featuredetectlib.learned.SuperPoint
 
 enum class KeypointDetectionAlgorithm(
@@ -14,8 +15,13 @@ enum class KeypointDetectionAlgorithm(
     companion object {
         val names = values().map { it.algorithmName }
 
-        fun nameToClassConstructor(algorithmName: String) = when (algorithmName) {
-            SUPERPOINT.algorithmName -> ::SuperPoint
+        fun nameToFeatureDetector(
+            context: Context,
+            algorithmName: String,
+            width: Int,
+            height: Int
+        ) = when (algorithmName) {
+            SUPERPOINT.algorithmName -> SuperPoint(context, width, height)
             else -> null
         }
     }

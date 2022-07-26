@@ -7,7 +7,8 @@ import androidx.core.content.edit
 private const val TAG = "PreferencesManager"
 private const val PREFERENCES_FILE_NAME = "ALGORITHM_PREFERENCES"
 private const val ALGORITHM_KEY = "algorithm"
-private const val ALGORITHM_DEFAULT = "None"
+
+private val ALGORITHM_DEFAULT = KeypointDetectionAlgorithm.NONE.algorithmName
 
 class PreferencesManager(context: Context) {
     private val preferences = context.getSharedPreferences(
