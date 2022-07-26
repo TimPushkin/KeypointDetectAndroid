@@ -62,7 +62,6 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(preferencesManager.getSelectedAlgorithm())
                 }
                 AppLayout(
-                    context = this,
                     outputViewModel = outputViewModel,
                     preferencesManager = preferencesManager,
                     selectedAlgorithm = selectedAlgorithm,

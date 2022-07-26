@@ -1,6 +1,5 @@
 package com.github.featuredetectandroid.ui
 
-import android.content.Context
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -15,66 +14,70 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
 import com.github.featuredetectandroid.utils.PreferencesManager
 
 @Composable
 fun AppLayout(
-    context: Context,
     outputViewModel: OutputViewModel,
     preferencesManager: PreferencesManager,
     selectedAlgorithm: String,
     onAlgorithmSelected: (String) -> Unit
-) = Scaffold(
-    drawerContent = {
-        Menu(
-            header = "Keypoint detection algorithm:",
-            options = KeypointDetectionAlgorithm.names,
-            selectedOption = selectedAlgorithm,
-            onSelected = { algorithmName ->
-                preferencesManager.putSelectedAlgorithm(algorithmName)
-                onAlgorithmSelected(algorithmName)
-                outputViewModel.keypointOffsets = emptyList()
-                outputViewModel.featureDetector = KeypointDetectionAlgorithm.nameToFeatureDetector(
-                    algorithmName = preferencesManager.getSelectedAlgorithm(),
-                    context = context,
-                    width = outputViewModel.featureDetector?.width ?: 0,
-                    height = outputViewModel.featureDetector?.height ?: 0
-                )
-            }
-        )
-    },
-    modifier = Modifier.fillMaxSize()
-) { paddingValues ->
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
-        contentAlignment = Alignment.Center
-    ) {
-        if (outputViewModel.isCameraPermissionGranted) {
-            outputViewModel.grayscaleBitmap?.let { bitmap ->
-                Image(
-                    bitmap = bitmap.asImageBitmap(),
-                    contentDescription = "Grayscale photo"
-                )
-
-                val (width, height) = with(LocalDensity.current) {
-                    bitmap.width.toDp() to bitmap.height.toDp()
+) {
+    val context = LocalContext.current
+    Scaffold(
+        drawerContent = {
+            Menu(
+                header = "Keypoint detection algorithm:",
+                options = KeypointDetectionAlgorithm.names,
+                selectedOption = selectedAlgorithm,
+                onSelected = { algorithmName ->
+                    preferencesManager.putSelectedAlgorithm(algorithmName)
+                    onAlgorithmSelected(algorithmName)
+                    outputViewModel.keypointOffsets = emptyList()
+                    outputViewModel.featureDetector =
+                        KeypointDetectionAlgorithm.nameToFeatureDetector(
+                            algorithmName = preferencesManager.getSelectedAlgorithm(),
+                            context = context,
+                            width = outputViewModel.featureDetector?.width ?: 0,
+                            height = outputViewModel.featureDetector?.height ?: 0
+                        )
                 }
-
-                Canvas(modifier = Modifier.size(width, height)) {
-                    drawPoints(
-                        points = outputViewModel.keypointOffsets,
-                        pointMode = PointMode.Points,
-                        color = Color.Blue,
-                        strokeWidth = 10f
+            )
+        },
+        modifier = Modifier.fillMaxSize()
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.Center
+        ) {
+            if (outputViewModel.isCameraPermissionGranted) {
+                outputViewModel.grayscaleBitmap?.let { bitmap ->
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = "Grayscale photo"
                     )
+
+                    val (width, height) = with(LocalDensity.current) {
+                        bitmap.width.toDp() to bitmap.height.toDp()
+                    }
+
+                    Canvas(modifier = Modifier.size(width, height)) {
+                        drawPoints(
+                            points = outputViewModel.keypointOffsets,
+                            pointMode = PointMode.Points,
+                            color = Color.Blue,
+                            strokeWidth = 10f
+                        )
+                    }
                 }
+            } else {
+                Text("Camera permission required")
             }
-        } else {
-            Text("Camera permission required")
         }
     }
 }
