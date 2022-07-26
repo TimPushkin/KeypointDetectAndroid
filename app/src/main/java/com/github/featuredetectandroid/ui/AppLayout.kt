@@ -33,7 +33,7 @@ fun AppLayout(
                 header = "Keypoint detection algorithm:",
                 options = KeypointDetectionAlgorithm.names,
                 selectedOption = selectedAlgorithm,
-                onSelected = { algorithmName -> onAlgorithmSelected(algorithmName) }
+                onSelected = onAlgorithmSelected
             )
         },
         modifier = Modifier.fillMaxSize()
