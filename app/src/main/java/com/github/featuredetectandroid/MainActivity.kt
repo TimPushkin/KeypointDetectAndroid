@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                         outputViewModel.keypointOffsets = emptyList()
                         outputViewModel.featureDetector =
                             KeypointDetectionAlgorithm.nameToFeatureDetector(
-                                algorithmName = preferencesManager.getSelectedAlgorithm(),
+                                algorithmName = algorithmName,
                                 context = this,
                                 width = outputViewModel.featureDetector?.width ?: 0,
                                 height = outputViewModel.featureDetector?.height ?: 0
