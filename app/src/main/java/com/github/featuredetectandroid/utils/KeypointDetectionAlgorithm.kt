@@ -1,19 +1,22 @@
 package com.github.featuredetectandroid.utils
 
-enum class KeypointDetectionAlgorithm {
-    NONE,
-    SIFT,
-    SURF,
-    ORB,
-    SUPERPOINT;
+import com.github.featuredetectlib.learned.SuperPoint
+
+enum class KeypointDetectionAlgorithm(
+    val algorithmName: String
+) {
+    NONE("None"),
+    SIFT("SIFT"),
+    SURF("SURF"),
+    ORB("ORB"),
+    SUPERPOINT("SuperPoint");
 
     companion object {
-        val names = values().map {
-            when (it) {
-                NONE -> "None"
-                SUPERPOINT -> "SuperPoint"
-                else -> it.name
-            }
+        val names = values().map { it.algorithmName }
+
+        fun nameToClassConstructor(algorithmName: String) = when (algorithmName) {
+            SUPERPOINT.algorithmName -> ::SuperPoint
+            else -> null
         }
     }
 }

@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalDensity
 import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
 import com.github.featuredetectandroid.utils.PreferencesManager
-import com.github.featuredetectandroid.utils.selectFeatureDetector
 
 @Composable
 fun AppLayout(
@@ -37,12 +36,9 @@ fun AppLayout(
                 preferencesManager.putSelectedAlgorithm(algorithmName)
                 onAlgorithmSelected(algorithmName)
                 outputViewModel.keypointOffsets = emptyList()
-                outputViewModel.featureDetector = selectFeatureDetector(
-                    context = context,
-                    algorithmName = algorithmName,
-                    width = outputViewModel.width,
-                    height = outputViewModel.height
-                )
+                outputViewModel.featureDetector = KeypointDetectionAlgorithm
+                    .nameToClassConstructor(preferencesManager.getSelectedAlgorithm())
+                    ?.invoke(context, outputViewModel.width, outputViewModel.height)
             }
         )
     },

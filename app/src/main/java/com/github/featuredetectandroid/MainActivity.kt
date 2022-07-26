@@ -21,9 +21,9 @@ import androidx.core.content.ContextCompat
 import com.github.featuredetectandroid.ui.AppLayout
 import com.github.featuredetectandroid.ui.OutputViewModel
 import com.github.featuredetectandroid.ui.theme.FeatureDetectAppTheme
+import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
 import com.github.featuredetectandroid.utils.PhotoAnalyzer
 import com.github.featuredetectandroid.utils.PreferencesManager
-import com.github.featuredetectandroid.utils.selectFeatureDetector
 import java.util.concurrent.Executors
 
 private const val TAG = "MainActivity"
@@ -51,12 +51,9 @@ class MainActivity : ComponentActivity() {
         outputViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
         preferencesManager = PreferencesManager(this)
-        outputViewModel.featureDetector = selectFeatureDetector(
-            context = this@MainActivity,
-            algorithmName = preferencesManager.getSelectedAlgorithm(),
-            width = outputViewModel.width,
-            height = outputViewModel.height
-        )
+        outputViewModel.featureDetector = KeypointDetectionAlgorithm
+            .nameToClassConstructor(preferencesManager.getSelectedAlgorithm())
+            ?.invoke(this, outputViewModel.width, outputViewModel.height)
 
         setContent {
             FeatureDetectAppTheme {
@@ -78,11 +75,15 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         outputViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
+        outputViewModel.featureDetector = KeypointDetectionAlgorithm
+            .nameToClassConstructor(preferencesManager.getSelectedAlgorithm())
+            ?.invoke(this, outputViewModel.width, outputViewModel.height)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
+        outputViewModel.featureDetector = null
     }
 
     private fun tryStartCamera() = when {
