@@ -80,9 +80,9 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         cameraExecutor.shutdown()
         outputViewModel.featureDetector = null
+        super.onDestroy()
     }
 
     private fun tryStartCamera() = when {
