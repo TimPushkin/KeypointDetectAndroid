@@ -62,10 +62,22 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(preferencesManager.getSelectedAlgorithm())
                 }
                 AppLayout(
-                    outputViewModel = outputViewModel,
-                    preferencesManager = preferencesManager,
+                    isCameraPermissionGranted = isCameraPermissionGranted(),
+                    keypointOffsets = outputViewModel.keypointOffsets,
+                    frameBitmap = outputViewModel.frameBitmap,
                     selectedAlgorithm = selectedAlgorithm,
-                    onAlgorithmSelected = { algorithmName -> selectedAlgorithm = algorithmName }
+                    onAlgorithmSelected = { algorithmName ->
+                        preferencesManager.putSelectedAlgorithm(algorithmName)
+                        selectedAlgorithm = algorithmName
+                        outputViewModel.keypointOffsets = emptyList()
+                        outputViewModel.featureDetector =
+                            KeypointDetectionAlgorithm.nameToFeatureDetector(
+                                algorithmName = preferencesManager.getSelectedAlgorithm(),
+                                context = this,
+                                width = outputViewModel.featureDetector?.width ?: 0,
+                                height = outputViewModel.featureDetector?.height ?: 0
+                            )
+                    }
                 )
             }
         }
@@ -73,7 +85,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        outputViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
     }
 
@@ -83,7 +94,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun tryStartCamera() = when {
-        outputViewModel.isCameraPermissionGranted -> startCamera()
+        isCameraPermissionGranted() -> startCamera()
         shouldRationalize() -> {
             Toast.makeText(
                 this,

@@ -50,7 +50,7 @@ class PhotoAnalyzer(private val outputViewModel: OutputViewModel) : ImageAnalysi
                 keypoints.map { Offset(it.x, it.y) }
             } ?: emptyList()
 
-        outputViewModel.grayscaleBitmap = luminanceArrayToBitmap(oriented, width, height)
+        outputViewModel.frameBitmap = luminanceArrayToBitmap(oriented, width, height)
 
         image.close()
     }

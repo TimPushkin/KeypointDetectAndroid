@@ -9,8 +9,7 @@ import androidx.lifecycle.ViewModel
 import com.github.featuredetectlib.FeatureDetector
 
 class OutputViewModel : ViewModel() {
-    var grayscaleBitmap: Bitmap? by mutableStateOf(null)
-    var isCameraPermissionGranted by mutableStateOf(false)
+    var frameBitmap: Bitmap? by mutableStateOf(null)
     var keypointOffsets: List<Offset> by mutableStateOf(emptyList())
     var featureDetector: FeatureDetector? by mutableStateOf(null)
 }

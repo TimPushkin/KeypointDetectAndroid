@@ -1,5 +1,6 @@
 package com.github.featuredetectandroid.ui
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -11,40 +12,28 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
-import com.github.featuredetectandroid.utils.PreferencesManager
 
 @Composable
 fun AppLayout(
-    outputViewModel: OutputViewModel,
-    preferencesManager: PreferencesManager,
+    isCameraPermissionGranted: Boolean,
+    keypointOffsets: List<Offset>,
+    frameBitmap: Bitmap?,
     selectedAlgorithm: String,
     onAlgorithmSelected: (String) -> Unit
 ) {
-    val context = LocalContext.current
     Scaffold(
         drawerContent = {
             Menu(
                 header = "Keypoint detection algorithm:",
                 options = KeypointDetectionAlgorithm.names,
                 selectedOption = selectedAlgorithm,
-                onSelected = { algorithmName ->
-                    preferencesManager.putSelectedAlgorithm(algorithmName)
-                    onAlgorithmSelected(algorithmName)
-                    outputViewModel.keypointOffsets = emptyList()
-                    outputViewModel.featureDetector =
-                        KeypointDetectionAlgorithm.nameToFeatureDetector(
-                            algorithmName = preferencesManager.getSelectedAlgorithm(),
-                            context = context,
-                            width = outputViewModel.featureDetector?.width ?: 0,
-                            height = outputViewModel.featureDetector?.height ?: 0
-                        )
-                }
+                onSelected = { algorithmName -> onAlgorithmSelected(algorithmName) }
             )
         },
         modifier = Modifier.fillMaxSize()
@@ -55,8 +44,8 @@ fun AppLayout(
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            if (outputViewModel.isCameraPermissionGranted) {
-                outputViewModel.grayscaleBitmap?.let { bitmap ->
+            if (isCameraPermissionGranted) {
+                frameBitmap?.let { bitmap ->
                     Image(
                         bitmap = bitmap.asImageBitmap(),
                         contentDescription = "Grayscale photo"
@@ -68,7 +57,7 @@ fun AppLayout(
 
                     Canvas(modifier = Modifier.size(width, height)) {
                         drawPoints(
-                            points = outputViewModel.keypointOffsets,
+                            points = keypointOffsets,
                             pointMode = PointMode.Points,
                             color = Color.Blue,
                             strokeWidth = 10f
