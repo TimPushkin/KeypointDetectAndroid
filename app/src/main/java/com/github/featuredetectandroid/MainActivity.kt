@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.util.Size
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,21 +13,13 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.content.ContextCompat
-import com.github.featuredetectandroid.ui.GrayscaleViewModel
-import com.github.featuredetectandroid.ui.Menu
+import com.github.featuredetectandroid.ui.AppLayout
+import com.github.featuredetectandroid.ui.OutputViewModel
 import com.github.featuredetectandroid.ui.theme.FeatureDetectAppTheme
 import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
 import com.github.featuredetectandroid.utils.PhotoAnalyzer
@@ -37,12 +28,9 @@ import java.util.concurrent.Executors
 
 private const val TAG = "MainActivity"
 
-private const val RESOLUTION_WIDTH = 640
-private const val RESOLUTION_HEIGHT = 360
-
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
-    private val imageViewModel by viewModels<GrayscaleViewModel>()
+    private val outputViewModel by viewModels<OutputViewModel>()
     private lateinit var preferencesManager: PreferencesManager
 
     private val cameraPermission =
@@ -60,62 +48,54 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        imageViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
-        tryStartCamera()
-        preferencesManager = PreferencesManager(this)
+        preferencesManager = (application as FeatureDetectApp).preferencesManager
+
+        outputViewModel.featureDetector = KeypointDetectionAlgorithm.nameToFeatureDetector(
+            algorithmName = preferencesManager.getSelectedAlgorithm(),
+            context = this,
+            width = outputViewModel.featureDetector?.width ?: 0,
+            height = outputViewModel.featureDetector?.height ?: 0
+        )
 
         setContent {
             FeatureDetectAppTheme {
                 var selectedAlgorithm by remember {
                     mutableStateOf(preferencesManager.getSelectedAlgorithm())
                 }
-                Scaffold(
-                    drawerContent = {
-                        Menu(
-                            header = "Keypoint detection algorithm:",
-                            options = KeypointDetectionAlgorithm.names,
-                            selectedOption = selectedAlgorithm,
-                            onSelected = { algorithmName ->
-                                preferencesManager.putSelectedAlgorithm(algorithmName)
-                                selectedAlgorithm = algorithmName
-                            }
-                        )
-                    }
-                ) {
-                    Box(Modifier.fillMaxSize()) {
-                        if (imageViewModel.isCameraPermissionGranted) {
-                            imageViewModel.grayscaleBitmap?.let { bitmap ->
-                                Image(
-                                    bitmap = bitmap.asImageBitmap(),
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentDescription = "Grayscale photo"
-                                )
-                            }
-                        } else {
-                            Text(
-                                text = "Camera permission required",
-                                modifier = Modifier.align(Alignment.Center)
+                AppLayout(
+                    isCameraPermissionGranted = isCameraPermissionGranted(),
+                    keypointOffsets = outputViewModel.keypointOffsets,
+                    frameBitmap = outputViewModel.frameBitmap,
+                    selectedAlgorithm = selectedAlgorithm,
+                    onAlgorithmSelected = { algorithmName ->
+                        preferencesManager.putSelectedAlgorithm(algorithmName)
+                        selectedAlgorithm = algorithmName
+                        outputViewModel.keypointOffsets = emptyList()
+                        outputViewModel.featureDetector =
+                            KeypointDetectionAlgorithm.nameToFeatureDetector(
+                                algorithmName = algorithmName,
+                                context = this,
+                                width = outputViewModel.featureDetector?.width ?: 0,
+                                height = outputViewModel.featureDetector?.height ?: 0
                             )
-                        }
                     }
-                }
+                )
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        imageViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         cameraExecutor.shutdown()
+        super.onDestroy()
     }
 
     private fun tryStartCamera() = when {
-        imageViewModel.isCameraPermissionGranted -> startCamera()
+        isCameraPermissionGranted() -> startCamera()
         shouldRationalize() -> {
             Toast.makeText(
                 this,
@@ -143,9 +123,8 @@ class MainActivity : ComponentActivity() {
 
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_YUV_420_888)
-                .setTargetResolution(Size(RESOLUTION_WIDTH, RESOLUTION_HEIGHT))
                 .build()
-                .apply { setAnalyzer(cameraExecutor, PhotoAnalyzer(imageViewModel)) }
+                .apply { setAnalyzer(cameraExecutor, PhotoAnalyzer(outputViewModel)) }
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 

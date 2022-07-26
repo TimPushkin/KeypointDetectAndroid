@@ -16,6 +16,8 @@ private const val Y_SHIFT = 127 // Y-component (luminance) should be inverted an
 private const val MAX_COLOR = 0xff
 private const val MAX_ALPHA = MAX_COLOR shl ALPHA_SHIFT
 
+private const val NUMBER_OF_COMPONENTS = 3
+
 fun luminanceArrayToBitmap(luminanceByteArray: ByteArray, width: Int, height: Int): Bitmap {
     Log.i(TAG, "Converting ByteArray image of size $width x $height to a Bitmap.")
 
@@ -34,3 +36,7 @@ fun luminanceArrayToBitmap(luminanceByteArray: ByteArray, width: Int, height: In
         copyPixelsFromBuffer(buffer)
     }
 }
+
+fun luminanceArrayToRGB(luminanceByteArray: ByteArray) = ByteArray(
+    NUMBER_OF_COMPONENTS * luminanceByteArray.size
+) { luminanceByteArray[it / NUMBER_OF_COMPONENTS] }
