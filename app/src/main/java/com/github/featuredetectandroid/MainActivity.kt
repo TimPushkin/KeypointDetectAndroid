@@ -52,10 +52,10 @@ class MainActivity : ComponentActivity() {
         outputViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
         outputViewModel.featureDetector = KeypointDetectionAlgorithm.nameToFeatureDetector(
-            context = this,
             algorithmName = preferencesManager.getSelectedAlgorithm(),
-            width = outputViewModel.width,
-            height = outputViewModel.height
+            context = this,
+            width = outputViewModel.featureDetector?.width ?: 0,
+            height = outputViewModel.featureDetector?.height ?: 0
         )
 
         setContent {
@@ -78,17 +78,10 @@ class MainActivity : ComponentActivity() {
         super.onResume()
         outputViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
-        outputViewModel.featureDetector = KeypointDetectionAlgorithm.nameToFeatureDetector(
-            context = this,
-            algorithmName = preferencesManager.getSelectedAlgorithm(),
-            width = outputViewModel.width,
-            height = outputViewModel.height
-        )
     }
 
     override fun onDestroy() {
         cameraExecutor.shutdown()
-        outputViewModel.featureDetector = null
         super.onDestroy()
     }
 

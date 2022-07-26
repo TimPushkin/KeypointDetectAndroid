@@ -3,9 +3,7 @@ package com.github.featuredetectandroid.utils
 import android.content.Context
 import com.github.featuredetectlib.learned.SuperPoint
 
-enum class KeypointDetectionAlgorithm(
-    val algorithmName: String
-) {
+enum class KeypointDetectionAlgorithm(val algorithmName: String) {
     NONE("None"),
     SIFT("SIFT"),
     SURF("SURF"),

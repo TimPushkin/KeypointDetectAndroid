@@ -29,35 +29,29 @@ class PhotoAnalyzer(private val outputViewModel: OutputViewModel) : ImageAnalysi
     }
 
     override fun analyze(image: ImageProxy) {
-        val rotationDegrees = image.imageInfo.rotationDegrees
-        val featureDetector = outputViewModel.featureDetector
-
         var width = image.width
         var height = image.height
         var oriented = image.planes[0].buffer.toByteArray()
 
         // Rotation of incorrectly oriented images is implemented here.
         // TODO: Optimize rotations for 180 and 270 degrees.
+        val rotationDegrees = image.imageInfo.rotationDegrees
         repeat(rotationDegrees / ROTATION_STEP) {
             Log.i(TAG, "The image is rotated on $rotationDegrees degrees.")
             oriented = rotateClockwiseOnRotationStep(oriented, width, height)
             width = height.also { height = width }
         }
 
-        if (outputViewModel.width != width) {
-            featureDetector?.width = width
-            outputViewModel.width = width
-        }
-        if (outputViewModel.height != height) {
-            featureDetector?.height = height
-            outputViewModel.height = height
-        }
-        val keypoints = (
-            featureDetector?.detect(luminanceArrayToRGB(oriented))
-                ?: Pair(emptyList(), emptyList())
-            ).first
-        outputViewModel.keypointOffsets = keypoints.map { Offset(it.x, it.y) }
-        outputViewModel.setPicture(oriented)
+        outputViewModel.keypointOffsets =
+            outputViewModel.featureDetector?.let { detector ->
+                if (detector.width != width) detector.width = width
+                if (detector.height != height) detector.height = height
+                val (keypoints, _) = detector.detect(luminanceArrayToRGB(oriented))
+                keypoints.map { Offset(it.x, it.y) }
+            } ?: emptyList()
+
+        outputViewModel.grayscaleBitmap = luminanceArrayToBitmap(oriented, width, height)
+
         image.close()
     }
 }
