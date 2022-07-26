@@ -10,7 +10,7 @@ std::vector<uint8_t> matToVector(const cv::Mat &mat) {
   return result;
 }
 
-void printOutput(const featurelib::DetectionResult &output){
+void printOutput(const featurelib::DetectionResult &output) {
   std::cout << "Printing points" << std::endl;
   for (auto &kp : output.keypoints) {
     std::cout << kp.x << "\t" << kp.y << "\t" << kp.size << "\t" << kp.angle << "\t" << kp.strength << std::endl;
@@ -33,8 +33,8 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   auto file_path = argv[1];
-  cv::Mat img = imread(file_path, cv::IMREAD_COLOR);
 
+  cv::Mat img = imread(file_path, cv::IMREAD_COLOR);
   auto width = img.cols;
   auto height = img.rows;
 
@@ -52,5 +52,6 @@ int main(int argc, char *argv[]) {
   printOutput(sift_output);
   printOutput(orb_output);
   printOutput(surf_output);
+
   return 0;
 }
