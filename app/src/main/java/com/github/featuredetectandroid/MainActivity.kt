@@ -49,8 +49,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         preferencesManager = (application as FeatureDetectApp).preferencesManager
-        outputViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
-        tryStartCamera()
         outputViewModel.featureDetector = KeypointDetectionAlgorithm.nameToFeatureDetector(
             algorithmName = preferencesManager.getSelectedAlgorithm(),
             context = this,
