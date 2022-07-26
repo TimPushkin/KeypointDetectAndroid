@@ -2,7 +2,7 @@ set(PROJECT_BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
 
 set(OPENCV_VERSION 4.6.0)
 # TODO: remove unused modules
-set(OPENCV_MODULES core,calib3d,imgproc,imgcodecs,features2d,highgui,xfeatures2d)
+set(OPENCV_MODULES core,calib3d,imgproc,imgcodecs,features2d,xfeatures2d)
 
 set(OPENCV_DOWNLOAD_DIR ${PROJECT_BUILD_DIR}/opencv-download)
 set(OPENCV_BUILD_DIR ${PROJECT_BUILD_DIR}/opencv-build)
@@ -76,18 +76,19 @@ set(
         -DOPENCV_EXTRA_MODULES_PATH=${OPENCV_DOWNLOAD_DIR}/opencv_contrib-${OPENCV_VERSION}/modules
         -DOPENCV_ENABLE_NONFREE=ON
         # Bundled components              TODO: disable the unwanted dependencies(1)
-        #        -DWITH_GTK=OFF
-        #        -DBUILD_TESTS=OFF
-        #        -DBUILD_PERF_TESTS=OFF
-        #        -DBUILD_ANDROID_PROJECTS=OFF
-        #        -DBUILD_ANDROID_EXAMPLES=OFF
-        #        -DBUILD_opencv_apps=OFF
-        #        -DBUILD_JAVA=OFF
-        #        -DBUILD_FAT_JAVA_LIB=OFF
-        #        -DBUILD_KOTLIN_EXTENSIONS=OFF
-        #        -DBUILD_OBJC=OFF
-        #        -DBUILD_opencv_python2=OFF
-        #        -DBUILD_opencv_python3=OFF
+        -DWITH_GTK=OFF
+        -DWITH_WIN32UI=OFF
+        -DBUILD_TESTS=OFF
+        -DBUILD_PERF_TESTS=OFF
+        -DBUILD_ANDROID_PROJECTS=OFF
+        -DBUILD_ANDROID_EXAMPLES=OFF
+        -DBUILD_opencv_apps=OFF
+        -DBUILD_JAVA=OFF
+        -DBUILD_FAT_JAVA_LIB=OFF
+        -DBUILD_KOTLIN_EXTENSIONS=OFF
+        -DBUILD_OBJC=OFF
+        -DBUILD_opencv_python2=OFF
+        -DBUILD_opencv_python3=OFF
         # Disabled dependencies            TODO: enable  dependencies which will be needed
         #        -DWITH_1394=OFF
         #        -DWITH_AVFOUNDATION=OFF
@@ -107,7 +108,7 @@ set(
         #        -DWITH_PROTOBUF=OFF
         #        -DWITH_QUIRC=OFF
         #        -DWITH_ANDROID_MEDIANDK=OFF
-        #        -DWITH_ANDROID_NATIVE_CAMERA=OFF]]
+        #        -DWITH_ANDROID_NATIVE_CAMERA=OFF
         # Enabled dependencies             # TODO: disable the unwanted dependencies(2)
         #        -DWITH_OPENCL=ON
         #        -DWITH_OPENVX=ON                  # TODO: install OpenVX and set OPENVX_ROOT
