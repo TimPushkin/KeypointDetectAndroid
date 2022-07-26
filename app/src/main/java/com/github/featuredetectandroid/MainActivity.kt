@@ -23,7 +23,6 @@ import com.github.featuredetectandroid.ui.OutputViewModel
 import com.github.featuredetectandroid.ui.theme.FeatureDetectAppTheme
 import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
 import com.github.featuredetectandroid.utils.PhotoAnalyzer
-import com.github.featuredetectandroid.utils.PreferencesManager
 import java.util.concurrent.Executors
 
 private const val TAG = "MainActivity"
@@ -31,7 +30,8 @@ private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val outputViewModel by viewModels<OutputViewModel>()
-    private lateinit var preferencesManager: PreferencesManager
+    private val preferencesManager = FeatureDetectApp.getPreferencesManager()
+        ?: error("FeatureDetectApp was not created!")
 
     private val cameraPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -50,7 +50,6 @@ class MainActivity : ComponentActivity() {
 
         outputViewModel.isCameraPermissionGranted = isCameraPermissionGranted()
         tryStartCamera()
-        preferencesManager = PreferencesManager(this)
         outputViewModel.featureDetector = KeypointDetectionAlgorithm
             .nameToClassConstructor(preferencesManager.getSelectedAlgorithm())
             ?.invoke(this, outputViewModel.width, outputViewModel.height)
