@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   auto file_path = argv[1];
-  
+
   cv::Mat img = imread(file_path, cv::IMREAD_COLOR);
   auto width = img.cols;
   auto height = img.rows;
@@ -52,6 +52,6 @@ int main(int argc, char *argv[]) {
   printOutput(sift_output);
   printOutput(orb_output);
   printOutput(surf_output);
-  
+
   return 0;
 }
