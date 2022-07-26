@@ -6,12 +6,20 @@ plugins {
 
 android {
     compileSdk 32
+    ndkVersion '25.0.8775105'
 
     defaultConfig {
         minSdk 21
         targetSdk 32
 
         consumerProguardFiles 'consumer-rules.pro'
+
+        externalNativeBuild {
+            cmake {
+                cppFlags '-std=c++11', '-frtti', '-fexceptions'
+                arguments '-DSCAPIX_BRIDGE=java'
+            }
+        }
     }
 
     buildTypes {
@@ -27,6 +35,18 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.22.1'
+        }
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs += 'src/main/cpp/generated/bridge/java'
+        }
     }
 }
 
