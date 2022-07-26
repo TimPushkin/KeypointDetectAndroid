@@ -13,6 +13,9 @@ enum class KeypointDetectionAlgorithm(val algorithmName: String) {
     companion object {
         val names = values().map { it.algorithmName }
 
+        /** SuperPoint, which needs a context during initialization,
+         * does not contain it inside itself, and therefore does not require any processing
+         * in an activity's onDestroy and onResume. */
         fun nameToFeatureDetector(
             context: Context,
             algorithmName: String,

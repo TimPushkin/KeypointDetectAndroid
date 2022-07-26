@@ -50,9 +50,6 @@ class MainActivity : ComponentActivity() {
 
         preferencesManager = (application as FeatureDetectApp).preferencesManager
 
-        // SuperPoint, which needs a context during initialization,
-        // does not contain it inside itself, and therefore does not require any processing
-        // in the oDestroy and onResume.
         outputViewModel.featureDetector = KeypointDetectionAlgorithm.nameToFeatureDetector(
             algorithmName = preferencesManager.getSelectedAlgorithm(),
             context = this,
