@@ -1,13 +1,12 @@
 set(PROJECT_BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
 
 set(OPENCV_VERSION 4.6.0)
-# TODO: remove unused modules
-set(OPENCV_MODULES core,calib3d,imgproc,imgcodecs,features2d,xfeatures2d)
+set(OPENCV_MODULES core,imgproc,imgcodecs,features2d,xfeatures2d)
 
 set(OPENCV_DOWNLOAD_DIR ${PROJECT_BUILD_DIR}/opencv-download)
 set(OPENCV_BUILD_DIR ${PROJECT_BUILD_DIR}/opencv-build)
 
-# Function which downloads and extracts OpenCV sources
+# Downloads and extracts OpenCV sources from the specified repository
 function(get_opencv repo)
     if (NOT EXISTS ${OPENCV_DOWNLOAD_DIR}/${repo}-${OPENCV_VERSION}/LICENSE)
         message(STATUS "${repo} not extracted into ${OPENCV_DOWNLOAD_DIR}")
@@ -42,8 +41,6 @@ endif ()
 
 # Download and extract OpenCV sources
 GET_OPENCV(opencv)
-
-# Download and extract OpenCV-contrib sources
 GET_OPENCV(opencv_contrib)
 
 # Set toolchain-related flags
@@ -69,13 +66,14 @@ if (ANDROID_ARM_NEON)
 endif ()
 
 # Configure OpenCV build
+message(STATUS "Configuring OpenCV build")
 set(
         OPENCV_CMAKE_ARGS  # https://docs.opencv.org/4.6.0/db/d05/tutorial_config_reference.html
         # General
         -DBUILD_LIST=${OPENCV_MODULES}
         -DOPENCV_EXTRA_MODULES_PATH=${OPENCV_DOWNLOAD_DIR}/opencv_contrib-${OPENCV_VERSION}/modules
         -DOPENCV_ENABLE_NONFREE=ON
-        # Bundled components              TODO: disable the unwanted dependencies(1)
+        # Bundled components               # TODO: disable the unwanted dependencies(1)
         -DWITH_GTK=OFF
         -DWITH_WIN32UI=OFF
         -DBUILD_TESTS=OFF
@@ -89,7 +87,7 @@ set(
         -DBUILD_OBJC=OFF
         -DBUILD_opencv_python2=OFF
         -DBUILD_opencv_python3=OFF
-        # Disabled dependencies            TODO: enable  dependencies which will be needed
+        # Disabled dependencies            # TODO: enable  dependencies which will be needed
         #        -DWITH_1394=OFF
         #        -DWITH_AVFOUNDATION=OFF
         #        -DWITH_CAP_IOS=OFF
@@ -111,8 +109,8 @@ set(
         #        -DWITH_ANDROID_NATIVE_CAMERA=OFF
         # Enabled dependencies             # TODO: disable the unwanted dependencies(2)
         #        -DWITH_OPENCL=ON
-        #        -DWITH_OPENVX=ON                  # TODO: install OpenVX and set OPENVX_ROOT
-        #        -DWITH_EIGEN=ON                   # TODO: install Eigen (and probably use EIGEN_INCLUDE_PATH)
+        #        -DWITH_OPENVX=ON          # TODO: install OpenVX and set OPENVX_ROOT
+        #        -DWITH_EIGEN=ON           # TODO: install Eigen (and probably use EIGEN_INCLUDE_PATH)
         #        -DWITH_IPP=ON
         # Cross-compilation handling
         -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY
