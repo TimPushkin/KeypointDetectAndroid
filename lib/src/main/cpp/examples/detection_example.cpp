@@ -19,7 +19,7 @@ void printOutput(const std::shared_ptr<featurelib::DetectionResult> &output) {
               << kp->getStrength() << std::endl;
   }
 
-  std::cout << "Printing descriptors_" << std::endl;
+  std::cout << "Printing descriptors" << std::endl;
   for (const auto &row : output->getDescriptors()) {
     for (const auto &element : row) std::cout << element << ' ';
     std::cout << std::endl;
