@@ -2,6 +2,8 @@ package com.github.featuredetectlib.traditional
 
 import com.github.featuredetectlib.Keypoint
 
+private const val ANGLE_NA = -1f // OpenCV sets angle to -1 if it is not applicable
+
 /**
  * Wrapper for a native keypoint.
  */
@@ -15,5 +17,5 @@ internal data class NativeKeypointWrapper(private val keypoint: StrippedKeypoint
     override val size: Float
         get() = keypoint.size
     override val angle: Float?
-        get() = keypoint.angle.takeIf { it != -1f } // angle == -1 if not applicable
+        get() = keypoint.angle.takeIf { it != ANGLE_NA }
 }
