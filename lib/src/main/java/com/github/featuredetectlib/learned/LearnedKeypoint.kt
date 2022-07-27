@@ -5,7 +5,7 @@ import com.github.featuredetectlib.Keypoint
 /**
  * Keypoint which represents an image feature.
  */
-data class LearnedKeypoint(
+internal data class LearnedKeypoint(
     override val x: Float,
     override val y: Float,
     override val strength: Float,

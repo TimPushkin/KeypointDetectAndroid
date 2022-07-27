@@ -2,6 +2,9 @@ package com.github.featuredetectandroid.utils
 
 import android.content.Context
 import com.github.featuredetectlib.learned.SuperPoint
+import com.github.featuredetectlib.traditional.Orb
+import com.github.featuredetectlib.traditional.Sift
+import com.github.featuredetectlib.traditional.Surf
 
 enum class KeypointDetectionAlgorithm(val algorithmName: String) {
     NONE("None"),
@@ -23,6 +26,9 @@ enum class KeypointDetectionAlgorithm(val algorithmName: String) {
             width: Int,
             height: Int
         ) = when (algorithmName) {
+            SIFT.algorithmName -> Sift(width, height)
+            SURF.algorithmName -> Surf(width, height)
+            ORB.algorithmName -> Orb(width, height)
             SUPERPOINT.algorithmName -> SuperPoint(context, width, height)
             else -> null
         }
