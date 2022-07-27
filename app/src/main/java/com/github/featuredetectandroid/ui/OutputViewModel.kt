@@ -14,5 +14,5 @@ class OutputViewModel : ViewModel() {
     var featureDetector: FeatureDetector? by mutableStateOf(null)
     var frames: Int by mutableStateOf(0)
     var milliseconds: Long by mutableStateOf(0)
-    var isDetecotrChanged: Boolean by mutableStateOf(false)
+    var isDetectorChanged: Boolean by mutableStateOf(false)
 }

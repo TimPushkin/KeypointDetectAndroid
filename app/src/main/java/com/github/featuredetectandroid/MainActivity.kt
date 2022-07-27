@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
                                 width = outputViewModel.featureDetector?.width ?: 0,
                                 height = outputViewModel.featureDetector?.height ?: 0
                             )
-                        outputViewModel.isDetecotrChanged = true
+                        outputViewModel.isDetectorChanged = true
                         outputViewModel.frames = 0
                         outputViewModel.milliseconds = 0
                     }
