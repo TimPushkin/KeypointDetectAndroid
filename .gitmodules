@@ -1,4 +1,4 @@
 [submodule "utils/external/superpoint"]
 	path = utils/external/superpoint
 	url = https://github.com/TimPushkin/SuperPointPretrainedNetwork.git
-	branch = decoder
+	branch = master
