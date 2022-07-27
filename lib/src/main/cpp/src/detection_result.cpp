@@ -14,4 +14,4 @@ std::vector<std::vector<uint8_t>> DetectionResult::getDescriptors() {
   return descriptors_;
 }
 
-} // namespace featurelib
+}  // namespace featurelib

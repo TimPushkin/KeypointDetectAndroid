@@ -1,5 +1,5 @@
-#ifndef FEATURELIB_INCLUDE_STRIPPED_KEYPOINT_H_
-#define FEATURELIB_INCLUDE_STRIPPED_KEYPOINT_H_
+#ifndef LIB_SRC_MAIN_CPP_INCLUDE_STRIPPED_KEYPOINT_H_
+#define LIB_SRC_MAIN_CPP_INCLUDE_STRIPPED_KEYPOINT_H_
 
 #ifdef SCAPIX_BRIDGE
 
@@ -12,9 +12,9 @@ namespace internal {
 template<typename T>
 using base_object = scapix::bridge::object<T>;
 
-} // namespace internal
+}  // namespace internal
 
-} // namespace featurelib
+}  // namespace featurelib
 
 #else
 
@@ -30,7 +30,7 @@ class base_object {
 
 }  // namespace featurelib
 
-#endif // SCAPIX_BRIDGE
+#endif  // SCAPIX_BRIDGE
 
 namespace featurelib {
 
@@ -56,6 +56,6 @@ class StrippedKeypoint : public internal::base_object<StrippedKeypoint> {
   float strength_;
 };
 
-} // namespace featurelib
+}  // namespace featurelib
 
-#endif // FEATURELIB_INCLUDE_STRIPPED_KEYPOINT_H_
+#endif  // LIB_SRC_MAIN_CPP_INCLUDE_STRIPPED_KEYPOINT_H_

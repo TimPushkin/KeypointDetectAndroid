@@ -1,6 +1,8 @@
-#ifndef FEATURELIB_INCLUDE_ORB_DETECTOR_H_
-#define FEATURELIB_INCLUDE_ORB_DETECTOR_H_
+#ifndef LIB_SRC_MAIN_CPP_INCLUDE_ORB_DETECTOR_H_
+#define LIB_SRC_MAIN_CPP_INCLUDE_ORB_DETECTOR_H_
 
+#include <memory>
+#include <vector>
 #include <opencv2/features2d.hpp>
 #include "feature_detector.h"
 
@@ -16,6 +18,6 @@ class OrbDetector : public FeatureDetector {
   cv::Ptr<cv::Feature2D> orb_ = cv::ORB::create();
 };
 
-} // namespace featurelib
+}  // namespace featurelib
 
-#endif // FEATURELIB_INCLUDE_ORB_DETECTOR_H_
+#endif  // LIB_SRC_MAIN_CPP_INCLUDE_ORB_DETECTOR_H_

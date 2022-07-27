@@ -7,8 +7,8 @@
 
 std::vector<uint8_t> matToVector(const cv::Mat &mat) {
   std::vector<uint8_t> result;
-  auto cont = mat.isContinuous() ? mat : mat.clone(); // make sure the Mat is continuous
-  cont.reshape(1, 1).copyTo(result); // copy from a 1D Mat
+  auto cont = mat.isContinuous() ? mat : mat.clone();  // make sure the Mat is continuous
+  cont.reshape(1, 1).copyTo(result);  // copy from a 1D Mat
   return result;
 }
 

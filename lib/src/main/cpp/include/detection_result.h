@@ -1,7 +1,7 @@
-#ifndef FEATURELIB_INCLUDE_DETECTION_RESULT_H_
-#define FEATURELIB_INCLUDE_DETECTION_RESULT_H_
+#ifndef LIB_SRC_MAIN_CPP_INCLUDE_DETECTION_RESULT_H_
+#define LIB_SRC_MAIN_CPP_INCLUDE_DETECTION_RESULT_H_
 
-#include <utility>
+#include <memory>
 #include <vector>
 #include <cstdint>
 #include "stripped_keypoint.h"
@@ -17,9 +17,9 @@ namespace internal {
 template<typename T>
 using base_object = scapix::bridge::object<T>;
 
-} // namespace internal
+}  // namespace internal
 
-} // namespace featurelib
+}  // namespace featurelib
 
 #else
 
@@ -31,17 +31,18 @@ template<typename T>
 class base_object {
 };
 
-} // namespace internal
+}  // namespace internal
 
-} // namespace featurelib
+}  // namespace featurelib
 
-#endif // SCAPIX_BRIDGE
+#endif  // SCAPIX_BRIDGE
 
 namespace featurelib {
 
 class DetectionResult : public internal::base_object<DetectionResult> {
  public:
-  DetectionResult(std::vector<std::shared_ptr<StrippedKeypoint>> keypoints, std::vector<std::vector<uint8_t>> descriptors);
+  DetectionResult(std::vector<std::shared_ptr<StrippedKeypoint>> keypoints,
+                  std::vector<std::vector<uint8_t>> descriptors);
 
   std::vector<std::shared_ptr<StrippedKeypoint>> getKeypoints();
 
@@ -52,6 +53,6 @@ class DetectionResult : public internal::base_object<DetectionResult> {
   std::vector<std::vector<uint8_t>> descriptors_;
 };
 
-} // namespace featurelib
+}  // namespace featurelib
 
-#endif // FEATURELIB_INCLUDE_DETECTION_RESULT_H_
+#endif  // LIB_SRC_MAIN_CPP_INCLUDE_DETECTION_RESULT_H_

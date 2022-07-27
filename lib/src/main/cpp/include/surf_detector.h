@@ -1,6 +1,8 @@
-#ifndef FEATURELIB_INCLUDE_SURF_DETECTOR_H_
-#define FEATURELIB_INCLUDE_SURF_DETECTOR_H_
+#ifndef LIB_SRC_MAIN_CPP_INCLUDE_SURF_DETECTOR_H_
+#define LIB_SRC_MAIN_CPP_INCLUDE_SURF_DETECTOR_H_
 
+#include <memory>
+#include <vector>
 #include <opencv2/xfeatures2d.hpp>
 #include "feature_detector.h"
 
@@ -16,6 +18,6 @@ class SurfDetector : public FeatureDetector {
   cv::Ptr<cv::Feature2D> surf_ = cv::xfeatures2d::SURF::create();
 };
 
-} // namespace featurelib
+}  // namespace featurelib
 
-#endif // FEATURELIB_INCLUDE_SURF_DETECTOR_H_
+#endif  // LIB_SRC_MAIN_CPP_INCLUDE_SURF_DETECTOR_H_

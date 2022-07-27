@@ -1,3 +1,5 @@
+#include <vector>
+#include <memory>
 #include "conversions.h"
 
 cv::Mat vectorToMat(const std::vector<std::uint8_t> &input_vector, int height, int width) {
@@ -19,11 +21,16 @@ std::vector<std::vector<uint8_t>> matTo2DVector(const cv::Mat &mat) {
   return result;
 }
 
-std::vector<std::shared_ptr<featurelib::StrippedKeypoint>> convertToStructure(const std::vector<cv::KeyPoint> &key_points) {
+std::vector<std::shared_ptr<featurelib::StrippedKeypoint>> convertToStructure(
+    const std::vector<cv::KeyPoint> &key_points) {
   std::vector<std::shared_ptr<featurelib::StrippedKeypoint>> output;
   output.reserve(key_points.size());
   for (auto &kp : key_points) {
-    output.emplace_back(std::make_shared<featurelib::StrippedKeypoint>(kp.pt.x, kp.pt.y, kp.angle, kp.response, kp.size));
+    output.emplace_back(std::make_shared<featurelib::StrippedKeypoint>(kp.pt.x,
+                                                                       kp.pt.y,
+                                                                       kp.angle,
+                                                                       kp.response,
+                                                                       kp.size));
   }
   return output;
 }

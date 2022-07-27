@@ -7,7 +7,7 @@ namespace featurelib {
 SiftDetector::SiftDetector(int width, int height) : FeatureDetector(width, height) {}
 
 std::shared_ptr<featurelib::DetectionResult> SiftDetector::detect(const std::vector<std::uint8_t> &input) const {
-  if (height_ <= 0 || width_ <= 0) { // cv::cvtColor throws on empty input
+  if (height_ <= 0 || width_ <= 0) {  // cv::cvtColor throws on empty input
     return std::make_shared<DetectionResult>(
             std::vector<std::shared_ptr<StrippedKeypoint>>(),
             std::vector<std::vector<uint8_t>>());
@@ -27,4 +27,4 @@ std::shared_ptr<featurelib::DetectionResult> SiftDetector::detect(const std::vec
   return std::make_shared<DetectionResult>(keypoints, descriptors);
 }
 
-} // namespace featurelib
+}  // namespace featurelib

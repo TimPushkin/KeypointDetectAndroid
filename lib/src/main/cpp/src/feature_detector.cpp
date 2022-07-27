@@ -22,4 +22,4 @@ void FeatureDetector::setWidth(int value) {
   mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));
 }
 
-} // namespace featurelib
+}  // namespace featurelib

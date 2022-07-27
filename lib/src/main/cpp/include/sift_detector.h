@@ -1,6 +1,8 @@
-#ifndef FEATURELIB_INCLUDE_SIFT_DETECTOR_H_
-#define FEATURELIB_INCLUDE_SIFT_DETECTOR_H_
+#ifndef LIB_SRC_MAIN_CPP_INCLUDE_SIFT_DETECTOR_H_
+#define LIB_SRC_MAIN_CPP_INCLUDE_SIFT_DETECTOR_H_
 
+#include <memory>
+#include <vector>
 #include <opencv2/features2d.hpp>
 #include "feature_detector.h"
 
@@ -16,6 +18,6 @@ class SiftDetector : public FeatureDetector {
   cv::Ptr<cv::Feature2D> sift_ = cv::SIFT::create();
 };
 
-} // namespace featurelib
+}  // namespace featurelib
 
-#endif // FEATURELIB_INCLUDE_SIFT_DETECTOR_H_
+#endif  // LIB_SRC_MAIN_CPP_INCLUDE_SIFT_DETECTOR_H_

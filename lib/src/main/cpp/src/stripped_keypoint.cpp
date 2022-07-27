@@ -25,4 +25,4 @@ float StrippedKeypoint::getStrength() const {
   return strength_;
 }
 
-} // namespace featurelib
+}  // namespace featurelib
