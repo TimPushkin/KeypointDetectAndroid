@@ -2,7 +2,7 @@ set(PROJECT_BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
 
 set(OPENCV_VERSION 4.6.0)
 # TODO: remove unused modules
-set(OPENCV_MODULES core,calib3d,imgproc,imgcodecs,features2d,xfeatures2d)
+set(OPENCV_MODULES core,imgproc,imgcodecs,features2d,xfeatures2d)
 
 set(OPENCV_DOWNLOAD_DIR ${PROJECT_BUILD_DIR}/opencv-download)
 set(OPENCV_BUILD_DIR ${PROJECT_BUILD_DIR}/opencv-build)
