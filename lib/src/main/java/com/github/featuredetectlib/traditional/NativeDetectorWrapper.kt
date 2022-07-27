@@ -1,0 +1,22 @@
+package com.github.featuredetectlib.traditional
+
+import com.github.featuredetectlib.Descriptor
+import com.github.featuredetectlib.FeatureDetector
+import com.github.featuredetectlib.Keypoint
+import com.github.featuredetectlib.traditional.FeatureDetector as NativeDetector
+
+/**
+ * Wrapper for a native feature detector.
+ */
+internal class NativeDetectorWrapper(private val detector: NativeDetector) : FeatureDetector {
+    override var width = detector.width
+    override var height = detector.height
+
+    override fun detect(image: ByteArray): Pair<List<Keypoint>, List<Descriptor>> {
+        val output = detector.detect(image)
+        // TODO: try to convert concurrently with async - await
+        val keypoints = output.keypoints.map { NativeKeypointWrapper(it) }
+        val descriptors = output.descriptors.map { descriptor -> descriptor.map { it.toFloat() } }
+        return keypoints to descriptors
+    }
+}
