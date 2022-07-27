@@ -1,5 +1,6 @@
 package com.github.featuredetectandroid.utils
 
+import android.os.SystemClock
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -46,7 +47,14 @@ class PhotoAnalyzer(private val outputViewModel: OutputViewModel) : ImageAnalysi
             outputViewModel.featureDetector?.let { detector ->
                 if (detector.width != width) detector.width = width
                 if (detector.height != height) detector.height = height
+                val startTime = SystemClock.elapsedRealtime()
                 val (keypoints, _) = detector.detect(luminanceArrayToRGB(oriented))
+                if (!outputViewModel.isDetecotrChanged) {
+                    outputViewModel.milliseconds += SystemClock.elapsedRealtime() - startTime
+                    outputViewModel.frames += 1
+                } else {
+                    outputViewModel.isDetecotrChanged = false
+                }
                 keypoints.map { Offset(it.x, it.y) }
             } ?: emptyList()
 

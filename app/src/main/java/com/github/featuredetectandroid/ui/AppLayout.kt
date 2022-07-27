@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
 
 @Composable
@@ -24,6 +26,8 @@ fun AppLayout(
     isCameraPermissionGranted: Boolean,
     keypointOffsets: List<Offset>,
     frameBitmap: Bitmap?,
+    frames: Int,
+    milliseconds: Long,
     selectedAlgorithm: String,
     onAlgorithmSelected: (String) -> Unit
 ) {
@@ -63,6 +67,18 @@ fun AppLayout(
                             strokeWidth = 10f
                         )
                     }
+
+                    Text(
+                        text = "Average keypoints detection time: " +
+                            "${if (frames != 0) milliseconds / frames else "-"} ms.",
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(
+                                vertical = 30.dp,
+                                horizontal = 20.dp
+                            ),
+                        style = MaterialTheme.typography.body1
+                    )
                 }
             } else {
                 Text("Camera permission required")
