@@ -5,7 +5,7 @@ import com.github.featuredetectlib.Keypoint
 /**
  * Wrapper for a native keypoint.
  */
-internal data class NativeKeypointWrapper(private val keypoint: KeyPoint) : Keypoint {
+internal data class NativeKeypointWrapper(private val keypoint: StrippedKeypoint) : Keypoint {
     override val x: Float
         get() = keypoint.x
     override val y: Float
