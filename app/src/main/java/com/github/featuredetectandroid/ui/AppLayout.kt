@@ -74,7 +74,9 @@ fun AppLayout(
                         .weight(1f)
                 )
 
-                if (keypointOffsets.isNotEmpty()) {
+                if (keypointOffsets.isNotEmpty() ||
+                    selectedAlgorithm != KeypointDetectionAlgorithm.NONE.algorithmName
+                ) {
                     Text(
                         text = "Detection time: $calcTimeMs ms.",
                         modifier = Modifier.padding(
