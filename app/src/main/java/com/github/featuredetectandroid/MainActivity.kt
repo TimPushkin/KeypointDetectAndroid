@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                     keypointOffsets = outputViewModel.keypointOffsets,
                     frameBitmap = outputViewModel.frameBitmap,
                     selectedAlgorithm = selectedAlgorithm,
-                    milliseconds = outputViewModel.milliseconds,
+                    calcTimeMs = outputViewModel.calcTimeMs,
                     onAlgorithmSelected = { algorithmName ->
                         preferencesManager.putSelectedAlgorithm(algorithmName)
                         selectedAlgorithm = algorithmName

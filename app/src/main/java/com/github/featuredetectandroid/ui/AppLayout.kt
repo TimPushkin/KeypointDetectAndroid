@@ -27,7 +27,7 @@ fun AppLayout(
     isCameraPermissionGranted: Boolean,
     keypointOffsets: List<Offset>,
     frameBitmap: Bitmap?,
-    milliseconds: Long,
+    calcTimeMs: Long,
     selectedAlgorithm: String,
     onAlgorithmSelected: (String) -> Unit
 ) {
@@ -76,7 +76,7 @@ fun AppLayout(
 
                 if (keypointOffsets.isNotEmpty()) {
                     Text(
-                        text = "Last detection time: $milliseconds ms.",
+                        text = "Last detection time: $calcTimeMs ms.",
                         modifier = Modifier.padding(
                             vertical = 30.dp,
                             horizontal = 20.dp
