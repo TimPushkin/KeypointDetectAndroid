@@ -79,7 +79,6 @@ class MainActivity : ComponentActivity() {
                                 width = outputViewModel.featureDetector?.width ?: 0,
                                 height = outputViewModel.featureDetector?.height ?: 0
                             )
-                        outputViewModel.milliseconds = 0
                     }
                 )
             }

@@ -49,9 +49,7 @@ class PhotoAnalyzer(private val outputViewModel: OutputViewModel) : ImageAnalysi
                 if (detector.height != height) detector.height = height
                 val startTime = SystemClock.elapsedRealtime()
                 val (keypoints, _) = detector.detect(luminanceArrayToRGB(oriented))
-                if (outputViewModel.keypointOffsets.isNotEmpty()) {
-                    outputViewModel.milliseconds = SystemClock.elapsedRealtime() - startTime
-                }
+                outputViewModel.milliseconds = SystemClock.elapsedRealtime() - startTime
                 keypoints.map { Offset(it.x, it.y) }
             } ?: emptyList()
 

@@ -55,8 +55,7 @@ fun Menu(
             )
             Text(
                 text = option,
-                textAlign = TextAlign.Start,
-                style = MaterialTheme.typography.body1
+                textAlign = TextAlign.Start
             )
         }
     }

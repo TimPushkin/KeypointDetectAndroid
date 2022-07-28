@@ -6,11 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Canvas
@@ -48,7 +47,7 @@ fun AppLayout(
                 .fillMaxSize()
                 .padding(paddingValues),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (!isCameraPermissionGranted) {
                 Text("Camera permission required")
@@ -81,8 +80,7 @@ fun AppLayout(
                         modifier = Modifier.padding(
                             vertical = 30.dp,
                             horizontal = 20.dp
-                        ),
-                        style = MaterialTheme.typography.body1
+                        )
                     )
                 }
             }
