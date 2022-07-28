@@ -67,7 +67,6 @@ class MainActivity : ComponentActivity() {
                     keypointOffsets = outputViewModel.keypointOffsets,
                     frameBitmap = outputViewModel.frameBitmap,
                     selectedAlgorithm = selectedAlgorithm,
-                    frames = outputViewModel.frames,
                     milliseconds = outputViewModel.milliseconds,
                     onAlgorithmSelected = { algorithmName ->
                         preferencesManager.putSelectedAlgorithm(algorithmName)
@@ -80,8 +79,6 @@ class MainActivity : ComponentActivity() {
                                 width = outputViewModel.featureDetector?.width ?: 0,
                                 height = outputViewModel.featureDetector?.height ?: 0
                             )
-                        outputViewModel.isDetectorChanged = true
-                        outputViewModel.frames = 0
                         outputViewModel.milliseconds = 0
                     }
                 )
