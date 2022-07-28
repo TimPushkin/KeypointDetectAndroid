@@ -48,14 +48,16 @@ fun AppLayout(
                 return@Box
             }
 
+            val keypointPaint = Paint().apply {
+                color = Color.Blue
+                strokeWidth = 10f
+            }
+
             frameBitmap?.asImageBitmap()?.let { bitmap ->
                 Canvas(bitmap).drawPoints(
                     pointMode = PointMode.Points,
                     points = keypointOffsets,
-                    paint = Paint().apply {
-                        color = Color.Blue
-                        strokeWidth = 10f
-                    }
+                    paint = keypointPaint
                 )
 
                 Image(
