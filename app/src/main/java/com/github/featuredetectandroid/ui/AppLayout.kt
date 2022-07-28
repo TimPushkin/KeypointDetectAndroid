@@ -76,7 +76,7 @@ fun AppLayout(
 
                 if (keypointOffsets.isNotEmpty()) {
                     Text(
-                        text = "Last detection time: $calcTimeMs ms.",
+                        text = "Detection time: $calcTimeMs ms.",
                         modifier = Modifier.padding(
                             vertical = 30.dp,
                             horizontal = 20.dp
