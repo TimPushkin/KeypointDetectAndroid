@@ -71,7 +71,6 @@ class MainActivity : ComponentActivity() {
                     onAlgorithmSelected = { algorithmName ->
                         preferencesManager.putSelectedAlgorithm(algorithmName)
                         selectedAlgorithm = algorithmName
-                        outputViewModel.keypointOffsets = emptyList()
                         outputViewModel.featureDetector =
                             KeypointDetectionAlgorithm.nameToFeatureDetector(
                                 algorithmName = algorithmName,
