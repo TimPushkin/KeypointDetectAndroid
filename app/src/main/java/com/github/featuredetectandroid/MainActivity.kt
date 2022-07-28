@@ -11,7 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888
+import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -122,7 +122,7 @@ class MainActivity : ComponentActivity() {
             val cameraProvider = cameraProviderFuture.get()
 
             val imageAnalyzer = ImageAnalysis.Builder()
-                .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_YUV_420_888)
+                .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_RGBA_8888)
                 .build()
                 .apply { setAnalyzer(cameraExecutor, PhotoAnalyzer(outputViewModel)) }
 
