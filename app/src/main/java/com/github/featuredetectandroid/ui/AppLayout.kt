@@ -14,7 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalDensity
@@ -48,40 +50,40 @@ fun AppLayout(
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            if (isCameraPermissionGranted) {
-                frameBitmap?.let { bitmap ->
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = "Grayscale photo"
-                    )
-
-                    val (width, height) = with(LocalDensity.current) {
-                        bitmap.width.toDp() to bitmap.height.toDp()
-                    }
-
-                    Canvas(modifier = Modifier.size(width, height)) {
-                        drawPoints(
-                            points = keypointOffsets,
-                            pointMode = PointMode.Points,
-                            color = Color.Blue,
-                            strokeWidth = 10f
-                        )
-                    }
-
-                    Text(
-                        text = "Average keypoints detection time: " +
-                            "${if (frames != 0) milliseconds / frames else "-"} ms.",
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(
-                                vertical = 30.dp,
-                                horizontal = 20.dp
-                            ),
-                        style = MaterialTheme.typography.body1
-                    )
-                }
-            } else {
+            if (!isCameraPermissionGranted) {
                 Text("Camera permission required")
+                return@Box
+            }
+
+            val keypointPaint = Paint().apply {
+                color = Color.Blue
+                strokeWidth = 10f
+            }
+
+            frameBitmap?.asImageBitmap()?.let { bitmap ->
+                Canvas(bitmap).drawPoints(
+                    pointMode = PointMode.Points,
+                    points = keypointOffsets,
+                    paint = keypointPaint
+                )
+
+                Image(
+                    bitmap = bitmap,
+                    contentDescription = "Grayscale photo",
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                Text(
+                    text = "Average keypoints detection time: " +
+                            "${if (frames != 0) milliseconds / frames else "-"} ms.",
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(
+                            vertical = 30.dp,
+                            horizontal = 20.dp
+                        ),
+                    style = MaterialTheme.typography.body1
+                )
             }
         }
     }

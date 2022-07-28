@@ -1,6 +1,14 @@
 message(STATUS "Configuring Scapix for ${SCAPIX_BRIDGE}")
 
-set(HEADER_FILES ${CMAKE_SOURCE_DIR}/include/feature_lib.h)
+set(
+        HEADER_FILES
+        ${CMAKE_SOURCE_DIR}/include/stripped_keypoint.h
+        ${CMAKE_SOURCE_DIR}/include/detection_result.h
+        ${CMAKE_SOURCE_DIR}/include/feature_detector.h
+        ${CMAKE_SOURCE_DIR}/include/sift_detector.h
+        ${CMAKE_SOURCE_DIR}/include/surf_detector.h
+        ${CMAKE_SOURCE_DIR}/include/orb_detector.h
+)
 
 include(FetchContent)
 FetchContent_Declare(
