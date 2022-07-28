@@ -9,6 +9,9 @@ import androidx.lifecycle.ViewModel
 import com.github.featuredetectlib.FeatureDetector
 
 class OutputViewModel : ViewModel() {
+    /**
+     * Mutable [Bitmap] to draw keypoints onto and display.
+     */
     var frameBitmap: Bitmap? by mutableStateOf(null)
     var keypointOffsets: List<Offset> by mutableStateOf(emptyList())
     var featureDetector: FeatureDetector? by mutableStateOf(null)
