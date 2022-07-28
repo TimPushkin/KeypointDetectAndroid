@@ -15,4 +15,5 @@ class OutputViewModel : ViewModel() {
     var frameBitmap: Bitmap? by mutableStateOf(null)
     var keypointOffsets: List<Offset> by mutableStateOf(emptyList())
     var featureDetector: FeatureDetector? by mutableStateOf(null)
+    var calcTimeMs: Long by mutableStateOf(0)
 }

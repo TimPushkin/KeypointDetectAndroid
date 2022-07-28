@@ -67,10 +67,10 @@ class MainActivity : ComponentActivity() {
                     keypointOffsets = outputViewModel.keypointOffsets,
                     frameBitmap = outputViewModel.frameBitmap,
                     selectedAlgorithm = selectedAlgorithm,
+                    calcTimeMs = outputViewModel.calcTimeMs,
                     onAlgorithmSelected = { algorithmName ->
                         preferencesManager.putSelectedAlgorithm(algorithmName)
                         selectedAlgorithm = algorithmName
-                        outputViewModel.keypointOffsets = emptyList()
                         outputViewModel.featureDetector =
                             KeypointDetectionAlgorithm.nameToFeatureDetector(
                                 algorithmName = algorithmName,

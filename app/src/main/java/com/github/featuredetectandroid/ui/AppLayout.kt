@@ -2,7 +2,8 @@ package com.github.featuredetectandroid.ui
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
@@ -16,13 +17,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.unit.dp
 import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
+
+private const val KEYPOINT_WIDTH = 10f
 
 @Composable
 fun AppLayout(
     isCameraPermissionGranted: Boolean,
     keypointOffsets: List<Offset>,
     frameBitmap: Bitmap?,
+    calcTimeMs: Long,
     selectedAlgorithm: String,
     onAlgorithmSelected: (String) -> Unit
 ) {
@@ -37,20 +42,21 @@ fun AppLayout(
         },
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            contentAlignment = Alignment.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (!isCameraPermissionGranted) {
                 Text("Camera permission required")
-                return@Box
+                return@Column
             }
 
             val keypointPaint = Paint().apply {
                 color = Color.Blue
-                strokeWidth = 10f
+                strokeWidth = KEYPOINT_WIDTH
             }
 
             frameBitmap?.asImageBitmap()?.let { bitmap ->
@@ -63,8 +69,22 @@ fun AppLayout(
                 Image(
                     bitmap = bitmap,
                     contentDescription = "Grayscale photo",
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f)
                 )
+
+                if (keypointOffsets.isNotEmpty() ||
+                    selectedAlgorithm != KeypointDetectionAlgorithm.NONE.algorithmName
+                ) {
+                    Text(
+                        text = "Detection time: $calcTimeMs ms.",
+                        modifier = Modifier.padding(
+                            vertical = 30.dp,
+                            horizontal = 20.dp
+                        )
+                    )
+                }
             }
         }
     }
