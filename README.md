@@ -12,7 +12,7 @@ Supported algorithms:
   
 App uses original library with 2 parts: the native one (based on OpenCV C++) and the JVM one (based on PyTorch for Kotlin).
 
-<img src="https://imgbox.com/cqNjK4FN" alt "Hi"/>
+<img src="https://images2.imgbox.com/b2/d9/cqNjK4FN_o.png" alt "Greetings"/>
 
 ## Getting started
 
@@ -36,6 +36,6 @@ Currently, required JVM classes, implementing native ones, are automatically gen
 ## User interaction
 
 The app is very easy to use. Give it permission to use the camera. Then you are free to analyze everything around you with it! To select a keypoint detection algorithm, open the menu with a swipe to the right. By default, the "None" mode is set, in which only the image from the camera is displayed on the screen. Select the desired algorithm, close the menu, point the camera at the object or view of interest and observe the obtained keypoints and their detection time.
-<img src="https://imgbox.com/n4bj9Jw6" alt "Permission"/>
-<img src="https://imgbox.com/NwBPkKMt" alt "Menu"/>
-<img src="https://imgbox.com/0ATu3Kq8" alt "App's appereance"/>
+<img src="https://images2.imgbox.com/f7/27/n4bj9Jw6_o.png" alt "Permission"/>
+<img src="https://images2.imgbox.com/22/8f/NwBPkKMt_o.png" alt "Menu"/>
+<img src="https://images2.imgbox.com/f1/90/0ATu3Kq8_o.png" alt "App's appereance"/>
