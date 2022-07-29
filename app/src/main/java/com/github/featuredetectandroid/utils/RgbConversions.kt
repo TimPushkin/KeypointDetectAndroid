@@ -54,7 +54,7 @@ fun rgbaComponentsToBitmap(imageArray: ByteArray, width: Int, height: Int): Bitm
             // ARGB_8888 pixel is stored in ABGR channel order
             put(
                 (a shl ALPHA_BIT_SHIFT) or (b shl BLUE_BIT_SHIFT) or
-                        (g shl GREEN_BIT_SHIFT) or (r shl RED_BIT_SHIFT)
+                    (g shl GREEN_BIT_SHIFT) or (r shl RED_BIT_SHIFT)
             )
         }
         rewind()
