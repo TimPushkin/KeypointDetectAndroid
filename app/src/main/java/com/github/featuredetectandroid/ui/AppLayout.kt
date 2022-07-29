@@ -3,6 +3,7 @@ package com.github.featuredetectandroid.ui
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -42,6 +43,18 @@ fun AppLayout(
         },
         modifier = Modifier.fillMaxSize()
     ) { paddingValues ->
+        if (!isCameraPermissionGranted) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Camera permission required")
+            }
+            return@Scaffold // Compose crashes when using return inside the Column below on release
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -49,11 +62,6 @@ fun AppLayout(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (!isCameraPermissionGranted) {
-                Text("Camera permission required")
-                return@Column
-            }
-
             val keypointPaint = Paint().apply {
                 color = Color.Blue
                 strokeWidth = KEYPOINT_WIDTH
