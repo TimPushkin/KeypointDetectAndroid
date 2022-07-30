@@ -1,6 +1,6 @@
 # Traditional keypoint detection algorithms
 
-This directory contains the native implementation of the SGBM-based depth estimation algorithm.
+This directory contains the c++ part of featuredetect application.
 
 ## Description
 
