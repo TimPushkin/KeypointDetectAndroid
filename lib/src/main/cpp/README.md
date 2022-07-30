@@ -1,29 +1,27 @@
 # Traditional keypoint detection algorithms
 
-This directory contains the c++ part of featuredetect application.
+This directory contains the native part of FeatureDetect application: the traditional SIFT, SURF, and ORB algorithms
+from OpenCV with OpenCV installation script and automatic language bridge generation.
 
-## Description
+## Algorithms
 
-[SIFT  (Scale-Invariant Feature Transform)](https://docs.opencv.org/3.4/d7/d60/classcv_1_1SIFT.html)
+- [SIFT  (Scale-Invariant Feature Transform)](https://docs.opencv.org/4.6.0/d7/d60/classcv_1_1SIFT.html)
+- [SURF (Speeded-Up Robust Features)](https://docs.opencv.org/4.6.0/d5/df7/classcv_1_1xfeatures2d_1_1SURF.html)
+- [ORB (Oriented FAST and Rotated BRIEF)](https://docs.opencv.org/4.6.0/db/d95/classcv_1_1ORB.html)
 
-[SURF (Speeded-Up Robust Features)](https://docs.opencv.org/3.4/d5/df7/classcv_1_1xfeatures2d_1_1SURF.html)
+These algorithms from OpenCV are used to calculate keypoints and their descriptors from an image.
 
-[ORB (Oriented FAST and Rotated BRIEF)](https://docs.opencv.org/3.4/d7/d60/classcv_1_1SIFT.html)
+The output is:
 
-These algorithms from OpenCV is used to
-calculate keypoints and descriptors from image. The result is:
-Firsly, vector of structures which contains floating-point numbers representing each keypoint of picture
-Secondly, a vector of descriptors accounting each keypoint which is also a vector of a floating-point numbers
-
-clang opencv contrib llvm aim path by cc cxx or set clang as highest priority compiller
-
+- A vector of keypoint structures containing keypoint's coordinates, angle, size, and strength
+- A vector of descriptors for each keypoint – each descriptor is a `float` array of algorithm-specific size
 
 ## Project structure
 
 The project consists of the following directories:
 
 - `examples` – usage examples (see below)
-- `external` - 3rd-party libraries
+- `external` – 3rd-party libraries
 - `include` – public headers to include when importing this CMake project
 - `src` – source code
 
@@ -33,24 +31,10 @@ The project consists of the following directories:
 example, `ninja`, with `-DCMAKE_GENERATOR=<generator name>` in the configuration command, because
 Windows' default generator `nmake` seems to fail.
 
-This project requires [OpenCV](https://github.com/opencv/opencv) 4.6.0 and [OpenCV-contrib](https://github.com/opencv/opencv_contrib) contains extra modules, you should install same version as main libary. You can either
-manually download and install them, or run `BuildOpenCV.cmake` script that will download and build
-both of them for you for you.
+This project requires [OpenCV](https://github.com/opencv/opencv) 4.6.0 with extra modules from
+[OpenCV-contrib](https://github.com/opencv/opencv_contrib) (`xfeatures2d`). You can either manually download and install
+them, or run `BuildOpenCV.cmake` script that will download and build both of them for you.
 
-Using opencv-contrib on intel architecture requires [clang-14](https://apt.llvm.org/) when you configure project with or without examples, it doesn't matters. Specify path in environment variables:
-```shell
-export CC=<path>
-```
-```shell
-export CXX=<path>
-```
-Or specify clang as the highest priority compiler:
-```shell
-sudo update-alternatives --config c++
-```
-```shell
-sudo update-alternatives --config cc
-```
 If you already have OpenCV, you can build this project with CMake:
 
 ```shell
@@ -115,7 +99,7 @@ configure command as follows:
 cmake -DSCAPIX_BRIDGE=<language> .
 ```
 
-[Scapix](https://github.com/scapix-com/scapix) is used for this -- see its page for the set of the
+[Scapix](https://github.com/scapix-com/scapix) is used for this – see its page for the set of the
 supported languages.
 
 The interface will be placed in the corresponding subdirectory of `generated` directory after the
@@ -126,4 +110,5 @@ build.
 Files in `examples` directory demonstrate how to use this project for depth estimation. Specify
 `-DBUILD_EXAMPLES=ON` to build them.
 
-- `detection_exmaple.cpp` accepts one CLI arguments: path to the image, then calculates keypoints and assosiated descriptors with three algorithms and prints them separately to `stdout`.
+- `detection_exmaple.cpp` accepts path to the image as a CLI argument, calculates keypoints and associated descriptors
+  with three algorithms, and prints them separately to `stdout`
