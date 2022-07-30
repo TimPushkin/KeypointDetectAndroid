@@ -1,41 +1,48 @@
 # FeatureDetectAndroid
 
-Android app for comparing traditional and learned techniques of feature detection and description. It provides an interface for selecting a keypoints detection algorithm and displays an image with keypoints and their detection time.
+Android app for comparing traditional and learned techniques of feature detection and description. It provides a
+GUI for selecting a keypoint detection algorithm and displays an image with keypoints and their detection time in soft
+real-time.
 
 Supported algorithms:
-1. Traditional:
-  - SIFT
-  - SURF
-  - ORB
-2. Learned:
-  - SuperPoint
-  
-App uses original library with 2 parts: the native one (based on OpenCV C++) and the JVM one (based on PyTorch for Kotlin).
 
-<img src="https://images2.imgbox.com/b2/d9/cqNjK4FN_o.png" alt "Greetings"/>
+|   Traditional   |  Learned   |
+|:---------------:|:----------:|
+| SIFT, SURF, ORB | SuperPoint |
+
+![Detection result example](https://i.imgur.com/lD8ERK3.png)
+
+App uses its original library consisting of parts: native (traditional algorithms from OpenCV) and JVM (learned
+algorithms based on PyTorch for Android).
 
 ## Getting started
 
-To build this project you need an OpenCV build suitable for the required Android ABI in your system.
+Follow these steps to buils the app:
 
-Run `BuildOpenCV.cmake` script which will download and build OpenCV
-automatically with the recommended optimizations. Read more about how to run the script in the
-native part's README. You have to run it once for every Android ABI you plan to use.
+1. **Configure traditional algorithms**: run [BuildOpenCV](lib/src/main/cpp/BuildOpenCV.cmake) script
+   to automatically download and install OpenCV for the required Android ABI. Read more about this script and its
+   arguments in the [native README](lib/src/main/cpp/README.md).
+2. **Configure learned algorithms**:
 
-You also need installed pytorch. If you don't have it, call `pip install pytorch`.
+```shell
+# In any of the the project directories
+pip install pytorch          # Installs PyTorch
+git submodule update --init  # Initializes SuperPoint Git submodule
 
-Then do the following:
-1. Call `git submodule update --init`.
-2. Run `utils/save_for_mobile.py` with utils as the working directory.
+# In `utils` subdirectory
+python save_for_mobile.py    # Converts SuperPoint to mobile and saves it to library's assets
+```
 
-After these steps select your active ABI and build the project with Gradle -- the app is available in `:app` module and the library is available in
-`:lib` module.
+3. **Build the project** with Gradle for the required ABI (this must be the same ABI you built OpenCV for).
 
-Currently, required JVM classes, implementing native ones, are automatically generated.
+## App usage
 
-## User interaction
+The app is very easy to use: give it the camera permission, and you are free to analyze everything around you with it!
 
-The app is very easy to use. Give it permission to use the camera. Then you are free to analyze everything around you with it! To select a keypoint detection algorithm, open the menu with a swipe to the right. By default, the "None" mode is set, in which only the image from the camera is displayed on the screen. Select the desired algorithm, close the menu, point the camera at the object or view of interest and observe the obtained keypoints and their detection time.
-<img src="https://images2.imgbox.com/f7/27/n4bj9Jw6_o.png" alt "Permission"/>
-<img src="https://images2.imgbox.com/22/8f/NwBPkKMt_o.png" alt "Menu"/>
-<img src="https://images2.imgbox.com/f1/90/0ATu3Kq8_o.png" alt "App's appereance"/>
+- To select a keypoint detection algorithm, open the menu with a swipe to the right.
+- By default, the `None` mode is set, in which only the image from the camera is displayed on the screen.
+- Select the desired algorithm, close the menu, and point the camera at the scene of interest and observe.
+- The obtained keypoints and their detection time will be displayed on screen.
+
+| ![Permission](https://i.imgur.com/dMPUeci.png) | ![Menu](https://i.imgur.com/HE9lq7D.png)  | ![Detection](https://i.imgur.com/TQbCCZu.png) |
+|:----------------------------------------------:|:-----------------------------------------:|:---------------------------------------------:|
