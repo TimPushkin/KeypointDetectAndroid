@@ -16,10 +16,6 @@ enum class KeypointDetectionAlgorithm(val algorithmName: String) {
     companion object {
         val names = values().map { it.algorithmName }
 
-        /**
-         * SuperPoint, which needs a context during initialization,
-         * does not retain links to it, so no context leak needs to be handled.
-         */
         fun nameToFeatureDetector(
             context: Context,
             algorithmName: String,
@@ -29,7 +25,7 @@ enum class KeypointDetectionAlgorithm(val algorithmName: String) {
             SIFT.algorithmName -> Sift(width, height)
             SURF.algorithmName -> Surf(width, height)
             ORB.algorithmName -> Orb(width, height)
-            SUPERPOINT.algorithmName -> SuperPoint(context, width, height)
+            SUPERPOINT.algorithmName -> SuperPoint.Builder(context, width, height).build()
             else -> null
         }
     }

@@ -22,7 +22,6 @@ internal class NativeDetectorWrapper(private val detector: NativeDetector) : Fea
 
     override fun detect(image: ByteArray): Pair<List<Keypoint>, List<Descriptor>> {
         val output = detector.detect(image)
-        // TODO: try to convert concurrently with async - await
         val keypoints = output.keypoints.map { NativeKeypointWrapper(it) }
         val descriptors = output.descriptors.map { descriptor -> descriptor.map { it.toFloat() } }
         return keypoints to descriptors
