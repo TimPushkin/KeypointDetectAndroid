@@ -1,4 +1,4 @@
-package com.github.featuredetectandroid
+package com.github.kpdandroid
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -18,12 +18,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
-import com.github.featuredetectandroid.ui.AppLayout
-import com.github.featuredetectandroid.ui.OutputViewModel
-import com.github.featuredetectandroid.ui.theme.FeatureDetectAppTheme
-import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
-import com.github.featuredetectandroid.utils.PhotoAnalyzer
-import com.github.featuredetectandroid.utils.PreferencesManager
+import com.github.kpdandroid.ui.AppLayout
+import com.github.kpdandroid.ui.OutputViewModel
+import com.github.kpdandroid.ui.theme.KeypointDetectAppTheme
+import com.github.kpdandroid.utils.KeypointDetectionAlgorithm
+import com.github.kpdandroid.utils.PhotoAnalyzer
+import com.github.kpdandroid.utils.PreferencesManager
 import java.util.concurrent.Executors
 
 private const val TAG = "MainActivity"
@@ -48,35 +48,35 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        preferencesManager = (application as FeatureDetectApp).preferencesManager
+        preferencesManager = (application as KeypointDetectApp).preferencesManager
 
-        outputViewModel.featureDetector = KeypointDetectionAlgorithm.nameToFeatureDetector(
-            algorithmName = preferencesManager.getSelectedAlgorithm(),
+        outputViewModel.keypointDetector = KeypointDetectionAlgorithm.nameToKeypointDetector(
+            algorithmName = preferencesManager.getSelectedAlgorithmName(),
             context = this,
-            width = outputViewModel.featureDetector?.width ?: 0,
-            height = outputViewModel.featureDetector?.height ?: 0
+            width = outputViewModel.keypointDetector?.width ?: 0,
+            height = outputViewModel.keypointDetector?.height ?: 0
         )
 
         setContent {
-            FeatureDetectAppTheme {
-                var selectedAlgorithm by remember {
-                    mutableStateOf(preferencesManager.getSelectedAlgorithm())
+            KeypointDetectAppTheme {
+                var selectedAlgorithmName by remember {
+                    mutableStateOf(preferencesManager.getSelectedAlgorithmName())
                 }
                 AppLayout(
                     isCameraPermissionGranted = isCameraPermissionGranted(),
                     keypointOffsets = outputViewModel.keypointOffsets,
                     frameBitmap = outputViewModel.frameBitmap,
-                    selectedAlgorithm = selectedAlgorithm,
+                    selectedAlgorithmName = selectedAlgorithmName,
                     calcTimeMs = outputViewModel.calcTimeMs,
                     onAlgorithmSelected = { algorithmName ->
-                        preferencesManager.putSelectedAlgorithm(algorithmName)
-                        selectedAlgorithm = algorithmName
-                        outputViewModel.featureDetector =
-                            KeypointDetectionAlgorithm.nameToFeatureDetector(
+                        preferencesManager.putSelectedAlgorithmName(algorithmName)
+                        selectedAlgorithmName = algorithmName
+                        outputViewModel.keypointDetector =
+                            KeypointDetectionAlgorithm.nameToKeypointDetector(
                                 algorithmName = algorithmName,
                                 context = this,
-                                width = outputViewModel.featureDetector?.width ?: 0,
-                                height = outputViewModel.featureDetector?.height ?: 0
+                                width = outputViewModel.keypointDetector?.width ?: 0,
+                                height = outputViewModel.keypointDetector?.height ?: 0
                             )
                     }
                 )

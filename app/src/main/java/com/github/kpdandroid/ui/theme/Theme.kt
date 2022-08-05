@@ -1,4 +1,4 @@
-package com.github.featuredetectandroid.ui.theme
+package com.github.kpdandroid.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
@@ -21,17 +21,14 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun FeatureDetectAppTheme(
+fun KeypointDetectAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val systemUiController = rememberSystemUiController()
-    val colors = if (darkTheme) {
-        DarkColorPalette
-    } else {
-        LightColorPalette
-    }
     systemUiController.setSystemBarsColor(color = Color.Blue)
+
+    val colors = if (darkTheme) DarkColorPalette else LightColorPalette
 
     MaterialTheme(
         colors = colors,

@@ -1,14 +1,14 @@
-package com.github.featuredetectlib.traditional
+package com.github.kpdlib.traditional
 
-import com.github.featuredetectlib.Descriptor
-import com.github.featuredetectlib.FeatureDetector
-import com.github.featuredetectlib.Keypoint
-import com.github.featuredetectlib.traditional.FeatureDetector as NativeDetector
+import com.github.kpdlib.Descriptor
+import com.github.kpdlib.KeypointDetector
+import com.github.kpdlib.Keypoint
+import com.github.kpdlib.traditional.KeypointDetector as NativeDetector
 
 /**
  * Wrapper for a native feature detector.
  */
-internal class NativeDetectorWrapper(private val detector: NativeDetector) : FeatureDetector {
+internal class NativeDetectorWrapper(private val detector: NativeDetector) : KeypointDetector {
     override var width: Int
         get() = detector.width
         set(value) {

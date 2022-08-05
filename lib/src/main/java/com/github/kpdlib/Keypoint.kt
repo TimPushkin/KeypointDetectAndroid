@@ -1,4 +1,4 @@
-package com.github.featuredetectlib
+package com.github.kpdlib
 
 /**
  * Keypoint which represents an important image feature.

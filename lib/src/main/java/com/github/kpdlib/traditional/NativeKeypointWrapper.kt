@@ -1,6 +1,6 @@
-package com.github.featuredetectlib.traditional
+package com.github.kpdlib.traditional
 
-import com.github.featuredetectlib.Keypoint
+import com.github.kpdlib.Keypoint
 
 private const val ANGLE_NA = -1f // OpenCV sets angle to -1 if it is not applicable
 

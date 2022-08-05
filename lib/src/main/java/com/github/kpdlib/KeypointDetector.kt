@@ -1,11 +1,11 @@
-package com.github.featuredetectlib
+package com.github.kpdlib
 
 typealias Descriptor = List<Float>
 
 /**
  * Detects keypoints and their descriptors on an image.
  */
-interface FeatureDetector {
+interface KeypointDetector {
     /**
      * Width of the passed images to be processed.
      */

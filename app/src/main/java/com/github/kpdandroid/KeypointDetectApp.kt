@@ -1,9 +1,9 @@
-package com.github.featuredetectandroid
+package com.github.kpdandroid
 
 import android.app.Application
-import com.github.featuredetectandroid.utils.PreferencesManager
+import com.github.kpdandroid.utils.PreferencesManager
 
-class FeatureDetectApp : Application() {
+class KeypointDetectApp : Application() {
     lateinit var preferencesManager: PreferencesManager
         private set
 

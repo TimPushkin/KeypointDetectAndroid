@@ -21,5 +21,5 @@
 -dontwarn javax.annotation.Nullable
 
 # Keep native-related classes
--keep class com.github.featuredetectlib.traditional.* { *; }
+-keep class com.github.kpdlib.traditional.* { *; }
 -keep class com.scapix.* { *; }
