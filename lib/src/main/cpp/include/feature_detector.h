@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdint>
 #include <opencv2/core.hpp>
+#include <opencv2/features2d.hpp>
 #include "stripped_keypoint.h"
 #include "detection_result.h"
 
@@ -43,9 +44,7 @@ namespace featurelib {
 
 class FeatureDetector : public internal::base_object<FeatureDetector> {
  public:
-  FeatureDetector(int width, int height);
-
-  virtual std::shared_ptr<DetectionResult> detect(const std::vector<std::uint8_t> &input_vector) const = 0;
+  std::shared_ptr<DetectionResult> detect(const std::vector<std::uint8_t> &pixel_data) const;
 
   int getHeight() const;
 
@@ -56,8 +55,12 @@ class FeatureDetector : public internal::base_object<FeatureDetector> {
   void setWidth(int value);
 
  protected:
+  FeatureDetector(int width, int height, cv::Ptr<cv::Feature2D> detector);
+
+ private:
   int width_;
   int height_;
+  cv::Ptr<cv::Feature2D> detector_;
   cv::Mat mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));  // Required to pick image region for detection
 };
 
