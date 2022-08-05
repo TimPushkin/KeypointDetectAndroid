@@ -49,6 +49,15 @@ android {
             java.srcDirs += 'src/main/cpp/generated/bridge/java'
         }
     }
+
+    // Without this Kotlin code may start trying to compile before JNI interface is generated
+    libraryVariants.all { variant ->
+        def variantName = variant.name.capitalize()
+        def nativeBuild = tasks.getByName("externalNativeBuild$variantName")
+        def compileKotlin = tasks.getByName("compile${variantName}Kotlin")
+
+        compileKotlin.dependsOn nativeBuild
+    }
 }
 
 dependencies {
