@@ -10,7 +10,6 @@ cv::Mat vectorToMat(const std::vector<std::uint8_t> &input_vector, int height, i
 
 std::vector<std::vector<uint8_t>> matTo2DVector(const cv::Mat &mat);
 
-std::vector<std::shared_ptr<featurelib::StrippedKeypoint>> convertToStructure(
-    const std::vector<cv::KeyPoint> &key_points);
+std::vector<std::shared_ptr<featurelib::StrippedKeypoint>> stripKeypoints(const std::vector<cv::KeyPoint> &keypoints);
 
 #endif  // LIB_SRC_MAIN_CPP_SRC_CONVERSIONS_H_

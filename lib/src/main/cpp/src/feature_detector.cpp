@@ -23,7 +23,7 @@ std::shared_ptr<DetectionResult> FeatureDetector::detect(const std::vector<std::
 
   detector_->detectAndCompute(image, mask_, cv_keypoints, cv_descriptors);
 
-  auto keypoints = convertToStructure(cv_keypoints);
+  auto keypoints = stripKeypoints(cv_keypoints);
   auto descriptors = matTo2DVector(cv_descriptors);
 
   return std::make_shared<DetectionResult>(keypoints, descriptors);
