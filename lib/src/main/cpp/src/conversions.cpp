@@ -21,15 +21,15 @@ std::vector<std::vector<uint8_t>> matTo2DVector(const cv::Mat &mat) {
   return result;
 }
 
-std::vector<std::shared_ptr<featurelib::StrippedKeypoint>> stripKeypoints(const std::vector<cv::KeyPoint> &keypoints) {
-  std::vector<std::shared_ptr<featurelib::StrippedKeypoint>> output;
+std::vector<std::shared_ptr<kpdlib::StrippedKeypoint>> stripKeypoints(const std::vector<cv::KeyPoint> &keypoints) {
+  std::vector<std::shared_ptr<kpdlib::StrippedKeypoint>> output;
   output.reserve(keypoints.size());
   for (auto &kp : keypoints) {
-    output.emplace_back(std::make_shared<featurelib::StrippedKeypoint>(kp.pt.x,
-                                                                       kp.pt.y,
-                                                                       kp.angle,
-                                                                       kp.response,
-                                                                       kp.size));
+    output.emplace_back(std::make_shared<kpdlib::StrippedKeypoint>(kp.pt.x,
+                                                                   kp.pt.y,
+                                                                   kp.angle,
+                                                                   kp.response,
+                                                                   kp.size));
   }
   return output;
 }

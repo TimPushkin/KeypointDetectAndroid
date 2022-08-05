@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(featurelib)
+project(kpdlib)
 
 option(BUILD_EXAMPLES "Build examples" OFF)
 

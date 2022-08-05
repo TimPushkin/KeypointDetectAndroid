@@ -3,7 +3,7 @@ set(
         stripped_keypoint.cpp
         detection_result.cpp
         conversions.cpp
-        feature_detector.cpp
+        keypoint_detector.cpp
         sift_detector.cpp
         surf_detector.cpp
         orb_detector.cpp

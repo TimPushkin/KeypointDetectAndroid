@@ -1,14 +1,14 @@
 #include <utility>
 #include <opencv2/imgproc.hpp>
 #include "conversions.h"
-#include "feature_detector.h"
+#include "keypoint_detector.h"
 
-namespace featurelib {
+namespace kpdlib {
 
-FeatureDetector::FeatureDetector(int width, int height, cv::Ptr<cv::Feature2D> detector)
+KeypointDetector::KeypointDetector(int width, int height, cv::Ptr<cv::Feature2D> detector)
     : width_(width), height_(height), detector_(std::move(detector)) {}
 
-std::shared_ptr<DetectionResult> FeatureDetector::detect(const std::vector<std::uint8_t> &pixel_data) const {
+std::shared_ptr<DetectionResult> KeypointDetector::detect(const std::vector<std::uint8_t> &pixel_data) const {
   if (height_ <= 0 || width_ <= 0) {  // cv::cvtColor throws on empty input
     return std::make_shared<DetectionResult>(
         std::vector<std::shared_ptr<StrippedKeypoint>>(),
@@ -29,22 +29,22 @@ std::shared_ptr<DetectionResult> FeatureDetector::detect(const std::vector<std::
   return std::make_shared<DetectionResult>(keypoints, descriptors);
 }
 
-int FeatureDetector::getHeight() const {
+int KeypointDetector::getHeight() const {
   return height_;
 }
 
-void FeatureDetector::setHeight(int value) {
+void KeypointDetector::setHeight(int value) {
   height_ = value;
   mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));
 }
 
-int FeatureDetector::getWidth() const {
+int KeypointDetector::getWidth() const {
   return width_;
 }
 
-void FeatureDetector::setWidth(int value) {
+void KeypointDetector::setWidth(int value) {
   width_ = value;
   mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));
 }
 
-}  // namespace featurelib
+}  // namespace kpdlib

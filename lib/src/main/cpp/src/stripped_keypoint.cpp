@@ -1,6 +1,6 @@
 #include "stripped_keypoint.h"
 
-namespace featurelib {
+namespace kpdlib {
 
 StrippedKeypoint::StrippedKeypoint(float x, float y, float size, float angle, float strength)
     : x_(x), y_(y), size_(size), angle_(angle), strength_(strength) {}
@@ -25,4 +25,4 @@ float StrippedKeypoint::getStrength() const {
   return strength_;
 }
 
-}  // namespace featurelib
+}  // namespace kpdlib
