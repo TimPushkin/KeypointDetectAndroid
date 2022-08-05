@@ -20,6 +20,6 @@ FetchContent_MakeAvailable(cmodule)
 
 find_package(Scapix REQUIRED)
 
-scapix_bridge_headers(${PROJECT_NAME} com.github.featuredetectlib.traditional ${HEADER_FILES})
+scapix_bridge_headers(${PROJECT_NAME} com.github.kpdlib.traditional ${HEADER_FILES})
 
 message(STATUS "Configuring Scapix - done")

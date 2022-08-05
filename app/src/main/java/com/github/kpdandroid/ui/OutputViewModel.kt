@@ -1,4 +1,4 @@
-package com.github.featuredetectandroid.ui
+package com.github.kpdandroid.ui
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
-import com.github.featuredetectlib.FeatureDetector
+import com.github.kpdlib.KeypointDetector
 
 class OutputViewModel : ViewModel() {
     /**
@@ -14,6 +14,6 @@ class OutputViewModel : ViewModel() {
      */
     var frameBitmap: Bitmap? by mutableStateOf(null)
     var keypointOffsets: List<Offset> by mutableStateOf(emptyList())
-    var featureDetector: FeatureDetector? by mutableStateOf(null)
+    var keypointDetector: KeypointDetector? by mutableStateOf(null)
     var calcTimeMs: Long by mutableStateOf(0)
 }

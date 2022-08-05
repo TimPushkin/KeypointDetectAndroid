@@ -1,4 +1,4 @@
-package com.github.featuredetectandroid.ui.theme
+package com.github.kpdandroid.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,4 +1,4 @@
-package com.github.featuredetectandroid.ui
+package com.github.kpdandroid.ui
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
-import com.github.featuredetectandroid.utils.KeypointDetectionAlgorithm
+import com.github.kpdandroid.utils.KeypointDetectionAlgorithm
 
 private const val KEYPOINT_WIDTH = 10f
 
@@ -29,7 +29,7 @@ fun AppLayout(
     keypointOffsets: List<Offset>,
     frameBitmap: Bitmap?,
     calcTimeMs: Long,
-    selectedAlgorithm: String,
+    selectedAlgorithmName: String,
     onAlgorithmSelected: (String) -> Unit
 ) {
     Scaffold(
@@ -37,7 +37,7 @@ fun AppLayout(
             Menu(
                 header = "Keypoint detection algorithm:",
                 options = KeypointDetectionAlgorithm.names,
-                selectedOption = selectedAlgorithm,
+                selectedOption = selectedAlgorithmName,
                 onSelected = onAlgorithmSelected
             )
         },
@@ -83,7 +83,7 @@ fun AppLayout(
                 )
 
                 if (keypointOffsets.isNotEmpty() ||
-                    selectedAlgorithm != KeypointDetectionAlgorithm.NONE.algorithmName
+                    selectedAlgorithmName != KeypointDetectionAlgorithm.NONE.formattedName
                 ) {
                     Text(
                         text = "Detection time: $calcTimeMs ms.",

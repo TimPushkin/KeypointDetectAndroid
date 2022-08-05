@@ -1,11 +1,11 @@
-package com.github.featuredetectandroid.utils
+package com.github.kpdandroid.utils
 
 import android.os.SystemClock
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.compose.ui.geometry.Offset
-import com.github.featuredetectandroid.ui.OutputViewModel
+import com.github.kpdandroid.ui.OutputViewModel
 import java.nio.ByteBuffer
 
 private const val TAG = "PhotoAnalyzer"
@@ -49,7 +49,7 @@ class PhotoAnalyzer(private val outputViewModel: OutputViewModel) : ImageAnalysi
         }
 
         outputViewModel.keypointOffsets =
-            outputViewModel.featureDetector?.let { detector ->
+            outputViewModel.keypointDetector?.let { detector ->
                 if (detector.width != width) detector.width = width
                 if (detector.height != height) detector.height = height
                 val rgbArray = rgbaComponentsToRgbByteArray(oriented)

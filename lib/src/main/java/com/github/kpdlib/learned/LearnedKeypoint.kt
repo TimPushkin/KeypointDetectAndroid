@@ -1,6 +1,6 @@
-package com.github.featuredetectlib.learned
+package com.github.kpdlib.learned
 
-import com.github.featuredetectlib.Keypoint
+import com.github.kpdlib.Keypoint
 
 /**
  * Keypoint which represents an image feature.

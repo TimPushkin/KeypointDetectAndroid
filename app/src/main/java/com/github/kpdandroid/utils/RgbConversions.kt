@@ -1,4 +1,4 @@
-package com.github.featuredetectandroid.utils
+package com.github.kpdandroid.utils
 
 import android.graphics.Bitmap
 import java.nio.IntBuffer

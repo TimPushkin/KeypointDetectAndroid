@@ -1,9 +1,9 @@
-package com.github.featuredetectlib.learned
+package com.github.kpdlib.learned
 
 import android.content.Context
-import com.github.featuredetectlib.Descriptor
-import com.github.featuredetectlib.FeatureDetector
-import com.github.featuredetectlib.Keypoint
+import com.github.kpdlib.Descriptor
+import com.github.kpdlib.KeypointDetector
+import com.github.kpdlib.Keypoint
 import org.pytorch.IValue
 import org.pytorch.LiteModuleLoader
 import org.pytorch.Module
@@ -24,7 +24,7 @@ class SuperPoint private constructor(
     private val decoder: Module,
     width: Int,
     height: Int,
-) : FeatureDetector {
+) : KeypointDetector {
     override var width = width
         set(value) {
             field = value
