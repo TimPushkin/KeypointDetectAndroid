@@ -12,7 +12,7 @@ std::vector<uint8_t> matToVector(const cv::Mat &mat) {
   return result;
 }
 
-void printOutput(const std::shared_ptr<featurelib::DetectionResult> &output) {
+void printOutput(const std::shared_ptr<kpdlib::DetectionResult> &output) {
   std::cout << "Printing points" << std::endl;
   for (auto &kp : output->getKeypoints()) {
     std::cout << kp->getX() << "\t" << kp->getY() << "\t" << kp->getSize() << "\t" << kp->getAngle() << "\t"
@@ -43,13 +43,13 @@ int main(int argc, char *argv[]) {
 
   auto image_data = matToVector(img);
 
-  featurelib::SiftDetector sift_detector(width, height);
+  kpdlib::SiftDetector sift_detector(width, height);
   auto sift_output = sift_detector.detect(image_data);
 
-  featurelib::OrbDetector orb_detector(width, height);
+  kpdlib::OrbDetector orb_detector(width, height);
   auto orb_output = orb_detector.detect(image_data);
 
-  featurelib::SurfDetector surf_detector(width, height);
+  kpdlib::SurfDetector surf_detector(width, height);
   auto surf_output = surf_detector.detect(image_data);
 
   printOutput(sift_output);

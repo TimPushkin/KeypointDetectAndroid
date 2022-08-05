@@ -1,8 +1,8 @@
 #include <opencv2/xfeatures2d.hpp>
 #include "surf_detector.h"
 
-namespace featurelib {
+namespace kpdlib {
 
-SurfDetector::SurfDetector(int width, int height) : FeatureDetector(width, height, cv::xfeatures2d::SURF::create()) {}
+SurfDetector::SurfDetector(int width, int height) : KeypointDetector(width, height, cv::xfeatures2d::SURF::create()) {}
 
-}  // namespace featurelib
+}  // namespace kpdlib

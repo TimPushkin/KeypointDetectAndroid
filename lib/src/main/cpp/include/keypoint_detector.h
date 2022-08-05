@@ -1,5 +1,5 @@
-#ifndef LIB_SRC_MAIN_CPP_INCLUDE_FEATURE_DETECTOR_H_
-#define LIB_SRC_MAIN_CPP_INCLUDE_FEATURE_DETECTOR_H_
+#ifndef LIB_SRC_MAIN_CPP_INCLUDE_KEYPOINT_DETECTOR_H_
+#define LIB_SRC_MAIN_CPP_INCLUDE_KEYPOINT_DETECTOR_H_
 
 #include <memory>
 #include <vector>
@@ -13,7 +13,7 @@
 
 #include <scapix/bridge/object.h>
 
-namespace featurelib {
+namespace kpdlib {
 
 namespace internal {
 
@@ -22,11 +22,11 @@ using base_object = scapix::bridge::object<T>;
 
 }  // namespace internal
 
-}  // namespace featurelib
+}  // namespace kpdlib
 
 #else
 
-namespace featurelib {
+namespace kpdlib {
 
 namespace internal {
 
@@ -36,13 +36,13 @@ class base_object {
 
 }  // namespace internal
 
-}  // namespace featurelib
+}  // namespace kpdlib
 
 #endif  // SCAPIX_BRIDGE
 
-namespace featurelib {
+namespace kpdlib {
 
-class FeatureDetector : public internal::base_object<FeatureDetector> {
+class KeypointDetector : public internal::base_object<KeypointDetector> {
  public:
   std::shared_ptr<DetectionResult> detect(const std::vector<std::uint8_t> &pixel_data) const;
 
@@ -55,7 +55,7 @@ class FeatureDetector : public internal::base_object<FeatureDetector> {
   void setWidth(int value);
 
  protected:
-  FeatureDetector(int width, int height, cv::Ptr<cv::Feature2D> detector);
+  KeypointDetector(int width, int height, cv::Ptr<cv::Feature2D> detector);
 
  private:
   int width_;
@@ -64,6 +64,6 @@ class FeatureDetector : public internal::base_object<FeatureDetector> {
   cv::Mat mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));  // Required to pick image region for detection
 };
 
-}  // namespace featurelib
+}  // namespace kpdlib
 
-#endif  // LIB_SRC_MAIN_CPP_INCLUDE_FEATURE_DETECTOR_H_
+#endif  // LIB_SRC_MAIN_CPP_INCLUDE_KEYPOINT_DETECTOR_H_

@@ -1,6 +1,6 @@
 #include "detection_result.h"
 
-namespace featurelib {
+namespace kpdlib {
 
 DetectionResult::DetectionResult(std::vector<std::shared_ptr<StrippedKeypoint>> keypoints,
                                  std::vector<std::vector<uint8_t>> descriptors)
@@ -14,4 +14,4 @@ std::vector<std::vector<uint8_t>> DetectionResult::getDescriptors() {
   return descriptors_;
 }
 
-}  // namespace featurelib
+}  // namespace kpdlib

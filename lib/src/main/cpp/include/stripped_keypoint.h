@@ -5,7 +5,7 @@
 
 #include <scapix/bridge/object.h>
 
-namespace featurelib {
+namespace kpdlib {
 
 namespace internal {
 
@@ -14,11 +14,11 @@ using base_object = scapix::bridge::object<T>;
 
 }  // namespace internal
 
-}  // namespace featurelib
+}  // namespace kpdlib
 
 #else
 
-namespace featurelib {
+namespace kpdlib {
 
 namespace internal {
 
@@ -28,11 +28,11 @@ class base_object {
 
 }  // namespace internal
 
-}  // namespace featurelib
+}  // namespace kpdlib
 
 #endif  // SCAPIX_BRIDGE
 
-namespace featurelib {
+namespace kpdlib {
 
 class StrippedKeypoint : public internal::base_object<StrippedKeypoint> {
  public:
@@ -56,6 +56,6 @@ class StrippedKeypoint : public internal::base_object<StrippedKeypoint> {
   float strength_;
 };
 
-}  // namespace featurelib
+}  // namespace kpdlib
 
 #endif  // LIB_SRC_MAIN_CPP_INCLUDE_STRIPPED_KEYPOINT_H_

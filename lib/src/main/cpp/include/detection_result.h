@@ -10,7 +10,7 @@
 
 #include <scapix/bridge/object.h>
 
-namespace featurelib {
+namespace kpdlib {
 
 namespace internal {
 
@@ -19,11 +19,11 @@ using base_object = scapix::bridge::object<T>;
 
 }  // namespace internal
 
-}  // namespace featurelib
+}  // namespace kpdlib
 
 #else
 
-namespace featurelib {
+namespace kpdlib {
 
 namespace internal {
 
@@ -33,11 +33,11 @@ class base_object {
 
 }  // namespace internal
 
-}  // namespace featurelib
+}  // namespace kpdlib
 
 #endif  // SCAPIX_BRIDGE
 
-namespace featurelib {
+namespace kpdlib {
 
 class DetectionResult : public internal::base_object<DetectionResult> {
  public:
@@ -53,6 +53,6 @@ class DetectionResult : public internal::base_object<DetectionResult> {
   std::vector<std::vector<uint8_t>> descriptors_;
 };
 
-}  // namespace featurelib
+}  // namespace kpdlib
 
 #endif  // LIB_SRC_MAIN_CPP_INCLUDE_DETECTION_RESULT_H_
