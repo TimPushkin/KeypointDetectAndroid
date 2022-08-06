@@ -5,6 +5,9 @@
 
 namespace kpdlib {
 
+// Detector that uses ORB from OpenCV: https://docs.opencv.org/4.6.0/db/d95/classcv_1_1ORB.html.
+// - Keypoints have sizes and angles
+// - Descriptor size is 64
 class SurfDetector : public KeypointDetector {
  public:
   SurfDetector(int width, int height);

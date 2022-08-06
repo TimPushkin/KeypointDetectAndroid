@@ -20,7 +20,6 @@ std::shared_ptr<DetectionResult> KeypointDetector::detect(const std::vector<std:
 
   std::vector<cv::KeyPoint> cv_keypoints;
   cv::Mat cv_descriptors;
-
   detector_->detectAndCompute(image, mask_, cv_keypoints, cv_descriptors);
 
   auto keypoints = stripKeypoints(cv_keypoints);
@@ -35,7 +34,7 @@ int KeypointDetector::getHeight() const {
 
 void KeypointDetector::setHeight(int value) {
   height_ = value;
-  mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));
+  mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));  // adjust for the new size
 }
 
 int KeypointDetector::getWidth() const {
@@ -44,7 +43,7 @@ int KeypointDetector::getWidth() const {
 
 void KeypointDetector::setWidth(int value) {
   width_ = value;
-  mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));
+  mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));  // adjust for the new size
 }
 
 }  // namespace kpdlib

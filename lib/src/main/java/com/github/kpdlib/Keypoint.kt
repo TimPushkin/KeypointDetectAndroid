@@ -23,13 +23,16 @@ interface Keypoint {
 
     /**
      * Diameter of the meaningful keypoint neighborhood.
+     *
+     * Some detectors don't provide such information, then this returns `null`.
      */
     val size: Float?
 
     /**
      * Orientation of the feature represented by the keypoint.
      *
-     * It is in [0, 360) degrees clockwise relative to image coordinates.
+     * It is in [0, 360) degrees clockwise relative to image coordinates. Some detectors don't
+     * provide such information, then this returns `null`.
      */
     val angle: Float?
 }

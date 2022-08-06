@@ -39,6 +39,8 @@ class base_object {
 
 namespace kpdlib {
 
+// Pair of keypoint and their descriptors in the corresponding order. Keypoint properties and descriptor size depend on
+// the detector used.
 class DetectionResult : public internal::base_object<DetectionResult> {
  public:
   DetectionResult(std::vector<std::shared_ptr<StrippedKeypoint>> keypoints,
