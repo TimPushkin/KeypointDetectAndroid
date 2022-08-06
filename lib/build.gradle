@@ -53,8 +53,8 @@ android {
     // Without this Kotlin code may start trying to compile before JNI interface is generated
     libraryVariants.all { variant ->
         def variantName = variant.name.capitalize()
-        def nativeBuild = tasks.getByName("externalNativeBuild$variantName")
-        def compileKotlin = tasks.getByName("compile${variantName}Kotlin")
+        def nativeBuild = tasks.getByName "externalNativeBuild$variantName"
+        def compileKotlin = tasks.getByName "compile${variantName}Kotlin"
 
         compileKotlin.dependsOn nativeBuild
     }
@@ -67,11 +67,8 @@ dependencies {
     implementation 'org.pytorch:pytorch_android_torchvision_lite:1.12.2'
 }
 
-tasks.named('detekt').configure {
-    reports { // Only HTML report is generated
-        xml.required.set(false)
-        txt.required.set(false)
-        sarif.required.set(false)
-        md.required.set(false)
-    }
+detekt {
+    config = files "$rootDir/config/detekt/detekt.yml"
+    buildUponDefaultConfig = true
+    ignoredBuildTypes = ['release']
 }

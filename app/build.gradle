@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'io.gitlab.arturbosch.detekt'
 }
 
 android {
@@ -59,4 +60,10 @@ dependencies {
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.23.1'
 
     implementation project(':lib')
+}
+
+detekt {
+    config = files "$rootDir/config/detekt/detekt.yml"
+    buildUponDefaultConfig = true
+    ignoredBuildTypes = ['release']
 }
