@@ -5,6 +5,9 @@
 
 namespace kpdlib {
 
+// Detector that uses ORB from OpenCV: https://docs.opencv.org/4.6.0/d7/d60/classcv_1_1SIFT.html.
+// - Keypoints have sizes and angles
+// - Descriptor size is 128
 class SiftDetector : public KeypointDetector {
  public:
   SiftDetector(int width, int height);

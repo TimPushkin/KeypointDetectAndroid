@@ -34,18 +34,26 @@ class base_object {
 
 namespace kpdlib {
 
+// Keypoint which represents an important image feature. It is a stripped version of OpenCV keypoint:
+// https://docs.opencv.org/4.6.0/d2/d29/classcv_1_1KeyPoint.html.
 class StrippedKeypoint : public internal::base_object<StrippedKeypoint> {
  public:
   StrippedKeypoint(float x, float y, float size, float angle, float strength);
 
+  // x coordinate of the keypoint center.
   float getX() const;
 
+  // y coordinate of the keypoint center.
   float getY() const;
 
+  // Diameter of the meaningful keypoint neighborhood.
   float getSize() const;
 
+  // Orientation of the feature represented by the keypoint. It is in [0, 360) degrees clockwise relative to image
+  // coordinates. Some detectors don't provide such information, then this returns `-1`.
   float getAngle() const;
 
+  // Keypoint strength. The higher the strength the "better" the keypoint.
   float getStrength() const;
 
  private:

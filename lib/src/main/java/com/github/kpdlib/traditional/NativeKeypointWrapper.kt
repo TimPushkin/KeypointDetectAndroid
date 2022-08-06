@@ -2,10 +2,11 @@ package com.github.kpdlib.traditional
 
 import com.github.kpdlib.Keypoint
 
-private const val ANGLE_NA = -1f // OpenCV sets angle to -1 if it is not applicable
+private const val ANGLE_NA = -1f // OpenCV sets angle to -1 if not applicable
 
 /**
- * Wrapper for a native keypoint.
+ * Wrapper for a stripped native
+ * [OpenCV keypoint](https://docs.opencv.org/4.6.0/d2/d29/classcv_1_1KeyPoint.html).
  */
 internal data class NativeKeypointWrapper(private val keypoint: StrippedKeypoint) : Keypoint {
     override val x: Float

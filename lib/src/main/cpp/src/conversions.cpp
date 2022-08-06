@@ -8,7 +8,7 @@ cv::Mat vectorToMat(const std::vector<std::uint8_t> &input_vector, int height, i
 
 std::vector<std::vector<uint8_t>> matTo2DVector(const cv::Mat &mat) {
   std::vector<std::vector<uint8_t>> result;
-  auto cont = mat.isContinuous() ? mat : mat.clone();  // make sure the Mat is continuous
+  auto cont = mat.isContinuous() ? mat : mat.clone();  // Make sure the Mat is continuous
 
   result.reserve(cont.rows);
 

@@ -3,7 +3,7 @@ package com.github.kpdlib.learned
 import com.github.kpdlib.Keypoint
 
 /**
- * Keypoint which represents an image feature.
+ * Keypoint implementation for learned approaches.
  */
 internal data class LearnedKeypoint(
     override val x: Float,

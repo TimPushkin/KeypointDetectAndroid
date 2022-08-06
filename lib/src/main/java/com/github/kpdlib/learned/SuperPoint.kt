@@ -2,8 +2,8 @@ package com.github.kpdlib.learned
 
 import android.content.Context
 import com.github.kpdlib.Descriptor
-import com.github.kpdlib.KeypointDetector
 import com.github.kpdlib.Keypoint
+import com.github.kpdlib.KeypointDetector
 import org.pytorch.IValue
 import org.pytorch.LiteModuleLoader
 import org.pytorch.Module
@@ -17,7 +17,12 @@ private const val DESCRIPTOR_SIZE = 256
 
 /**
  * Detects learned keypoints and their descriptors using
- * [SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork) network.
+ * [SuperPoint](https://github.com/magicleap/SuperPointPretrainedNetwork) pretrained network.
+ *
+ * - Keypoints don't have sizes and angles
+ * - Descriptor size is 256
+ *
+ * To obtain an instance, use [SuperPoint.Builder].
  */
 class SuperPoint private constructor(
     private val net: Module,
@@ -55,8 +60,13 @@ class SuperPoint private constructor(
         return keypoints to descriptors
     }
 
+    /**
+     * Converts an array of RGB pixels represented as `[R_1, G_1, B_1, ..., R_n, G_n, B_n]` to a
+     * relative luminance array `[L_1, ..., L_n]` as described in
+     * [WCAG 2.x](https://www.w3.org/WAI/GL/wiki/Relative_luminance).
+     */
     @Suppress("MagicNumber")
-    private fun rgbToGrayscale(pixels: ByteArray): FloatArray =
+    private fun rgbToGrayscale(pixels: ByteArray) =
         FloatArray(width * height) { i ->
             val r = linearizeSrgbChannel((pixels[3 * i] + 128) / 255f)
             val g = linearizeSrgbChannel((pixels[3 * i + 1] + 128) / 255f)
@@ -65,7 +75,7 @@ class SuperPoint private constructor(
         }
 
     @Suppress("MagicNumber")
-    private fun linearizeSrgbChannel(value: Float): Float =
+    private fun linearizeSrgbChannel(value: Float) =
         if (value <= 0.04045) value / 12.92f else ((value + 0.055f) / 1.055f).pow(2.4f)
 
     private fun keypointTensorToKeypointList(tensor: Tensor): List<Keypoint> {

@@ -5,6 +5,9 @@
 
 namespace kpdlib {
 
+// Detector that uses ORB from OpenCV: https://docs.opencv.org/4.6.0/db/d95/classcv_1_1ORB.html.
+// - Keypoints have sizes and angles
+// - Descriptor size is 32
 class OrbDetector : public KeypointDetector {
  public:
   OrbDetector(int width, int height);
