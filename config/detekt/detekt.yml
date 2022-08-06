@@ -2,3 +2,13 @@ naming:
   FunctionNaming:
     ignoreAnnotated:
       - 'Composable'
+  MatchingDeclarationName:
+    active: false # Overlapped by formatting>Filename
+
+style:
+  NewLineAtEndOfFile:
+    active: false # Overlapped by formatting>FinalNewline
+  MaxLineLength:
+    active: false # Overlapped by formatting>MaximumLineLength
+  ModifierOrder:
+    active: false # Overlapped by formatting>ModifierOrdering

@@ -60,6 +60,8 @@ dependencies {
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.23.1'
 
     implementation project(':lib')
+
+    detektPlugins 'io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0'
 }
 
 detekt {
