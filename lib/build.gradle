@@ -74,3 +74,8 @@ detekt {
     buildUponDefaultConfig = true
     ignoredBuildTypes = ['release']
 }
+
+// Exclude detekt from check task to make building independent from linting
+tasks.named 'check' configure {
+    dependsOn.removeIf { it.name == 'detekt' }
+}
