@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <limits>
 #include <opencv2/core.hpp>
 #include <opencv2/features2d.hpp>
 #include "stripped_keypoint.h"
@@ -74,7 +75,7 @@ class KeypointDetector : public internal::base_object<KeypointDetector> {
   // Determines image region to be considered during detection. It is required as an argument in OpenCV interface:
   // https://docs.opencv.org/4.6.0/d0/d13/classcv_1_1Feature2D.html#a8be0d1c20b08eb867184b8d74c15a677 -- and is always
   // set to the current full image size so that the whole image is considered.
-  cv::Mat mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));
+  cv::Mat mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(std::numeric_limits<uint8_t>::max()));
 };
 
 }  // namespace kpdlib

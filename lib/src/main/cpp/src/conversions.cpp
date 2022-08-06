@@ -24,7 +24,7 @@ std::vector<std::vector<uint8_t>> matTo2DVector(const cv::Mat &mat) {
 std::vector<std::shared_ptr<kpdlib::StrippedKeypoint>> stripKeypoints(const std::vector<cv::KeyPoint> &keypoints) {
   std::vector<std::shared_ptr<kpdlib::StrippedKeypoint>> output;
   output.reserve(keypoints.size());
-  for (auto &kp : keypoints) {
+  for (const auto &kp : keypoints) {
     output.emplace_back(std::make_shared<kpdlib::StrippedKeypoint>(kp.pt.x,
                                                                    kp.pt.y,
                                                                    kp.angle,

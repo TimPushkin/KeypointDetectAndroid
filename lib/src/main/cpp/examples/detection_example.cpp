@@ -23,7 +23,9 @@ void printOutput(const std::shared_ptr<kpdlib::DetectionResult> &output) {
 
   std::cout << "Descriptors" << std::endl;
   for (const auto &row : output->getDescriptors()) {
-    for (const auto &element : row) std::cout << element << ' ';
+    for (const auto &element : row) {
+      std::cout << element << ' ';
+    }
     std::cout << std::endl;
   }
 }
@@ -38,7 +40,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Read the image
-  auto image_path = argv[1];
+  auto *image_path = argv[1];
   auto img = cv::imread(image_path, cv::IMREAD_COLOR);
 
   // Convert the image into the suitable format
