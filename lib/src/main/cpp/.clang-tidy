@@ -1,0 +1,2 @@
+Checks: 'android-*,bugprone-*,google-*,modernize-*,performance-*,portatibility-*,readability-*,-bugprone-easily-swappable-parameters,-modernize-use-trailing-return-type,-clang-diagnostic-error,-readability-identifier-length'
+WarningsAsErrors: 'android-*,bugprone-*,clang-analyzer-*,google-*,performance-*,portatibility-*,readability-*'
