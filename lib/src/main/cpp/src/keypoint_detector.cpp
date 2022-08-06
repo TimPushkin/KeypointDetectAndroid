@@ -34,7 +34,8 @@ int KeypointDetector::getHeight() const {
 
 void KeypointDetector::setHeight(int value) {
   height_ = value;
-  mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));  // adjust for the new size
+  // Adjust mask for the new size
+  mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(std::numeric_limits<uint8_t>::max()));
 }
 
 int KeypointDetector::getWidth() const {
@@ -43,7 +44,8 @@ int KeypointDetector::getWidth() const {
 
 void KeypointDetector::setWidth(int value) {
   width_ = value;
-  mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(255));  // adjust for the new size
+  // Adjust mask for the new size
+  mask_ = cv::Mat(height_, width_, CV_8U, cv::Scalar(std::numeric_limits<uint8_t>::max()));
 }
 
 }  // namespace kpdlib
