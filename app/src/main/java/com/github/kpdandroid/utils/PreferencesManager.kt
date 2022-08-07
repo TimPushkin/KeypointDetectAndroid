@@ -16,15 +16,13 @@ class PreferencesManager(context: Context) {
         Context.MODE_PRIVATE
     )
 
-    fun getSelectedAlgorithmName() = preferences.getString(ALGORITHM_KEY, ALGORITHM_DEFAULT)
-        ?: ALGORITHM_DEFAULT
-
-    fun putSelectedAlgorithmName(value: String) {
-        preferences.edit {
-            putString(ALGORITHM_KEY, value)
-            apply()
+    var selectedAlgorithmName: String
+        get() = preferences.getString(ALGORITHM_KEY, ALGORITHM_DEFAULT) ?: ALGORITHM_DEFAULT
+        set(value) {
+            preferences.edit {
+                putString(ALGORITHM_KEY, value)
+                apply()
+            }
+            Log.i(TAG, "$value algorithm was selected.")
         }
-
-        Log.i(TAG, "$value algorithm was selected.")
-    }
 }

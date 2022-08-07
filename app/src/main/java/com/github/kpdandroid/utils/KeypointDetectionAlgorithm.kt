@@ -16,7 +16,7 @@ enum class KeypointDetectionAlgorithm(val formattedName: String) {
     companion object {
         val names = values().map { it.formattedName }
 
-        fun nameToKeypointDetector(
+        fun constructKeypointDetector(
             context: Context,
             algorithmName: String,
             width: Int,
