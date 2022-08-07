@@ -26,16 +26,17 @@ import java.util.concurrent.Executors
 private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
-    private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val snapshotViewModel by viewModels<SnapshotViewModel>()
     private lateinit var preferencesManager: PreferencesManager
+    private val cameraExecutor = Executors.newSingleThreadExecutor()
+    private var isAnalyzing = false
 
-    private val cameraPermission =
+    private val cameraPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
                 Toast.makeText(this, "Permissions granted.", Toast.LENGTH_SHORT).show()
                 Log.d(TAG, "Permission was granted successfully.")
-                startCamera()
+                startCameraAnalysis()
             } else {
                 Toast.makeText(this, "Permissions not granted.", Toast.LENGTH_SHORT).show()
                 Log.d(TAG, "Permission was NOT granted.")
@@ -78,9 +79,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        tryStartCamera()
+    // Not using onResume to account for changes made in split screen
+    override fun onTopResumedActivityChanged(isTopResumedActivity: Boolean) {
+        if (isTopResumedActivity) startCameraAnalysisIfNeeded()
     }
 
     override fun onDestroy() {
@@ -88,16 +89,20 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 
-    private fun tryStartCamera() = when {
-        isCameraPermissionGranted() -> startCamera()
-        shouldRationalize() -> {
-            Toast.makeText(
-                this,
-                "Without camera permission app can't get and display keypoints.",
-                Toast.LENGTH_SHORT
-            ).show()
+    private fun startCameraAnalysisIfNeeded() {
+        if (isAnalyzing) return
+
+        when {
+            isCameraPermissionGranted() -> startCameraAnalysis()
+            shouldRationalize() -> {
+                Toast.makeText(
+                    this,
+                    "Without camera permission app can't get and display keypoints.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else -> cameraPermissionRequest.launch(Manifest.permission.CAMERA)
         }
-        else -> cameraPermission.launch(Manifest.permission.CAMERA)
     }
 
     private fun isCameraPermissionGranted() = ContextCompat.checkSelfPermission(
@@ -109,7 +114,7 @@ class MainActivity : ComponentActivity() {
         (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) &&
             shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
 
-    private fun startCamera() {
+    private fun startCameraAnalysis() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
@@ -123,9 +128,11 @@ class MainActivity : ComponentActivity() {
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
+            cameraProvider.unbindAll() // Just in case
+
             try {
-                cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(this, cameraSelector, imageAnalyzer)
+                isAnalyzing = true
             } catch (illegalState: IllegalStateException) {
                 Log.e(TAG, "Use case binding failed: ", illegalState)
             } catch (illegalArgument: IllegalArgumentException) {
