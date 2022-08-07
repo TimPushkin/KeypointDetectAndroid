@@ -51,8 +51,8 @@ class MainActivity : ComponentActivity() {
 
         preferencesManager = (application as KeypointDetectApp).preferencesManager
 
-        snapshotViewModel.keypointDetector = KeypointDetectionAlgorithm.nameToKeypointDetector(
-            algorithmName = preferencesManager.getSelectedAlgorithmName(),
+        snapshotViewModel.keypointDetector = KeypointDetectionAlgorithm.constructKeypointDetector(
+            algorithmName = preferencesManager.selectedAlgorithmName,
             context = this,
             width = snapshotViewModel.keypointDetector?.width ?: 0,
             height = snapshotViewModel.keypointDetector?.height ?: 0
@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             KeypointDetectAppTheme {
                 var selectedAlgorithmName by remember {
-                    mutableStateOf(preferencesManager.getSelectedAlgorithmName())
+                    mutableStateOf(preferencesManager.selectedAlgorithmName)
                 }
 
                 snapshotViewModel.painter.pointColor = MaterialTheme.colors.primary
@@ -72,10 +72,10 @@ class MainActivity : ComponentActivity() {
                     isCameraPermissionGranted = isCameraPermissionGranted(),
                     selectedAlgorithmName = selectedAlgorithmName,
                     onAlgorithmSelected = { algorithmName ->
-                        preferencesManager.putSelectedAlgorithmName(algorithmName)
+                        preferencesManager.selectedAlgorithmName = algorithmName
                         selectedAlgorithmName = algorithmName
                         snapshotViewModel.keypointDetector =
-                            KeypointDetectionAlgorithm.nameToKeypointDetector(
+                            KeypointDetectionAlgorithm.constructKeypointDetector(
                                 algorithmName = algorithmName,
                                 context = this,
                                 width = snapshotViewModel.keypointDetector?.width ?: 0,
