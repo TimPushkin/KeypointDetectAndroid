@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import com.github.kpdandroid.ui.AppLayout
-import com.github.kpdandroid.ui.OutputViewModel
+import com.github.kpdandroid.ui.SnapshotViewModel
 import com.github.kpdandroid.ui.theme.KeypointDetectAppTheme
 import com.github.kpdandroid.utils.KeypointDetectionAlgorithm
 import com.github.kpdandroid.utils.PhotoAnalyzer
@@ -30,7 +30,7 @@ private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
     private val cameraExecutor = Executors.newSingleThreadExecutor()
-    private val outputViewModel by viewModels<OutputViewModel>()
+    private val snapshotViewModel by viewModels<SnapshotViewModel>()
     private lateinit var preferencesManager: PreferencesManager
 
     private val cameraPermission =
@@ -50,11 +50,11 @@ class MainActivity : ComponentActivity() {
 
         preferencesManager = (application as KeypointDetectApp).preferencesManager
 
-        outputViewModel.keypointDetector = KeypointDetectionAlgorithm.nameToKeypointDetector(
+        snapshotViewModel.keypointDetector = KeypointDetectionAlgorithm.nameToKeypointDetector(
             algorithmName = preferencesManager.getSelectedAlgorithmName(),
             context = this,
-            width = outputViewModel.keypointDetector?.width ?: 0,
-            height = outputViewModel.keypointDetector?.height ?: 0
+            width = snapshotViewModel.keypointDetector?.width ?: 0,
+            height = snapshotViewModel.keypointDetector?.height ?: 0
         )
 
         setContent {
@@ -63,20 +63,19 @@ class MainActivity : ComponentActivity() {
                     mutableStateOf(preferencesManager.getSelectedAlgorithmName())
                 }
                 AppLayout(
+                    image = snapshotViewModel.paintedSnapshot,
+                    calcTimeMs = snapshotViewModel.calcTimeMs,
                     isCameraPermissionGranted = isCameraPermissionGranted(),
-                    keypointOffsets = outputViewModel.keypointOffsets,
-                    frameBitmap = outputViewModel.frameBitmap,
                     selectedAlgorithmName = selectedAlgorithmName,
-                    calcTimeMs = outputViewModel.calcTimeMs,
                     onAlgorithmSelected = { algorithmName ->
                         preferencesManager.putSelectedAlgorithmName(algorithmName)
                         selectedAlgorithmName = algorithmName
-                        outputViewModel.keypointDetector =
+                        snapshotViewModel.keypointDetector =
                             KeypointDetectionAlgorithm.nameToKeypointDetector(
                                 algorithmName = algorithmName,
                                 context = this,
-                                width = outputViewModel.keypointDetector?.width ?: 0,
-                                height = outputViewModel.keypointDetector?.height ?: 0
+                                width = snapshotViewModel.keypointDetector?.width ?: 0,
+                                height = snapshotViewModel.keypointDetector?.height ?: 0
                             )
                     }
                 )
@@ -124,7 +123,7 @@ class MainActivity : ComponentActivity() {
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_RGBA_8888)
                 .build()
-                .apply { setAnalyzer(cameraExecutor, PhotoAnalyzer(outputViewModel)) }
+                .apply { setAnalyzer(cameraExecutor, PhotoAnalyzer(snapshotViewModel)) }
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 

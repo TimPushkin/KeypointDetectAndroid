@@ -5,61 +5,55 @@ import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.compose.ui.geometry.Offset
-import com.github.kpdandroid.ui.OutputViewModel
+import com.github.kpdandroid.ui.SnapshotViewModel
 import java.nio.ByteBuffer
 
 private const val TAG = "PhotoAnalyzer"
 private const val ROTATION_STEP = 90
-private const val RGBA_COMPONENTS_NUM = 4
 
-class PhotoAnalyzer(private val outputViewModel: OutputViewModel) : ImageAnalysis.Analyzer {
+class PhotoAnalyzer(private val snapshotViewModel: SnapshotViewModel) : ImageAnalysis.Analyzer {
+    override fun analyze(image: ImageProxy) {
+        var width = image.width
+        var height = image.height
+        var oriented = image.planes[0].buffer.toByteArray()
+        Log.v(TAG, "Analyzing snapshot of size $width x $height.")
+
+        // Rotate if needed
+        val rotationDegrees = image.imageInfo.rotationDegrees
+        Log.v(TAG, "Rotating snapshot on $rotationDegrees degrees.")
+        repeat(rotationDegrees / ROTATION_STEP) {
+            oriented = rotateRgbaBytes90degreesClockwise(oriented, width, height)
+            width = height.also { height = width }
+        }
+
+        // Detect keypoints
+        val (keypoints, calcTimeMs) = runDetection(rgbaBytesToRgbBytes(oriented), width, height)
+
+        snapshotViewModel.provideSnapshot(
+            snapshot = rgbaBytesToBitmap(oriented, width, height),
+            keypoints = keypoints.map { Offset(it.x, it.y) },
+            calcTimeMs = calcTimeMs
+        )
+
+        image.close()
+    }
+
     private fun ByteBuffer.toByteArray(): ByteArray {
         rewind()
         return ByteArray(remaining()).also { get(it) }
     }
 
-    private fun rotateClockwiseOnRotationStep(
-        imageArray: ByteArray,
-        width: Int,
-        height: Int
-    ) = ByteArray(RGBA_COMPONENTS_NUM * width * height).also { array ->
-        for (i in 0 until width) {
-            for (j in 0 until height) {
-                for (componentIndex in 0 until RGBA_COMPONENTS_NUM) {
-                    array[RGBA_COMPONENTS_NUM * (i * height + j) + componentIndex] =
-                        imageArray[
-                            RGBA_COMPONENTS_NUM * (i + (height - 1 - j) * width) + componentIndex
-                        ]
-                }
-            }
-        }
-    }
+    private fun runDetection(orientedRgbSnapshot: ByteArray, width: Int, height: Int) =
+        snapshotViewModel.keypointDetector?.let { detector ->
+            if (detector.width != width) detector.width = width
+            if (detector.height != height) detector.height = height
 
-    override fun analyze(image: ImageProxy) {
-        var width = image.width
-        var height = image.height
-        var oriented = image.planes[0].buffer.toByteArray()
+            val startTime = SystemClock.elapsedRealtime()
+            val (keypoints, _) = detector.detect(orientedRgbSnapshot)
+            val calcTimeMs = SystemClock.elapsedRealtime() - startTime
 
-        // Rotation of incorrectly oriented images is implemented here.
-        val rotationDegrees = image.imageInfo.rotationDegrees
-        repeat(rotationDegrees / ROTATION_STEP) {
-            Log.v(TAG, "The image is rotated on $rotationDegrees degrees.")
-            oriented = rotateClockwiseOnRotationStep(oriented, width, height)
-            width = height.also { height = width }
-        }
+            Log.v(TAG, "Detected ${keypoints.size} in $calcTimeMs ms.")
 
-        outputViewModel.keypointOffsets =
-            outputViewModel.keypointDetector?.let { detector ->
-                if (detector.width != width) detector.width = width
-                if (detector.height != height) detector.height = height
-                val rgbArray = rgbaComponentsToRgbByteArray(oriented)
-                val startTime = SystemClock.elapsedRealtime()
-                val (keypoints, _) = detector.detect(rgbArray)
-                outputViewModel.calcTimeMs = SystemClock.elapsedRealtime() - startTime
-                keypoints.map { Offset(it.x, it.y) }
-            } ?: emptyList()
-
-        outputViewModel.frameBitmap = rgbaComponentsToBitmap(oriented, width, height)
-        image.close()
-    }
+            keypoints.map { Offset(it.x, it.y) } to calcTimeMs
+        } ?: (emptyList<Offset>() to 0L)
 }
