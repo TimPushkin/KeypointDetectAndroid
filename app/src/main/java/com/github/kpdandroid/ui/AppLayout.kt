@@ -61,10 +61,11 @@ fun AppLayout(
                         .weight(1f)
                 )
 
-                val detectionTime = calcTimeMs?.let { "$it ms" } ?: "unknown"
+                val detectionText = calcTimeMs?.let { "Latest detection time: $it ms" }
+                    ?: "Pick an algorithm to see detection time"
 
                 Text(
-                    text = "Detection time: $detectionTime",
+                    text = detectionText,
                     modifier = Modifier.padding(30.dp)
                 )
             }
