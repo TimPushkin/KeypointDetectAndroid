@@ -117,6 +117,7 @@ class MainActivity : ComponentActivity() {
 
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_RGBA_8888)
+                .setOutputImageRotationEnabled(true)
                 .build()
                 .apply { setAnalyzer(cameraExecutor, PhotoAnalyzer(snapshotViewModel)) }
 

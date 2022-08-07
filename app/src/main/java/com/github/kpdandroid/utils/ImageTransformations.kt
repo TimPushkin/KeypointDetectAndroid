@@ -4,19 +4,6 @@ import android.graphics.Bitmap
 import java.nio.IntBuffer
 
 private const val RGBA_CHANNELS_NUM = 4
-
-fun rotateRgbaBytes90degreesClockwise(rgbaBytes: ByteArray, width: Int, height: Int) =
-    ByteArray(RGBA_CHANNELS_NUM * width * height).also { array ->
-        for (i in 0 until width) {
-            for (j in 0 until height) {
-                for (channelIndex in 0 until RGBA_CHANNELS_NUM) {
-                    array[RGBA_CHANNELS_NUM * (i * height + j) + channelIndex] =
-                        rgbaBytes[RGBA_CHANNELS_NUM * (i + (height - 1 - j) * width) + channelIndex]
-                }
-            }
-        }
-    }
-
 private const val RGB_CHANNELS_NUM = 3
 
 /**
