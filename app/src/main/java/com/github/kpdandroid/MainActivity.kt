@@ -13,6 +13,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,6 +63,9 @@ class MainActivity : ComponentActivity() {
                 var selectedAlgorithmName by remember {
                     mutableStateOf(preferencesManager.getSelectedAlgorithmName())
                 }
+
+                snapshotViewModel.painter.pointColor = MaterialTheme.colors.primary
+
                 AppLayout(
                     image = snapshotViewModel.paintedSnapshot,
                     calcTimeMs = snapshotViewModel.calcTimeMs,
