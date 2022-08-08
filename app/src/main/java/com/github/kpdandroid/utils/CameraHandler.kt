@@ -22,8 +22,11 @@ import kotlin.math.abs
 
 private const val TAG = "CameraHandler"
 
+// YUV_420_888 seems to be always used by CameraX, even for RGBA_8888
+private const val IMAGE_FORMAT_CAMERA2_MAIN = ImageFormat.YUV_420_888
+
 // JPEG is always supported and seems to give the right resolutions for CameraX
-private const val IMAGE_FORMAT_CAMERA2 = ImageFormat.JPEG
+private const val IMAGE_FORMAT_CAMERA2_FALLBACK = ImageFormat.JPEG
 
 // Convenient to convert to RGB and Bitmap
 private const val IMAGE_FORMAT_CAMERAX = ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888
@@ -108,18 +111,30 @@ class CameraHandler(
                 return emptyList()
             }
 
-        // Check format is supported
-        if (!configs.isOutputSupportedFor(IMAGE_FORMAT_CAMERA2)) {
-            Log.e(
-                TAG,
-                "Selected format $IMAGE_FORMAT_CAMERA2 is unsupported. " +
-                    "Supported formats: ${configs.outputFormats.joinToString(", ")}."
-            )
-            return emptyList()
-        }
-
-        // Get resolutions
-        val resolutions = configs.getOutputSizes(IMAGE_FORMAT_CAMERA2)
+        // Get resolutions of the supported format
+        val resolutions =
+            when {
+                configs.isOutputSupportedFor(IMAGE_FORMAT_CAMERA2_MAIN) ->
+                    configs.getOutputSizes(IMAGE_FORMAT_CAMERA2_MAIN)
+                configs.isOutputSupportedFor(IMAGE_FORMAT_CAMERA2_FALLBACK) -> {
+                    Log.w(
+                        TAG,
+                        "Main image format $IMAGE_FORMAT_CAMERA2_MAIN is unsupported. " +
+                            "Falling back to $IMAGE_FORMAT_CAMERA2_FALLBACK."
+                    )
+                    Log.d(TAG, "Supported formats: ${configs.outputFormats.joinToString(", ")}.")
+                    configs.getOutputSizes(IMAGE_FORMAT_CAMERA2_FALLBACK)
+                }
+                else -> {
+                    Log.wtf(
+                        TAG,
+                        "Both main $IMAGE_FORMAT_CAMERA2_MAIN and " +
+                            "fallback $IMAGE_FORMAT_CAMERA2_FALLBACK image formats are unsupported."
+                    )
+                    Log.d(TAG, "Supported formats: ${configs.outputFormats.joinToString(", ")}.")
+                    emptyArray()
+                }
+            }
 
         // Rotate resolutions if needed
         Log.d(
@@ -141,7 +156,7 @@ class CameraHandler(
     private fun Size.flipped() = Size(height, width)
 
     fun startImageAnalysis(targetResolution: Size?, callback: (realResolution: Size?) -> Unit) {
-        Log.i(TAG, "Starting image analysis targeting $targetResolution.")
+        Log.i(TAG, "Starting image analysis targeting ${targetResolution ?: "default"}.")
 
         ProcessCameraProvider.getInstance(activity).addListener({
             val cameraProvider = cameraProviderFuture.get()
