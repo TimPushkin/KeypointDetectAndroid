@@ -148,7 +148,7 @@ class CameraHandler(
             resolutions.forEachIndexed { i, size -> resolutions[i] = size.flipped() }
         }
 
-        return resolutions.sortedBy { it.width }.apply {
+        return resolutions.sortedWith(compareBy<Size> { it.width }.thenBy { it.height }).apply {
             Log.i(TAG, "Supported resolutions: ${joinToString(", ")}.")
         }
     }
