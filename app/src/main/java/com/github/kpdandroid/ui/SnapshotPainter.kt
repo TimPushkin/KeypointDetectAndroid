@@ -24,7 +24,7 @@ class SnapshotPainter(pointColor: Color = Color.Blue, pointWidth: Float = 10f) {
             pointPaint.strokeWidth = value
         }
 
-    fun paint(snapshot: ImageBitmap, points: List<Offset>) {
+    fun draw(snapshot: ImageBitmap, points: List<Offset>) {
         Canvas(snapshot).drawPoints(
             pointMode = PointMode.Points,
             points = points,
