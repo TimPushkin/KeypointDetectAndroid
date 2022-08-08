@@ -14,14 +14,26 @@ class SnapshotAnalyzer(private val snapshotViewModel: SnapshotViewModel) : Image
     override fun analyze(image: ImageProxy) {
         val width = image.width
         val height = image.height
-        val snapshot = image.planes[0].buffer.toByteArray()
-        Log.v(TAG, "Analyzing snapshot of size ${width}x$height.")
+        val (snapshot, rowStride, pixelStride) =
+            image.planes[0].run { Triple(buffer.toByteArray(), rowStride, pixelStride) }
+        Log.v(
+            TAG,
+            "Analyzing snapshot:\n" +
+                "- size: ${width}x$height\n" +
+                "- pixel stride: $pixelStride\n" +
+                "- row stride: $rowStride\n" +
+                "- width * pixelStride: ${width * pixelStride}"
+        )
 
-        val (keypoints, calcTimeMs) = runDetection(rgbaBytesToRgbBytes(snapshot), width, height)
+        val (keypoints, calcTimeMs) = runDetection(
+            rgbSnapshot = rgbaBytesToRgbBytes(snapshot, width, height, rowStride, pixelStride),
+            width = width,
+            height = height
+        )
         Log.v(TAG, "Detected ${keypoints.size} keypoints in $calcTimeMs ms.")
 
         snapshotViewModel.provideSnapshot(
-            snapshot = rgbaBytesToBitmap(snapshot, width, height),
+            snapshot = rgbaBytesToBitmap(snapshot, width, height, rowStride, pixelStride),
             keypoints = keypoints.map { Offset(it.x, it.y) },
             calcTimeMs = calcTimeMs
         )
