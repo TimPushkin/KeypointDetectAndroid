@@ -58,6 +58,10 @@ class MainActivity : ComponentActivity() {
             height = snapshotViewModel.keypointDetector?.height ?: 0
         )
 
+        initLayout()
+    }
+
+    private fun initLayout() {
         setContent {
             KeypointDetectAppTheme {
                 snapshotViewModel.painter.pointColor = MaterialTheme.colors.primary
@@ -118,11 +122,6 @@ class MainActivity : ComponentActivity() {
         if (isTopResumedActivity) startCameraAnalysisIfNeeded()
     }
 
-    override fun onDestroy() {
-        cameraHandler.shutdown()
-        super.onDestroy()
-    }
-
     private fun startCameraAnalysisIfNeeded() {
         if (cameraHandler.isAnalyzing) return
 
@@ -151,4 +150,9 @@ class MainActivity : ComponentActivity() {
     private fun shouldRationalize() =
         (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) &&
             shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
+
+    override fun onDestroy() {
+        cameraHandler.shutdown()
+        super.onDestroy()
+    }
 }

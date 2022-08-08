@@ -42,6 +42,7 @@ class CameraHandler(
     private val cameraManager = activity.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val cameraProviderFuture = ProcessCameraProvider.getInstance(activity)
     private val cameraExecutor = Executors.newSingleThreadExecutor()
+    private val mainExecutor = ContextCompat.getMainExecutor(activity)
     private val screenRotation = extractScreenRotation()
     var cameraSelector = cameraSelector
         set(value) {
@@ -50,7 +51,7 @@ class CameraHandler(
             field = value
         }
 
-    var isAnalyzing = false // TODO: account for concurrent modification
+    var isAnalyzing = false
         private set
     var supportedResolutions: List<Size> = emptyList()
 
@@ -64,24 +65,28 @@ class CameraHandler(
         } else {
             (activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
         }
-        if (display == null) {
+        return if (display != null) {
+            surfaceRotationToDegrees(display.rotation)
+        } else {
             Log.w(TAG, "Cannot get current display, assuming rotation is $DEFAULT_SCREEN_ROTATION.")
-            return DEFAULT_SCREEN_ROTATION
+            DEFAULT_SCREEN_ROTATION
         }
-        return when (display.rotation) {
-            Surface.ROTATION_0 -> 0
-            Surface.ROTATION_90 -> 90
-            Surface.ROTATION_180 -> 180
-            Surface.ROTATION_270 -> 270
-            else -> { // Should not happen
-                Log.wtf(TAG, "Unknown display rotation, assuming $DEFAULT_SCREEN_ROTATION.")
-                DEFAULT_SCREEN_ROTATION
-            }
+    }
+
+    @Suppress("MagicNumber")
+    private fun surfaceRotationToDegrees(surfaceRotation: Int) = when (surfaceRotation) {
+        Surface.ROTATION_0 -> 0
+        Surface.ROTATION_90 -> 90
+        Surface.ROTATION_180 -> 180
+        Surface.ROTATION_270 -> 270
+        else -> { // Should not happen
+            Log.wtf(TAG, "Unknown display rotation, assuming $DEFAULT_SCREEN_ROTATION.")
+            DEFAULT_SCREEN_ROTATION
         }
     }
 
     private fun extractSupportedResolutions() {
-        ProcessCameraProvider.getInstance(activity).addListener({
+        cameraProviderFuture.addListener({
             Log.d(TAG, "Retrieving supported resolutions.")
 
             val cameraProvider = cameraProviderFuture.get()
@@ -97,7 +102,7 @@ class CameraHandler(
             }
 
             supportedResolutions = camera.getSupportedResolutions()
-        }, ContextCompat.getMainExecutor(activity))
+        }, mainExecutor)
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -106,10 +111,10 @@ class CameraHandler(
         val cameraId = Camera2CameraInfo.from(cameraInfo).cameraId
         val characteristics = cameraManager.getCameraCharacteristics(cameraId)
         val configs = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-            ?: run { // Should not happen
-                Log.wtf(TAG, "Failed to retrieve configs of $this.")
-                return emptyList()
-            }
+        if (configs == null) { // Should not happen
+            Log.wtf(TAG, "Failed to retrieve configs of $this.")
+            return emptyList()
+        }
 
         // Get resolutions of the supported format
         val resolutions =
@@ -158,7 +163,7 @@ class CameraHandler(
     fun startImageAnalysis(targetResolution: Size?, callback: (realResolution: Size?) -> Unit) {
         Log.i(TAG, "Starting image analysis targeting ${targetResolution ?: "default"}.")
 
-        ProcessCameraProvider.getInstance(activity).addListener({
+        cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
 
             val imageAnalysis = ImageAnalysis.Builder()
@@ -192,10 +197,9 @@ class CameraHandler(
                 Log.e(TAG, "Targeted $targetResolution, but got $realResolution instead.")
             }
 
-            callback(realResolution)
-
             Log.i(TAG, "Started image analysis on $realResolution.")
-        }, ContextCompat.getMainExecutor(activity))
+            callback(realResolution)
+        }, mainExecutor)
     }
 
     fun stopImageAnalysis() {
@@ -206,10 +210,10 @@ class CameraHandler(
 
         Log.i(TAG, "Stopping image analysis.")
 
-        ProcessCameraProvider.getInstance(activity).addListener({
-            cameraProviderFuture.get().unbindAll()  // Currently only binding image analysis
+        cameraProviderFuture.addListener({
+            cameraProviderFuture.get().unbindAll() // Currently only binding image analysis
             Log.i(TAG, "Stopped image analysis.")
-        }, ContextCompat.getMainExecutor(activity))
+        }, mainExecutor)
     }
 
     fun shutdown() {

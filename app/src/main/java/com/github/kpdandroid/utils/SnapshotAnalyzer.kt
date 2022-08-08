@@ -8,7 +8,7 @@ import androidx.compose.ui.geometry.Offset
 import com.github.kpdandroid.ui.SnapshotViewModel
 import java.nio.ByteBuffer
 
-private const val TAG = "PhotoAnalyzer"
+private const val TAG = "SnapshotAnalyzer"
 
 class SnapshotAnalyzer(private val snapshotViewModel: SnapshotViewModel) : ImageAnalysis.Analyzer {
     override fun analyze(image: ImageProxy) {
@@ -18,7 +18,7 @@ class SnapshotAnalyzer(private val snapshotViewModel: SnapshotViewModel) : Image
         Log.v(TAG, "Analyzing snapshot of size ${width}x$height.")
 
         val (keypoints, calcTimeMs) = runDetection(rgbaBytesToRgbBytes(snapshot), width, height)
-        Log.v(TAG, "Detected ${keypoints.size} in $calcTimeMs ms.")
+        Log.v(TAG, "Detected ${keypoints.size} keypoints in $calcTimeMs ms.")
 
         snapshotViewModel.provideSnapshot(
             snapshot = rgbaBytesToBitmap(snapshot, width, height),

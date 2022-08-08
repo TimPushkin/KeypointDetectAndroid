@@ -6,6 +6,7 @@ import android.util.Size
 import androidx.core.content.edit
 
 private const val TAG = "PreferencesManager"
+
 private const val PREFERENCES_FILE_NAME = "ALGORITHM_PREFERENCES"
 
 private const val ALGORITHM_KEY = "algorithm"
@@ -34,6 +35,6 @@ class PreferencesManager(context: Context) {
             preferences.edit {
                 putString(RESOLUTION_KEY, value?.toString())
             }
-            Log.i(TAG, "Resolution ${value?.width} x ${value?.height} has been selected.")
+            Log.i(TAG, "Resolution $value has been selected.")
         }
 }
