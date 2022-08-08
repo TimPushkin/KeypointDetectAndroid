@@ -20,8 +20,8 @@ class SnapshotViewModel : ViewModel() {
 
     val painter = SnapshotPainter()
 
-    fun provideSnapshot(snapshot: Bitmap, keypoints: List<Offset>, calcTimeMs: Long) {
-        paintedSnapshot = snapshot.asImageBitmap().also { painter.draw(it, keypoints) }
+    fun provideSnapshot(snapshot: Bitmap?, keypoints: List<Offset>, calcTimeMs: Long) {
+        paintedSnapshot = snapshot?.asImageBitmap()?.also { painter.draw(it, keypoints) }
         this.calcTimeMs = keypointDetector?.run { calcTimeMs }
     }
 }

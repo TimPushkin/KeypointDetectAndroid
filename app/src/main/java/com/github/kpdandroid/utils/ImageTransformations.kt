@@ -1,7 +1,10 @@
 package com.github.kpdandroid.utils
 
 import android.graphics.Bitmap
+import android.util.Log
 import java.nio.IntBuffer
+
+private const val TAG = "ImageTransformations"
 
 private const val RGBA_CHANNELS_NUM = 4
 private const val RGB_CHANNELS_NUM = 3
@@ -70,7 +73,8 @@ private const val MAX_COLOR = 0xff // Maximum ARGB_8888 channel value
  * @param height height of the image.
  * @param rowStride size of each row in bytes.
  * @param pixelStride size of each pixel in bytes.
- * @return mutable [Bitmap] in [Bitmap.Config.ARGB_8888] format containing the given pixels.
+ * @return mutable [Bitmap] in [Bitmap.Config.ARGB_8888] format containing the given pixels, or null
+ * is the Bitmap cannot be allocated.
  *
  * @throws IllegalArgumentException if rowStride is less than (image width) * (pixel stride) or
  * pixelStride is less than the number of channels in RGBA pixel (i.e. less than 4).
@@ -81,7 +85,7 @@ fun rgbaBytesToBitmap(
     height: Int,
     rowStride: Int,
     pixelStride: Int
-): Bitmap {
+): Bitmap? {
     if (pixelStride < RGBA_CHANNELS_NUM) {
         throw IllegalArgumentException(
             "Pixel stride $pixelStride is less than pixel size $RGBA_CHANNELS_NUM."
@@ -93,24 +97,29 @@ fun rgbaBytesToBitmap(
         )
     }
 
-    val usefulRowSize = width * pixelStride
-
-    val buffer = IntBuffer.allocate(width * height * RGBA_CHANNELS_NUM).apply {
-        for (rowShift in rgbaBytes.indices step rowStride) {
-            for (pixelShift in 0 until usefulRowSize step pixelStride) {
-                val r = rgbaBytes[rowShift + pixelShift + RED_POS].toInt() and MAX_COLOR
-                val g = rgbaBytes[rowShift + pixelShift + GREEN_POS].toInt() and MAX_COLOR
-                val b = rgbaBytes[rowShift + pixelShift + BLUE_POS].toInt() and MAX_COLOR
-                val a = rgbaBytes[rowShift + pixelShift + ALPHA_POS].toInt() and MAX_COLOR
-                // ARGB_8888 pixel is stored in ABGR channel order
-                put(
-                    (a shl ALPHA_BIT_SHIFT) or (b shl BLUE_BIT_SHIFT) or
-                        (g shl GREEN_BIT_SHIFT) or (r shl RED_BIT_SHIFT)
-                )
-            }
-        }
-        rewind()
+    val buffer = try {
+        IntBuffer.allocate(width * height * RGBA_CHANNELS_NUM)
+    } catch (e: OutOfMemoryError) {
+        Log.e(TAG, "Cannot allocate memory for bitmap to convert", e)
+        return null
     }
+
+    val usefulRowSize = width * pixelStride
+    for (rowShift in rgbaBytes.indices step rowStride) {
+        for (pixelShift in 0 until usefulRowSize step pixelStride) {
+            val r = rgbaBytes[rowShift + pixelShift + RED_POS].toInt() and MAX_COLOR
+            val g = rgbaBytes[rowShift + pixelShift + GREEN_POS].toInt() and MAX_COLOR
+            val b = rgbaBytes[rowShift + pixelShift + BLUE_POS].toInt() and MAX_COLOR
+            val a = rgbaBytes[rowShift + pixelShift + ALPHA_POS].toInt() and MAX_COLOR
+            // ARGB_8888 pixel is stored in ABGR channel order
+            buffer.put(
+                (a shl ALPHA_BIT_SHIFT) or (b shl BLUE_BIT_SHIFT) or
+                    (g shl GREEN_BIT_SHIFT) or (r shl RED_BIT_SHIFT)
+            )
+        }
+    }
+    buffer.rewind()
+
     return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).apply {
         copyPixelsFromBuffer(buffer)
     }

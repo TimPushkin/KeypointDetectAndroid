@@ -44,23 +44,25 @@ fun AppLayout(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            image?.let { bitmap ->
+            if (image != null) {
                 Image(
-                    bitmap = bitmap,
-                    contentDescription = "Grayscale photo",
+                    bitmap = image,
+                    contentDescription = "Camera snapshot",
                     modifier = Modifier
                         .fillMaxSize()
                         .weight(1f)
                 )
-
-                val detectionText = calcTimeMs?.let { "Latest detection time: $it ms" }
-                    ?: "Pick an algorithm to see detection time"
-
-                Text(
-                    text = detectionText,
-                    modifier = Modifier.padding(30.dp)
-                )
+            } else {
+                Text("Snapshot not available")
             }
+
+            val detectionText = calcTimeMs?.let { "Latest detection time: $it ms" }
+                ?: "Pick an algorithm to see detection time"
+
+            Text(
+                text = detectionText,
+                modifier = Modifier.padding(30.dp)
+            )
         }
     }
 }
