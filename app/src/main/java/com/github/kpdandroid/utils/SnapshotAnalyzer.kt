@@ -10,14 +10,15 @@ import java.nio.ByteBuffer
 
 private const val TAG = "PhotoAnalyzer"
 
-class PhotoAnalyzer(private val snapshotViewModel: SnapshotViewModel) : ImageAnalysis.Analyzer {
+class SnapshotAnalyzer(private val snapshotViewModel: SnapshotViewModel) : ImageAnalysis.Analyzer {
     override fun analyze(image: ImageProxy) {
         val width = image.width
         val height = image.height
         val snapshot = image.planes[0].buffer.toByteArray()
-        Log.v(TAG, "Analyzing snapshot of size $width x $height.")
+        Log.v(TAG, "Analyzing snapshot of size ${width}x$height.")
 
         val (keypoints, calcTimeMs) = runDetection(rgbaBytesToRgbBytes(snapshot), width, height)
+        Log.v(TAG, "Detected ${keypoints.size} in $calcTimeMs ms.")
 
         snapshotViewModel.provideSnapshot(
             snapshot = rgbaBytesToBitmap(snapshot, width, height),
@@ -41,8 +42,6 @@ class PhotoAnalyzer(private val snapshotViewModel: SnapshotViewModel) : ImageAna
             val startTime = SystemClock.elapsedRealtime()
             val (keypoints, _) = detector.detect(rgbSnapshot)
             val calcTimeMs = SystemClock.elapsedRealtime() - startTime
-
-            Log.v(TAG, "Detected ${keypoints.size} in $calcTimeMs ms.")
 
             keypoints.map { Offset(it.x, it.y) } to calcTimeMs
         } ?: (emptyList<Offset>() to 0L)

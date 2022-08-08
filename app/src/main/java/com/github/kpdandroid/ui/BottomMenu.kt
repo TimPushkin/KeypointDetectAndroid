@@ -1,6 +1,10 @@
 package com.github.kpdandroid.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.BottomAppBar
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
@@ -13,17 +17,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+
+@Composable
+fun BottomMenu(items: @Composable RowScope.() -> Unit) {
+    BottomAppBar {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically,
+            content = items
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomMenuItem(
     options: List<String>,
-    initialOption: String,
+    selectedOption: String,
     onSelected: (String) -> Unit,
     leadingIcon: (@Composable () -> Unit)? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf(initialOption) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -48,7 +64,6 @@ fun BottomMenuItem(
                 DropdownMenuItem(
                     onClick = {
                         onSelected(option)
-                        selectedOption = option
                         expanded = false
                     }
                 ) {
