@@ -2,13 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.kpdandroid">
 
-    <uses-feature
-        android:name="android.hardware.camera2"
-        android:required="true" />
+    <uses-feature android:name="android.hardware.camera2" />
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:name="com.github.kpdandroid.KeypointDetectApp"
+        android:name=".KeypointDetectApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,15 +14,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KeypointDetectAndroid">
         <activity
-            android:name="com.github.kpdandroid.MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.KeypointDetectAndroid">
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".CameraAnalysisActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

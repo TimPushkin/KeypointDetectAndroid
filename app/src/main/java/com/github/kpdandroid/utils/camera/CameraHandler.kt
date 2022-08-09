@@ -1,4 +1,4 @@
-package com.github.kpdandroid.utils
+package com.github.kpdandroid.utils.camera
 
 import android.annotation.SuppressLint
 import android.content.Context

@@ -1,4 +1,4 @@
-package com.github.kpdandroid.ui
+package com.github.kpdandroid.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AppLayout(
+fun CameraAnalysisScreen(
     image: ImageBitmap?,
     calcTimeMs: Long?,
     isCameraPermissionGranted: Boolean,

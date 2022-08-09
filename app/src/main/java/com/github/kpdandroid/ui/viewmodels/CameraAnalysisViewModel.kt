@@ -1,4 +1,4 @@
-package com.github.kpdandroid.ui
+package com.github.kpdandroid.ui.viewmodels
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.getValue
@@ -8,9 +8,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
+import com.github.kpdandroid.ui.SnapshotPainter
 import com.github.kpdlib.KeypointDetector
 
-class SnapshotViewModel : ViewModel() {
+class CameraAnalysisViewModel : ViewModel() {
     var keypointDetector: KeypointDetector? by mutableStateOf(null)
 
     var paintedSnapshot: ImageBitmap? by mutableStateOf(null)

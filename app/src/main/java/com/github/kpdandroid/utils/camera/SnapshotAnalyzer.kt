@@ -1,16 +1,18 @@
-package com.github.kpdandroid.utils
+package com.github.kpdandroid.utils.camera
 
 import android.os.SystemClock
 import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.compose.ui.geometry.Offset
-import com.github.kpdandroid.ui.SnapshotViewModel
+import com.github.kpdandroid.ui.viewmodels.CameraAnalysisViewModel
+import com.github.kpdandroid.utils.rgbaBytesToBitmap
+import com.github.kpdandroid.utils.rgbaBytesToRgbBytes
 import java.nio.ByteBuffer
 
 private const val TAG = "SnapshotAnalyzer"
 
-class SnapshotAnalyzer(private val snapshotViewModel: SnapshotViewModel) : ImageAnalysis.Analyzer {
+class SnapshotAnalyzer(private val viewModel: CameraAnalysisViewModel) : ImageAnalysis.Analyzer {
     override fun analyze(image: ImageProxy) {
         val width = image.width
         val height = image.height
@@ -32,7 +34,7 @@ class SnapshotAnalyzer(private val snapshotViewModel: SnapshotViewModel) : Image
         )
         Log.v(TAG, "Detected ${keypoints.size} keypoints in $calcTimeMs ms.")
 
-        snapshotViewModel.provideSnapshot(
+        viewModel.provideSnapshot(
             snapshot = rgbaBytesToBitmap(snapshot, width, height, rowStride, pixelStride),
             keypoints = keypoints.map { Offset(it.x, it.y) },
             calcTimeMs = calcTimeMs
@@ -47,7 +49,7 @@ class SnapshotAnalyzer(private val snapshotViewModel: SnapshotViewModel) : Image
     }
 
     private fun runDetection(rgbSnapshot: ByteArray, width: Int, height: Int) =
-        snapshotViewModel.keypointDetector?.let { detector ->
+        viewModel.keypointDetector?.let { detector ->
             if (detector.width != width) detector.width = width
             if (detector.height != height) detector.height = height
 
