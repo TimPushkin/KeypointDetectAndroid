@@ -37,7 +37,7 @@ class SnapshotAnalyzer(private val viewModel: ImageAnalysisViewModel) : ImageAna
 
         viewModel.apply {
             provideImage(
-                rgbaBytesToBitmap(snapshot, width, height, rowStride, pixelStride)?.asImageBitmap()
+                rgbaBytesToBitmap(snapshot, width, height, rowStride, pixelStride).asImageBitmap()
             )
             drawKeypoints(keypoints.map { Offset(it.x, it.y) })
             this.calcTimeMs = calcTimeMs.toDouble() to 0.0
