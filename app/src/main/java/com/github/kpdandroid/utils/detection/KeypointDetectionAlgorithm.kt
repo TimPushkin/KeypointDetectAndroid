@@ -1,4 +1,4 @@
-package com.github.kpdandroid.utils
+package com.github.kpdandroid.utils.detection
 
 import android.content.Context
 import com.github.kpdlib.learned.SuperPoint
@@ -16,7 +16,7 @@ enum class KeypointDetectionAlgorithm(val formattedName: String) {
     companion object {
         val names = values().map { it.formattedName }
 
-        fun constructKeypointDetector(
+        fun constructDetectorFrom(
             context: Context,
             algorithmName: String,
             width: Int,

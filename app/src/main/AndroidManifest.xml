@@ -23,6 +23,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".FileAnalysisActivity"
+            android:exported="true" />
+        <activity
             android:name=".CameraAnalysisActivity"
             android:exported="true" />
     </application>
