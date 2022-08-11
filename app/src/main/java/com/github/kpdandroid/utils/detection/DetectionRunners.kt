@@ -6,6 +6,8 @@ import com.github.kpdlib.KeypointDetector
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+typealias KeypointsWithTime = Pair<List<Offset>, Long>
+
 /**
  * Runs keypoint detection on the provided image, changing detector's size if needed. Returns the
  * resulting keypoints and the time the detection took.
@@ -14,7 +16,7 @@ fun KeypointDetector.detectTimed(
     rgbBytes: ByteArray,
     imageWidth: Int,
     imageHeight: Int
-): Pair<List<Offset>, Long> {
+): KeypointsWithTime {
     if (width != imageWidth) width = imageWidth
     if (height != imageHeight) height = imageHeight
 
@@ -24,6 +26,8 @@ fun KeypointDetector.detectTimed(
 
     return keypoints.map { Offset(it.x, it.y) } to calcTimeMs
 }
+
+typealias MeanWithError = Pair<Double, Double>
 
 /**
  * Creates a sequence of detection calls (each time changing detector's size if needed) measuring
@@ -37,7 +41,7 @@ fun KeypointDetector.detectTimedRepeated(
     imageWidth: Int,
     imageHeight: Int,
     times: Int = 1
-): Sequence<Triple<List<Offset>, Double, Double>> {
+): Sequence<Pair<KeypointsWithTime, MeanWithError>> {
     var mean = 0.0
     var dev = 0.0 // Unbiased estimation of standard deviation
 
@@ -74,7 +78,7 @@ fun KeypointDetector.detectTimedRepeated(
                     0.0
                 }
 
-            yield(Triple(keypoints, mean, dev))
+            yield((keypoints to time) to (mean to dev))
         }
     }
 }

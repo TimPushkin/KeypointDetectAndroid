@@ -18,7 +18,7 @@ private const val TAG = "ImageAnalysisViewModel"
 open class ImageAnalysisViewModel : ViewModel() {
     private val painter = KeypointPainter()
 
-    var keypointDetector: KeypointDetector? by mutableStateOf(null)
+    var keypointDetector: KeypointDetector? = null
     var imageLayers: Pair<ImageBitmap, ImageBitmap>? by mutableStateOf(null)
         private set
 

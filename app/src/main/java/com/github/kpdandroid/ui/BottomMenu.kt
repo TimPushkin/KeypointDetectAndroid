@@ -84,8 +84,8 @@ private val MIN_LEADING_ICON_SIZE = 48.dp
 @Composable
 fun BottomMenuItem(
     title: String,
-    onClicked: () -> Unit,
-    leadingIcon: (@Composable BoxScope.() -> Unit)? = null
+    leadingIcon: (@Composable BoxScope.() -> Unit)? = null,
+    onClicked: () -> Unit
 ) {
     Row(
         modifier = Modifier.clickable(
@@ -111,8 +111,8 @@ fun BottomMenuItem(
 fun ExpandableBottomMenuItem(
     options: List<String>,
     selectedOption: String,
-    onSelected: (String) -> Unit,
-    leadingIcon: (@Composable BoxScope.() -> Unit)? = null
+    leadingIcon: (@Composable BoxScope.() -> Unit)? = null,
+    onSelected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -150,4 +150,18 @@ fun ExpandableBottomMenuItem(
             }
         }
     }
+}
+
+@Composable
+fun ExpandableBottomMenuItem(
+    title: String,
+    leadingIcon: (@Composable BoxScope.() -> Unit)? = null,
+    optionsWithAction: List<Pair<String, () -> Unit>>
+) {
+    ExpandableBottomMenuItem(
+        options = optionsWithAction.map { it.first },
+        selectedOption = title,
+        onSelected = { option -> optionsWithAction.find { it.first == option }?.run { second() } },
+        leadingIcon = leadingIcon
+    )
 }
