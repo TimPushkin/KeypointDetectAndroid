@@ -37,7 +37,7 @@ fun FileAnalysisScreen(
     var openDialog by rememberSaveable { mutableStateOf(false) }
 
     if (openDialog) {
-        RunTimesChoosingDialog(
+        RunConfigurationDialog(
             onDismiss = { openDialog = false },
             onConfirm = { enteredNum ->
                 onStartClick(enteredNum)
@@ -71,7 +71,7 @@ private fun formatTime(time: Double) = "%5f".format(time)
 private const val MIN_RUN_TIMES = 1
 
 @Composable
-private fun RunTimesChoosingDialog(onDismiss: () -> Unit, onConfirm: (Int) -> Unit) {
+private fun RunConfigurationDialog(onDismiss: () -> Unit, onConfirm: (Int) -> Unit) {
     var alertDialogText by rememberSaveable { mutableStateOf(MIN_RUN_TIMES.toString()) }
 
     AlertDialog(
