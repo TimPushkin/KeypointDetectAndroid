@@ -15,30 +15,23 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material.icons.filled.Storage
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import com.github.kpdandroid.ui.BottomMenuItem
 import com.github.kpdandroid.ui.DualBottomMenu
 import com.github.kpdandroid.ui.ExpandableBottomMenuItem
-import com.github.kpdandroid.ui.ImageAnalysisViewModel
 import com.github.kpdandroid.ui.screens.FileAnalysisScreen
 import com.github.kpdandroid.ui.theme.KeypointDetectAppTheme
+import com.github.kpdandroid.ui.viewmodels.FileAnalysisViewModel
 import com.github.kpdandroid.utils.PreferencesManager
-import com.github.kpdandroid.utils.bitmapToRgbBytes
 import com.github.kpdandroid.utils.detection.KeypointDetectionAlgorithm
-import com.github.kpdandroid.utils.detection.detectTimedRepeated
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 private const val TAG = "FileAnalysisActivity"
 
 private const val IMAGE_MIME = "image/*"
 
 class FileAnalysisActivity : ComponentActivity() {
-    private val viewModel by viewModels<ImageAnalysisViewModel>()
-    private val dafaultScope = CoroutineScope(Dispatchers.Default)
+    private val viewModel by viewModels<FileAnalysisViewModel>()
     private lateinit var preferencesManager: PreferencesManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,11 +56,13 @@ class FileAnalysisActivity : ComponentActivity() {
 
                 FileAnalysisScreen(
                     imageLayers = viewModel.imageLayers?.toList() ?: emptyList(),
-                    calcTimeMs = viewModel.calcTimeMs,
-                    showStartButton = viewModel.imageLayers != null &&
+                    calcTimesMs = viewModel.calcTimesMs,
+                    detectionProgress = viewModel.detectionProgress,
+                    showFab = viewModel.imageLayers != null &&
                         preferencesManager.selectedFileAlgorithmName !=
                         KeypointDetectionAlgorithm.NONE.formattedName,
-                    onStartClick = this::runDetection,
+                    onStartClick = viewModel::startDetection,
+                    onStopClick = viewModel::stopDetection,
                     bottomMenu = {
                         DualBottomMenu(
                             horizontalArrangement = Arrangement.Center,
@@ -134,30 +129,5 @@ class FileAnalysisActivity : ComponentActivity() {
         } else {
             Log.e(TAG, "Failed to decode image from $imageUri.")
         }
-    }
-
-    private fun runDetection(times: Int) {
-        viewModel.keypointDetector?.let { detector ->
-            viewModel.imageLayers?.let { (image, _) ->
-                Log.i(TAG, "Running detection for $times times.")
-
-                dafaultScope.launch {
-                    val rgbBytes = bitmapToRgbBytes(image.asAndroidBitmap())
-                    val results = detector.detectTimedRepeated(
-                        rgbBytes = rgbBytes,
-                        imageWidth = image.width,
-                        imageHeight = image.height,
-                        times = times
-                    )
-
-                    for ((keypoints, meanCalcTimeMs, devCalcTimeMs) in results) {
-                        launch(Dispatchers.Main) {
-                            viewModel.drawKeypoints(keypoints)
-                            viewModel.calcTimeMs = meanCalcTimeMs to devCalcTimeMs
-                        }
-                    }
-                }
-            } ?: run { Log.e(TAG, "Cannot run detection: image is not selected.") }
-        } ?: run { Log.e(TAG, "Cannot run detection: detector is not selected.") }
     }
 }

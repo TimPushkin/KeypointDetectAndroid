@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.FabPosition
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
@@ -14,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,36 +29,53 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.github.kpdandroid.ui.DetectionResultColumn
 
+private const val MIN_RUN_TIMES = 1
+
 @Composable
 fun FileAnalysisScreen(
     imageLayers: List<ImageBitmap>,
-    calcTimeMs: Pair<Double, Double>?,
-    showStartButton: Boolean,
+    calcTimesMs: Pair<Double, Double>?,
+    detectionProgress: Float?,
+    showFab: Boolean,
     onStartClick: (Int) -> Unit,
+    onStopClick: () -> Unit,
     bottomMenu: @Composable () -> Unit
 ) {
     var openDialog by rememberSaveable { mutableStateOf(false) }
+    // Saved here to keep between dialog reopening
+    var dialogEnteredNum by rememberSaveable { mutableStateOf(MIN_RUN_TIMES) }
 
     if (openDialog) {
         RunConfigurationDialog(
+            savedEnteredNum = dialogEnteredNum,
             onDismiss = { openDialog = false },
             onConfirm = { enteredNum ->
                 onStartClick(enteredNum)
                 openDialog = false
+                dialogEnteredNum = enteredNum
             }
         )
     }
 
     Scaffold(
         bottomBar = bottomMenu,
-        floatingActionButton = { if (showStartButton) StartFab { openDialog = true } },
+        floatingActionButton = {
+            when {
+                !showFab -> Unit
+                detectionProgress == null -> StartFab { openDialog = true }
+                else -> StopFab(
+                    progress = detectionProgress,
+                    onClick = onStopClick
+                )
+            }
+        },
         floatingActionButtonPosition = FabPosition.Center,
         isFloatingActionButtonDocked = true
     ) { paddingValues ->
         DetectionResultColumn(
             imageLayers = imageLayers,
             altText = "Pick an image for analysis",
-            captions = calcTimeMs?.let { (calcTimeMs, stdDevMs) ->
+            captions = calcTimesMs?.let { (calcTimeMs, stdDevMs) ->
                 listOf(
                     "Mean detection time: ${formatTime(calcTimeMs)} ms.",
                     "Standard deviation: ${formatTime(stdDevMs)} ms."
@@ -68,11 +88,13 @@ fun FileAnalysisScreen(
 
 private fun formatTime(time: Double) = "%5f".format(time)
 
-private const val MIN_RUN_TIMES = 1
-
 @Composable
-private fun RunConfigurationDialog(onDismiss: () -> Unit, onConfirm: (Int) -> Unit) {
-    var alertDialogText by rememberSaveable { mutableStateOf(MIN_RUN_TIMES.toString()) }
+private fun RunConfigurationDialog(
+    savedEnteredNum: Int,
+    onDismiss: () -> Unit,
+    onConfirm: (Int) -> Unit
+) {
+    var enteredText by rememberSaveable { mutableStateOf(savedEnteredNum.toString()) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -82,15 +104,15 @@ private fun RunConfigurationDialog(onDismiss: () -> Unit, onConfirm: (Int) -> Un
                 horizontalAlignment = Alignment.End
             ) {
                 val onDone = {
-                    val enteredNum = alertDialogText.toIntOrNull()?.coerceAtLeast(MIN_RUN_TIMES)
+                    val enteredNum = enteredText.toIntOrNull()?.coerceAtLeast(MIN_RUN_TIMES)
                         ?: MIN_RUN_TIMES
-                    alertDialogText = enteredNum.toString()
+                    enteredText = enteredNum.toString()
                     onConfirm(enteredNum)
                 }
 
                 OutlinedTextField(
-                    value = alertDialogText,
-                    onValueChange = { alertDialogText = it },
+                    value = enteredText,
+                    onValueChange = { enteredText = it },
                     label = { Text("Number of runs") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -115,4 +137,16 @@ private fun StartFab(onClick: () -> Unit) {
         },
         onClick = onClick
     )
+}
+
+@Composable
+private fun StopFab(progress: Float, onClick: () -> Unit) {
+    FloatingActionButton(onClick = onClick) {
+        CircularProgressIndicator(progress = progress)
+
+        Icon(
+            imageVector = Icons.Default.Stop,
+            contentDescription = "Stop"
+        )
+    }
 }

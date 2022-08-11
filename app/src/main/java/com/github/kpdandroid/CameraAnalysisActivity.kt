@@ -18,10 +18,10 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.core.content.ContextCompat
 import com.github.kpdandroid.ui.ExpandableBottomMenuItem
-import com.github.kpdandroid.ui.ImageAnalysisViewModel
 import com.github.kpdandroid.ui.UnitedBottomMenu
 import com.github.kpdandroid.ui.screens.CameraAnalysisScreen
 import com.github.kpdandroid.ui.theme.KeypointDetectAppTheme
+import com.github.kpdandroid.ui.viewmodels.CameraAnalysisViewModel
 import com.github.kpdandroid.utils.PreferencesManager
 import com.github.kpdandroid.utils.camera.CameraHandler
 import com.github.kpdandroid.utils.camera.SnapshotAnalyzer
@@ -30,7 +30,7 @@ import com.github.kpdandroid.utils.detection.KeypointDetectionAlgorithm
 private const val TAG = "CameraAnalysisActivity"
 
 class CameraAnalysisActivity : ComponentActivity() {
-    private val viewModel by viewModels<ImageAnalysisViewModel>()
+    private val viewModel by viewModels<CameraAnalysisViewModel>()
     private lateinit var preferencesManager: PreferencesManager
     private lateinit var cameraHandler: CameraHandler
 
@@ -67,7 +67,7 @@ class CameraAnalysisActivity : ComponentActivity() {
 
                 CameraAnalysisScreen(
                     imageLayers = viewModel.imageLayers?.toList() ?: emptyList(),
-                    calcTimeMs = viewModel.calcTimeMs?.first,
+                    calcTimeMs = viewModel.calcTimeMs,
                     isCameraPermissionGranted = isCameraPermissionGranted(),
                     bottomMenu = {
                         UnitedBottomMenu(horizontalArrangement = Arrangement.SpaceEvenly) {

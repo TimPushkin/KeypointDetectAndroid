@@ -14,7 +14,7 @@ import com.github.kpdandroid.ui.DetectionResultColumn
 @Composable
 fun CameraAnalysisScreen(
     imageLayers: List<ImageBitmap>,
-    calcTimeMs: Double?,
+    calcTimeMs: Long?,
     isCameraPermissionGranted: Boolean,
     bottomMenu: @Composable () -> Unit
 ) {

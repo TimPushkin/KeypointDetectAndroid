@@ -1,4 +1,4 @@
-package com.github.kpdandroid.ui
+package com.github.kpdandroid.ui.viewmodels
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -10,17 +10,17 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
+import com.github.kpdandroid.ui.KeypointPainter
 import com.github.kpdlib.KeypointDetector
 
 private const val TAG = "ImageAnalysisViewModel"
 
-class ImageAnalysisViewModel : ViewModel() {
+open class ImageAnalysisViewModel : ViewModel() {
     private val painter = KeypointPainter()
 
     var keypointDetector: KeypointDetector? by mutableStateOf(null)
     var imageLayers: Pair<ImageBitmap, ImageBitmap>? by mutableStateOf(null)
         private set
-    var calcTimeMs: Pair<Double, Double>? by mutableStateOf(null)
 
     fun provideImage(image: ImageBitmap?) {
         if (image == null) {

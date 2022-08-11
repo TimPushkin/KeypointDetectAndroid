@@ -5,7 +5,7 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asImageBitmap
-import com.github.kpdandroid.ui.ImageAnalysisViewModel
+import com.github.kpdandroid.ui.viewmodels.CameraAnalysisViewModel
 import com.github.kpdandroid.utils.detection.detectTimed
 import com.github.kpdandroid.utils.rgbaBytesToBitmap
 import com.github.kpdandroid.utils.rgbaBytesToRgbBytes
@@ -13,7 +13,7 @@ import java.nio.ByteBuffer
 
 private const val TAG = "SnapshotAnalyzer"
 
-class SnapshotAnalyzer(private val viewModel: ImageAnalysisViewModel) : ImageAnalysis.Analyzer {
+class SnapshotAnalyzer(private val viewModel: CameraAnalysisViewModel) : ImageAnalysis.Analyzer {
     override fun analyze(image: ImageProxy) {
         val width = image.width
         val height = image.height
@@ -40,7 +40,7 @@ class SnapshotAnalyzer(private val viewModel: ImageAnalysisViewModel) : ImageAna
                 rgbaBytesToBitmap(snapshot, width, height, rowStride, pixelStride).asImageBitmap()
             )
             drawKeypoints(keypoints.map { Offset(it.x, it.y) })
-            this.calcTimeMs = calcTimeMs.toDouble() to 0.0
+            this.calcTimeMs = calcTimeMs
         }
 
         image.close()
