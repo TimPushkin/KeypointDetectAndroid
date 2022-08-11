@@ -1,5 +1,6 @@
 package com.github.kpdandroid.ui
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,6 +11,8 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
 import com.github.kpdlib.KeypointDetector
+
+private const val TAG = "ImageAnalysisViewModel"
 
 class ImageAnalysisViewModel : ViewModel() {
     private val painter = KeypointPainter()
@@ -26,19 +29,27 @@ class ImageAnalysisViewModel : ViewModel() {
             return
         }
 
-        val oldKeypointsBitmap = imageLayers?.second?.asAndroidBitmap()
+        val oldPaintBitmap = imageLayers?.second?.asAndroidBitmap()
         val requiredSize = image.asAndroidBitmap().byteCount
-        val newKeypointsLayer = when {
-            oldKeypointsBitmap == null || requiredSize > oldKeypointsBitmap.allocationByteCount ->
-                ImageBitmap(image.width, image.height, image.config)
-            requiredSize < oldKeypointsBitmap.allocationByteCount ->
-                oldKeypointsBitmap.apply { reconfigure(image.width, image.height, config) }
+        val paintLayer = when {
+            oldPaintBitmap == null || requiredSize > oldPaintBitmap.allocationByteCount -> {
+                // Cannot reuse the old bitmap
+                Log.d(TAG, "Allocating a new bitmap for painting (required size $requiredSize).")
+                ImageBitmap(image.width, image.height).also { painter.updateImage(it) }
+            }
+            oldPaintBitmap.width != image.width && oldPaintBitmap.height != image.height -> {
+                // Can reconfigure the old bitmap, but must detach it first
+                Log.d(TAG, "Reconfiguring the old painting bitmap.")
+                painter.updateImage(null)
+                imageLayers = null
+                oldPaintBitmap.apply { reconfigure(image.width, image.height, config) }
                     .asImageBitmap()
-            else -> oldKeypointsBitmap.asImageBitmap() // Sizes are equal
+                    .also { painter.updateImage(it) }
+            }
+            else -> oldPaintBitmap.asImageBitmap() // Sizes are equal
         }
 
-        painter.updateImage(newKeypointsLayer)
-        imageLayers = image to newKeypointsLayer
+        imageLayers = image to paintLayer
     }
 
     fun drawKeypoints(keypoints: List<Offset>) {
