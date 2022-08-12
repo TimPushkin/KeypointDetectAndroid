@@ -1,11 +1,14 @@
 package com.github.kpdandroid.ui.viewmodels
 
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.viewModelScope
+import com.github.kpdandroid.utils.PreferencesManager
 import com.github.kpdandroid.utils.bitmapToRgbBytes
 import com.github.kpdandroid.utils.detection.DetectionLogger
 import com.github.kpdandroid.utils.detection.detectTimedRepeated
@@ -15,13 +18,15 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
+import java.io.InputStream
+import java.io.OutputStream
 
 private const val TAG = "FileAnalysisViewModel"
 
 private const val DETECTION_PROGRESS_NULLING_DELAY = 200L
 
-class FileAnalysisViewModel : ImageAnalysisViewModel() {
-    var logger: DetectionLogger? = null
+class FileAnalysisViewModel(prefs: PreferencesManager) : ImageAnalysisViewModel(prefs) {
+    private var logger: DetectionLogger? = null
         set(value) {
             field?.close()
             field = value
@@ -89,6 +94,26 @@ class FileAnalysisViewModel : ImageAnalysisViewModel() {
         detectionRunningJob.cancelAndJoin()
         logger?.save()
         detectionProgress = null
+    }
+
+    fun setupImage(imageInputStream: InputStream?) {
+        Log.d(TAG, "Setting up image from $imageInputStream.")
+        val image = imageInputStream?.use { BitmapFactory.decodeStream(it)?.asImageBitmap() }
+        if (image != null) {
+            super.updateMainLayer(image)
+        } else {
+            Log.e(TAG, "Failed to open and decode image from $imageInputStream.")
+        }
+    }
+
+    fun setupLogger(logOutputStream: OutputStream?) {
+        Log.d(TAG, "Setting up logger to $logOutputStream.")
+        if (logOutputStream != null) {
+            logger = DetectionLogger(logOutputStream)
+        } else {
+            logger = null
+            Log.e(TAG, "Failed to set up logging to $logOutputStream.")
+        }
     }
 
     override fun onCleared() {

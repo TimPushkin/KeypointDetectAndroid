@@ -6,7 +6,7 @@ import com.github.kpdlib.traditional.Orb
 import com.github.kpdlib.traditional.Sift
 import com.github.kpdlib.traditional.Surf
 
-enum class KeypointDetectionAlgorithm(val formattedName: String) {
+enum class DetectionAlgo(val title: String) {
     NONE("None"),
     SIFT("SIFT"),
     SURF("SURF"),
@@ -14,7 +14,7 @@ enum class KeypointDetectionAlgorithm(val formattedName: String) {
     SUPERPOINT("SuperPoint");
 
     companion object {
-        val names = values().map { it.formattedName }
+        val titles = values().map { it.title }
 
         fun constructDetectorFrom(
             context: Context,
@@ -22,10 +22,10 @@ enum class KeypointDetectionAlgorithm(val formattedName: String) {
             width: Int,
             height: Int
         ) = when (algorithmName) {
-            SIFT.formattedName -> Sift(width, height)
-            SURF.formattedName -> Surf(width, height)
-            ORB.formattedName -> Orb(width, height)
-            SUPERPOINT.formattedName -> SuperPoint.Builder(context, width, height).build()
+            SIFT.title -> Sift(width, height)
+            SURF.title -> Surf(width, height)
+            ORB.title -> Orb(width, height)
+            SUPERPOINT.title -> SuperPoint.Builder(context, width, height).build()
             else -> null
         }
     }

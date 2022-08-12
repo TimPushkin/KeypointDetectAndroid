@@ -25,9 +25,15 @@ import androidx.compose.ui.unit.dp
 import com.github.kpdandroid.R
 
 private const val ICON_SCALE = 1.5f
+const val MAIN_SCREEN = "MAIN_SCREEN"
+
+enum class NavDestination(val title: String, val icon: ImageVector) {
+    FILE_ANALYSIS("File analysis", Icons.Default.Storage),
+    CAMERA_ANALYSIS("Camera analysis", Icons.Default.Camera)
+}
 
 @Composable
-fun MainNavScreen(onDestinationClick: (MainNavDestinations) -> Unit) {
+fun NavScreen(onDestinationSelected: (NavDestination) -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -36,11 +42,11 @@ fun MainNavScreen(onDestinationClick: (MainNavDestinations) -> Unit) {
         }
     ) { paddingValues ->
         LazyColumn(modifier = Modifier.padding(paddingValues)) {
-            items(MainNavDestinations.values()) { destination ->
+            items(NavDestination.values()) { destination ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable(role = Role.Button) { onDestinationClick(destination) },
+                        .clickable(role = Role.Button) { onDestinationSelected(destination) },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -57,9 +63,4 @@ fun MainNavScreen(onDestinationClick: (MainNavDestinations) -> Unit) {
             }
         }
     }
-}
-
-enum class MainNavDestinations(val title: String, val icon: ImageVector) {
-    FILE_ANALYSIS("File analysis", Icons.Default.Storage),
-    CAMERA_ANALYSIS("Camera analysis", Icons.Default.Camera)
 }

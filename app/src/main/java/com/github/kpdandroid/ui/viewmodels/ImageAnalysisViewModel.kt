@@ -10,19 +10,27 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.github.kpdandroid.ui.KeypointPainter
+import com.github.kpdandroid.utils.PreferencesManager
 import com.github.kpdlib.KeypointDetector
 
 private const val TAG = "ImageAnalysisViewModel"
 
-open class ImageAnalysisViewModel : ViewModel() {
+abstract class ImageAnalysisViewModel(val prefs: PreferencesManager) : ViewModel() {
     private val painter = KeypointPainter()
 
     var keypointDetector: KeypointDetector? = null
     var imageLayers: Pair<ImageBitmap, ImageBitmap>? by mutableStateOf(null)
         private set
 
-    fun provideImage(image: ImageBitmap?) {
+    var keypointColor: Color
+        get() = painter.pointColor
+        set(value) {
+            painter.pointColor = value
+        }
+
+    protected fun updateMainLayer(image: ImageBitmap?) {
         if (image == null) {
             painter.updateImage(null)
             imageLayers = null
@@ -56,7 +64,9 @@ open class ImageAnalysisViewModel : ViewModel() {
         painter.draw(keypoints)
     }
 
-    fun setKeypointColor(color: Color) {
-        painter.pointColor = color
+    class Factory(private val prefs: PreferencesManager) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return modelClass.getConstructor(PreferencesManager::class.java).newInstance(prefs)
+        }
     }
 }

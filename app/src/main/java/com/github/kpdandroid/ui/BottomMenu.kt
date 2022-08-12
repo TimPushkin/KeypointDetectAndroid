@@ -106,13 +106,17 @@ fun BottomMenuItem(
     }
 }
 
+data class ExpandableBottomMenuItemContent(
+    val options: List<String>,
+    val selectedOption: String,
+    val onSelected: (String) -> Unit
+)
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ExpandableBottomMenuItem(
-    options: List<String>,
-    selectedOption: String,
-    leadingIcon: (@Composable BoxScope.() -> Unit)? = null,
-    onSelected: (String) -> Unit
+    content: ExpandableBottomMenuItemContent,
+    leadingIcon: (@Composable BoxScope.() -> Unit)? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -129,7 +133,7 @@ fun ExpandableBottomMenuItem(
                 )
             }
 
-            Text(selectedOption)
+            Text(content.selectedOption)
 
             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
         }
@@ -138,10 +142,10 @@ fun ExpandableBottomMenuItem(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            for (option in options) {
+            for (option in content.options) {
                 DropdownMenuItem(
                     onClick = {
-                        onSelected(option)
+                        content.onSelected(option)
                         expanded = false
                     }
                 ) {
@@ -158,10 +162,11 @@ fun ExpandableBottomMenuItem(
     leadingIcon: (@Composable BoxScope.() -> Unit)? = null,
     optionsWithAction: List<Pair<String, () -> Unit>>
 ) {
-    ExpandableBottomMenuItem(
+    val content = ExpandableBottomMenuItemContent(
         options = optionsWithAction.map { it.first },
         selectedOption = title,
-        onSelected = { option -> optionsWithAction.find { it.first == option }?.run { second() } },
-        leadingIcon = leadingIcon
+        onSelected = { option -> optionsWithAction.find { it.first == option }?.run { second() } }
     )
+
+    ExpandableBottomMenuItem(content = content, leadingIcon = leadingIcon)
 }
