@@ -59,24 +59,22 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+    private fun createViewModel(): ViewModelProvider.Factory {
+        check(this::prefs.isInitialized) {
+            "ImageAnalysisViewModel.Factory accessed before prefs initialization"
+        }
+        return ImageAnalysisViewModel.Factory(prefs)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         prefs = (application as KeypointDetectApp).prefs
         cameraHandler = CameraHandler(this, cameraViewModel.analyzer)
 
-        fileViewModel.keypointDetector = DetectionAlgo.constructDetectorFrom(
-            algorithmName = prefs.fileAlgoName,
-            context = this,
-            width = fileViewModel.keypointDetector?.width ?: 0,
-            height = fileViewModel.keypointDetector?.height ?: 0
-        )
-        cameraViewModel.keypointDetector = DetectionAlgo.constructDetectorFrom(
-            algorithmName = prefs.cameraAlgoName,
-            context = this,
-            width = cameraViewModel.keypointDetector?.width ?: 0,
-            height = cameraViewModel.keypointDetector?.height ?: 0
-        )
+        // In case starting for the first time
+        fileViewModel ensureUsesDetectorNamed prefs.fileAlgoName
+        cameraViewModel ensureUsesDetectorNamed prefs.cameraAlgoName
 
         setContent {
             KeypointDetectAppTheme {
@@ -108,11 +106,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun createViewModel(): ViewModelProvider.Factory {
-        check(this::prefs.isInitialized) {
-            "ImageAnalysisViewModel.Factory accessed before prefs initialization"
+    private infix fun ImageAnalysisViewModel.ensureUsesDetectorNamed(algoName: String) {
+        if (DetectionAlgo.from(keypointDetector)?.title != algoName) {
+            keypointDetector = DetectionAlgo.constructDetectorFrom(
+                algorithmName = algoName,
+                context = this@MainActivity,
+                width = keypointDetector?.width ?: 0,
+                height = keypointDetector?.height ?: 0
+            )
         }
-        return ImageAnalysisViewModel.Factory(prefs)
     }
 
     private fun tieCameraLifecycleTo(owner: LifecycleOwner) {

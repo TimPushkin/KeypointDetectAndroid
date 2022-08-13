@@ -1,6 +1,7 @@
 package com.github.kpdandroid.utils.detection
 
 import android.content.Context
+import com.github.kpdlib.KeypointDetector
 import com.github.kpdlib.learned.SuperPoint
 import com.github.kpdlib.traditional.Orb
 import com.github.kpdlib.traditional.Sift
@@ -15,6 +16,15 @@ enum class DetectionAlgo(val title: String) {
 
     companion object {
         val titles = values().map { it.title }
+
+        fun from(detector: KeypointDetector?) = when (detector) {
+            is Sift -> SIFT
+            is Surf -> SURF
+            is Orb -> ORB
+            is SuperPoint -> SUPERPOINT
+            null -> NONE
+            else -> null
+        }
 
         fun constructDetectorFrom(
             context: Context,
