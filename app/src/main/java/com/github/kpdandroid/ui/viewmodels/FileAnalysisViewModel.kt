@@ -69,7 +69,6 @@ class FileAnalysisViewModel(prefs: PreferencesManager) : ImageAnalysisViewModel(
                 )
 
                 results.forEachIndexed { i, (keypointsWithTime, meanWithError) ->
-                    yield()
                     drawKeypoints(keypointsWithTime.first)
                     calcTimesMs = meanWithError
                     detectionProgress = (i + 1).toFloat() / times
@@ -80,6 +79,7 @@ class FileAnalysisViewModel(prefs: PreferencesManager) : ImageAnalysisViewModel(
                         keypointsWithTime.first.size,
                         keypointsWithTime.second
                     )
+                    yield()
                 }
                 logger?.save()
 
