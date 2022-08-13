@@ -27,3 +27,7 @@
     public static int w(...);
     public static int e(...);
 }
+
+# ViewModels' constructors get removed when using `getConstructor()` in ViewModelProvider.Factory
+-keepclassmembers class com.github.kpdandroid.ui.viewmodels.CameraAnalysisViewModel { public <init>(...); }
+-keepclassmembers class com.github.kpdandroid.ui.viewmodels.FileAnalysisViewModel { public <init>(...); }
