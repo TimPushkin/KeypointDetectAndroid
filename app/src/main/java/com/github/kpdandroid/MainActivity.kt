@@ -50,7 +50,10 @@ class MainActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
                 Log.i(TAG, "Camera permission was granted.")
-                tryStartCameraAnalysisIfNeeded()
+                // In Android Q and later permission window triggers onTopResumedActivityChanged()
+                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+                    tryStartCameraAnalysisIfNeeded()
+                }
             } else {
                 Log.e(TAG, "Camera permission was NOT granted.")
             }
