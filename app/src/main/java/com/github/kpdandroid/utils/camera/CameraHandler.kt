@@ -46,30 +46,30 @@ class CameraHandler(
 ) {
     private val cameraManager = activity.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val cameraProviderFuture = ProcessCameraProvider.getInstance(activity)
+    private val cameraLifecycleOwner = AtomicReference<LifecycleOwner>(activity)
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val mainExecutor = ContextCompat.getMainExecutor(activity)
-    private val cameraLifecycleOwner = AtomicReference<LifecycleOwner>(activity)
 
     var cameraSelector = cameraSelector
         set(value) {
             extractSupportedResolutions()
             field = value
         }
-
-    private val screenRotation: Int
-
     val isCameraLifecycleTied: Boolean
         get() = cameraLifecycleOwner.get() != activity
-    var isAnalyzing = false
+    var isAnalyzing = { false }
         private set
     var supportedResolutions by mutableStateOf(emptyList<Size>())
         private set
+
+    private val screenRotation: Int
 
     init {
         // Get screen rotation
         val display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             activity.display
         } else {
+            @Suppress("DEPRECATION") // Not deprecated when < Build.VERSION_CODES.R
             (activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
         }
         screenRotation = if (display != null) {
@@ -183,7 +183,7 @@ class CameraHandler(
                 .apply { setAnalyzer(cameraExecutor, analyzer) }
 
             cameraProvider.unbindAll() // Currently only binding image analysis
-            isAnalyzing = false
+            isAnalyzing = { cameraProvider.isBound(imageAnalysis) }
 
             try {
                 cameraProvider.bindToLifecycle(
@@ -212,12 +212,7 @@ class CameraHandler(
         }, mainExecutor)
     }
 
-    fun stopImageAnalysisIfNeeded() {
-        if (!isAnalyzing) {
-            Log.i(TAG, "Image analysis is not running.")
-            return
-        }
-
+    fun stopImageAnalysis() {
         Log.i(TAG, "Stopping image analysis.")
 
         cameraProviderFuture.addListener({
@@ -236,7 +231,6 @@ class CameraHandler(
             previousOwner = cameraLifecycleOwner.get()
             if (previousOwner == owner) return
         } while (!cameraLifecycleOwner.compareAndSet(previousOwner, owner))
-        stopImageAnalysisIfNeeded()
     }
 
     /**
@@ -245,7 +239,6 @@ class CameraHandler(
      * to the activity.
      */
     fun untieCameraLifecycleIfNeededFrom(owner: LifecycleOwner) {
-        stopImageAnalysisIfNeeded()
         cameraLifecycleOwner.compareAndSet(owner, activity)
     }
 

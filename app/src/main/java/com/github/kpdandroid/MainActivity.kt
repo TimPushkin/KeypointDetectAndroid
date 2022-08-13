@@ -117,6 +117,12 @@ class MainActivity : ComponentActivity() {
 
     private fun tieCameraLifecycleTo(owner: LifecycleOwner) {
         Log.i(TAG, "Tying camera lifecycle to $owner.")
+
+        if (cameraHandler.isAnalyzing()) {
+            Log.d(TAG, "Stopping image analysis first.")
+            cameraHandler.stopImageAnalysis()
+        }
+
         cameraHandler.tieCameraLifecycleIfNeededTo(
             owner.apply {
                 lifecycle.addObserver(
@@ -133,13 +139,8 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    // Not using onResume to account for changes made in split screen
-    override fun onTopResumedActivityChanged(isTopResumedActivity: Boolean) {
-        if (isTopResumedActivity) tryStartCameraAnalysisIfNeeded()
-    }
-
     private fun tryStartCameraAnalysisIfNeeded() {
-        if (cameraHandler.run { isCameraLifecycleTied && !isAnalyzing }) tryStartCameraAnalysis()
+        if (cameraHandler.run { isCameraLifecycleTied && !isAnalyzing() }) tryStartCameraAnalysis()
     }
 
     private fun tryStartCameraAnalysis() {
@@ -171,6 +172,11 @@ class MainActivity : ComponentActivity() {
     private fun shouldRationalize(permission: String) =
         (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) &&
             shouldShowRequestPermissionRationale(permission)
+
+    // Not using onResume to account for changes made in split screen
+    override fun onTopResumedActivityChanged(isTopResumedActivity: Boolean) {
+        if (isTopResumedActivity) tryStartCameraAnalysisIfNeeded()
+    }
 
     override fun onDestroy() {
         cameraHandler.shutdown()
