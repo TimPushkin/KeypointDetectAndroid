@@ -225,7 +225,11 @@ private fun StartFab(onClick: () -> Unit) {
 @Composable
 private fun StopFab(progress: Float, onClick: () -> Unit) {
     FloatingActionButton(onClick = onClick) {
-        CircularProgressIndicator(progress = progress)
+        if (progress > 0) {
+            CircularProgressIndicator(progress = progress)
+        } else {
+            CircularProgressIndicator()
+        }
 
         Icon(
             imageVector = Icons.Default.Stop,
