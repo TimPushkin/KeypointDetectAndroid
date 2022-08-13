@@ -145,46 +145,6 @@ private fun RunConfigurationDialog(open: Boolean, onDismiss: () -> Unit, onConfi
     }
 }
 
-@Composable
-private fun FileAnalysisFab(
-    show: Boolean,
-    progress: Float?,
-    onStart: () -> Unit,
-    onStop: () -> Unit
-) {
-    when {
-        !show -> Unit
-        progress == null -> StartFab(onClick = onStart)
-        else -> StopFab(progress = progress, onClick = onStop)
-    }
-}
-
-@Composable
-private fun StartFab(onClick: () -> Unit) {
-    ExtendedFloatingActionButton(
-        text = { Text("START") },
-        icon = {
-            Icon(
-                imageVector = Icons.Default.PlayArrow,
-                contentDescription = "Start"
-            )
-        },
-        onClick = onClick
-    )
-}
-
-@Composable
-private fun StopFab(progress: Float, onClick: () -> Unit) {
-    FloatingActionButton(onClick = onClick) {
-        CircularProgressIndicator(progress = progress)
-
-        Icon(
-            imageVector = Icons.Default.Stop,
-            contentDescription = "Stop"
-        )
-    }
-}
-
 private const val IMAGE_MIME = "image/*"
 private const val TEXT_MIME = "text/*"
 private const val SUGGESTED_LOG_FILENAME = "log.txt"
@@ -232,4 +192,44 @@ private fun FileAnalysisMenu(
             )
         }
     )
+}
+
+@Composable
+private fun FileAnalysisFab(
+    show: Boolean,
+    progress: Float?,
+    onStart: () -> Unit,
+    onStop: () -> Unit
+) {
+    when {
+        !show -> Unit
+        progress == null -> StartFab(onClick = onStart)
+        else -> StopFab(progress = progress, onClick = onStop)
+    }
+}
+
+@Composable
+private fun StartFab(onClick: () -> Unit) {
+    ExtendedFloatingActionButton(
+        text = { Text("START") },
+        icon = {
+            Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = "Start"
+            )
+        },
+        onClick = onClick
+    )
+}
+
+@Composable
+private fun StopFab(progress: Float, onClick: () -> Unit) {
+    FloatingActionButton(onClick = onClick) {
+        CircularProgressIndicator(progress = progress)
+
+        Icon(
+            imageVector = Icons.Default.Stop,
+            contentDescription = "Stop"
+        )
+    }
 }
