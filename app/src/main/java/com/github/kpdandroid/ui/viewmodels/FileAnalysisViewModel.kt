@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.viewModelScope
 import com.github.kpdandroid.KeypointDetectApp
 import com.github.kpdandroid.utils.bitmapToRgbBytes
+import com.github.kpdandroid.utils.detection.DetectionAlgo
 import com.github.kpdandroid.utils.detection.DetectionLogger
 import com.github.kpdandroid.utils.detection.detectTimedRepeated
 import kotlinx.coroutines.Dispatchers
@@ -70,12 +71,14 @@ class FileAnalysisViewModel(app: Application) :
                     times = times
                 )
 
+                val detectorTitle = DetectionAlgo.from(detector)?.title
+
                 results.forEachIndexed { i, (keypointsWithTime, meanWithError) ->
                     drawKeypoints(keypointsWithTime.first)
                     calcTimesMs = meanWithError
                     detectionProgress = (i + 1).toFloat() / times
                     logger?.log(
-                        detector::class.simpleName,
+                        detectorTitle,
                         image.width,
                         image.height,
                         keypointsWithTime.first.size,

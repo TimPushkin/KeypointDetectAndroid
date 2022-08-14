@@ -10,9 +10,10 @@ private const val TAG = "DetectionLogger"
 class DetectionLogger(logFile: OutputStream) : Closeable {
     private val writer = logFile.bufferedWriter()
 
-    fun log(detectorName: String?, width: Int, height: Int, keypointsNum: Int, timeMs: Long) {
+    fun log(detectorTitle: String?, width: Int, height: Int, keypointsNum: Int, timeMs: Long) {
+        Log.d(TAG, "Writing log: $detectorTitle ${width}x$height $keypointsNum $timeMs")
         try {
-            writer.write("$detectorName ${width}x$height $keypointsNum $timeMs")
+            writer.write("$detectorTitle ${width}x$height $keypointsNum $timeMs")
             writer.newLine()
         } catch (e: IOException) {
             Log.e(TAG, "Failed to write a log.", e)
