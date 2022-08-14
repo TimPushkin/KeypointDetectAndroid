@@ -1,13 +1,15 @@
 package com.github.kpdandroid.ui.viewmodels
 
+import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asImageBitmap
-import com.github.kpdandroid.utils.PreferencesManager
+import com.github.kpdandroid.KeypointDetectApp
 import com.github.kpdandroid.utils.camera.SnapshotAnalyzer
 
-class CameraAnalysisViewModel(prefs: PreferencesManager) : ImageAnalysisViewModel(prefs) {
+class CameraAnalysisViewModel(app: Application) :
+    ImageAnalysisViewModel(app, { (app as KeypointDetectApp).prefs.cameraAlgoTitle }) {
     val analyzer = SnapshotAnalyzer(
         detectorGetter = { keypointDetector },
         onResult = { snapshot, keypoints, calcTimeMs ->

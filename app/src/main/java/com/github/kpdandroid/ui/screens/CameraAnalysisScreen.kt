@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import com.github.kpdandroid.ui.DetectionResultColumn
 import com.github.kpdandroid.ui.ExpandableBottomMenuItem
 import com.github.kpdandroid.ui.ExpandableBottomMenuItemContent
@@ -23,8 +22,8 @@ import com.github.kpdandroid.ui.viewmodels.CameraAnalysisViewModel
 import com.github.kpdandroid.utils.detection.DetectionAlgo
 
 @Composable
-// - Not using `vm = viewModel()` as the ViewModel has a non-trivial constructor and, furthermore,
-// we need to use exactly the same instance as the MainActivity does.
+// - Not using `vm = viewModel()` as we need to use exactly the same instance as the MainActivity
+// does.
 // - Not using `vm = viewModel(LocalContext.current as ViewModelStoreOwner)` as it may cause
 // unexpected cast exceptions.
 fun CameraAnalysisScreen(
@@ -34,21 +33,11 @@ fun CameraAnalysisScreen(
 ) {
     Scaffold(
         bottomBar = {
-            val context = LocalContext.current
-
             CameraAnalysisMenu(
                 algorithmsItem = ExpandableBottomMenuItemContent(
                     options = DetectionAlgo.titles,
                     selectedOption = vm.prefs.cameraAlgoTitle,
-                    onSelected = { algoTitle ->
-                        vm.prefs.cameraAlgoTitle = algoTitle
-                        vm.keypointDetector = DetectionAlgo.constructDetectorFrom(
-                            algoTitle = algoTitle,
-                            context = context,
-                            width = vm.keypointDetector?.width ?: 0,
-                            height = vm.keypointDetector?.height ?: 0
-                        )
-                    }
+                    onSelected = { algoTitle -> vm.prefs.cameraAlgoTitle = algoTitle }
                 ),
                 resolutionsItem = ExpandableBottomMenuItemContent(
                     options = supportedResolutions,

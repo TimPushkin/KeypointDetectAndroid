@@ -44,8 +44,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-// - Not using `vm = viewModel()` as the ViewModel has a non-trivial constructor and, furthermore,
-// we need to use exactly the same instance as the MainActivity does.
+// - Not using `vm = viewModel()` as we need to use exactly the same instance as the MainActivity
+// does.
 // - Not using `vm = viewModel(LocalContext.current as ViewModelStoreOwner)` as it may cause
 // unexpected cast exceptions.
 fun FileAnalysisScreen(vm: FileAnalysisViewModel) {
@@ -66,15 +66,7 @@ fun FileAnalysisScreen(vm: FileAnalysisViewModel) {
                 algorithmsItem = ExpandableBottomMenuItemContent(
                     options = DetectionAlgo.titles,
                     selectedOption = vm.prefs.fileAlgoTitle,
-                    onSelected = { algoTitle ->
-                        vm.prefs.fileAlgoTitle = algoTitle
-                        vm.keypointDetector = DetectionAlgo.constructDetectorFrom(
-                            algoTitle = algoTitle,
-                            context = context,
-                            width = vm.keypointDetector?.width ?: 0,
-                            height = vm.keypointDetector?.height ?: 0
-                        )
-                    }
+                    onSelected = { algoTitle -> vm.prefs.fileAlgoTitle = algoTitle }
                 ),
                 onImagePicked = { vm.setupImage(context.contentResolver.openInputStream(it)) },
                 onLogPicked = { vm.setupLogger(context.contentResolver.openOutputStream(it)) }

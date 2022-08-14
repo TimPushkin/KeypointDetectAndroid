@@ -1,5 +1,6 @@
 package com.github.kpdandroid.ui.viewmodels
 
+import android.app.Application
 import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -8,7 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.lifecycle.viewModelScope
-import com.github.kpdandroid.utils.PreferencesManager
+import com.github.kpdandroid.KeypointDetectApp
 import com.github.kpdandroid.utils.bitmapToRgbBytes
 import com.github.kpdandroid.utils.detection.DetectionLogger
 import com.github.kpdandroid.utils.detection.detectTimedRepeated
@@ -25,7 +26,8 @@ private const val TAG = "FileAnalysisViewModel"
 
 private const val DETECTION_PROGRESS_NULLING_DELAY = 200L
 
-class FileAnalysisViewModel(prefs: PreferencesManager) : ImageAnalysisViewModel(prefs) {
+class FileAnalysisViewModel(app: Application) :
+    ImageAnalysisViewModel(app, { (app as KeypointDetectApp).prefs.fileAlgoTitle }) {
     private var logger: DetectionLogger? = null
         set(value) {
             field?.close()

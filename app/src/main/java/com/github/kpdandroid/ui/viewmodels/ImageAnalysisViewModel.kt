@@ -1,26 +1,35 @@
 package com.github.kpdandroid.ui.viewmodels
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.github.kpdandroid.KeypointDetectApp
 import com.github.kpdandroid.ui.KeypointPainter
-import com.github.kpdandroid.utils.PreferencesManager
+import com.github.kpdandroid.utils.detection.DetectionAlgo
 import com.github.kpdlib.KeypointDetector
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 private const val TAG = "ImageAnalysisViewModel"
 
-abstract class ImageAnalysisViewModel(val prefs: PreferencesManager) : ViewModel() {
+abstract class ImageAnalysisViewModel(app: Application, algoTitleGetter: () -> String) :
+    AndroidViewModel(app) {
+    val prefs = (app as KeypointDetectApp).prefs
     private val painter = KeypointPainter()
 
     var keypointDetector: KeypointDetector? = null
+        private set
     var imageLayers: Pair<ImageBitmap, ImageBitmap>? by mutableStateOf(null)
         private set
 
@@ -29,6 +38,19 @@ abstract class ImageAnalysisViewModel(val prefs: PreferencesManager) : ViewModel
         set(value) {
             painter.pointColor = value
         }
+
+    init {
+        snapshotFlow(algoTitleGetter)
+            .distinctUntilChanged()
+            .onEach { newAlgoTitle ->
+                keypointDetector = DetectionAlgo.constructDetectorFrom(
+                    algoTitle = newAlgoTitle,
+                    context = getApplication(),
+                    width = keypointDetector?.width ?: 0,
+                    height = keypointDetector?.height ?: 0
+                )
+            }.launchIn(viewModelScope)
+    }
 
     protected fun updateMainLayer(image: ImageBitmap?) {
         if (image == null) {
@@ -62,11 +84,5 @@ abstract class ImageAnalysisViewModel(val prefs: PreferencesManager) : ViewModel
 
     fun drawKeypoints(keypoints: List<Offset>) {
         painter.draw(keypoints)
-    }
-
-    class Factory(private val prefs: PreferencesManager) : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return modelClass.getConstructor(PreferencesManager::class.java).newInstance(prefs)
-        }
     }
 }
