@@ -15,7 +15,7 @@ private const val TAG = "SnapshotAnalyzer"
 
 class SnapshotAnalyzer(
     private val detectorGetter: () -> KeypointDetector?,
-    private val onResult: (snapshot: Bitmap, keypoints: List<Offset>, calcTimeMs: Long) -> Unit
+    private val onResult: (snapshot: Bitmap, keypoints: List<Offset>, calcTimeMs: Long?) -> Unit
 ) : ImageAnalysis.Analyzer {
     override fun analyze(image: ImageProxy) {
         val width = image.width
@@ -35,7 +35,7 @@ class SnapshotAnalyzer(
             rgbBytes = rgbaBytesToRgbBytes(snapshot, width, height, rowStride, pixelStride),
             imageWidth = width,
             imageHeight = height
-        ) ?: (emptyList<Offset>() to 0L)
+        ) ?: (emptyList<Offset>() to null)
         Log.v(TAG, "Detected ${keypoints.size} keypoints in $calcTimeMs ms.")
 
         onResult(
