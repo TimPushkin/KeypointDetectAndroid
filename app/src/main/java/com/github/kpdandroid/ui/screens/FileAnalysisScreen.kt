@@ -51,7 +51,7 @@ import kotlinx.coroutines.launch
 fun FileAnalysisScreen(vm: FileAnalysisViewModel) {
     var openDialog by rememberSaveable { mutableStateOf(false) }
     RunConfigurationDialog(
-        open = openDialog,
+        opened = openDialog,
         onDismiss = { openDialog = false },
         onConfirm = { enteredNum ->
             vm.startDetection(enteredNum)
@@ -75,7 +75,7 @@ fun FileAnalysisScreen(vm: FileAnalysisViewModel) {
         floatingActionButton = {
             val scope = rememberCoroutineScope { Dispatchers.Default }
             FileAnalysisFab(
-                show = vm.imageLayers != null && vm.prefs.fileAlgoTitle != DetectionAlgo.NONE.title,
+                visible = vm.imageLayers != null && vm.prefs.fileAlgoTitle != DetectionAlgo.NONE.title,
                 progress = vm.detectionProgress,
                 onStart = { openDialog = true },
                 onStop = { scope.launch { vm.stopDetection() } }
@@ -103,38 +103,42 @@ private fun formatTime(time: Double) = "%5f".format(time)
 private const val MIN_RUN_TIMES = 1
 
 @Composable
-private fun RunConfigurationDialog(open: Boolean, onDismiss: () -> Unit, onConfirm: (Int) -> Unit) {
+private fun RunConfigurationDialog(
+    opened: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: (Int) -> Unit
+) {
     var enteredText by rememberSaveable { mutableStateOf(MIN_RUN_TIMES.toString()) }
 
-    if (open) {
-        AlertDialog(
-            onDismissRequest = onDismiss,
-            buttons = {
-                Column(
-                    modifier = Modifier.padding(20.dp),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    val onDone = {
-                        val enteredNum = enteredText.toIntOrNull()?.coerceAtLeast(MIN_RUN_TIMES)
-                            ?: MIN_RUN_TIMES
-                        enteredText = enteredNum.toString()
-                        onConfirm(enteredNum)
-                    }
+    if (!opened) return
 
-                    OutlinedTextField(
-                        value = enteredText,
-                        onValueChange = { enteredText = it },
-                        label = { Text("Number of runs") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        keyboardActions = KeyboardActions(onAny = { onDone() })
-                    )
-
-                    TextButton(onClick = onDone) { Text("START") }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        buttons = {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.End
+            ) {
+                val onDone = {
+                    val enteredNum = enteredText.toIntOrNull()?.coerceAtLeast(MIN_RUN_TIMES)
+                        ?: MIN_RUN_TIMES
+                    enteredText = enteredNum.toString()
+                    onConfirm(enteredNum)
                 }
+
+                OutlinedTextField(
+                    value = enteredText,
+                    onValueChange = { enteredText = it },
+                    label = { Text("Number of runs") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardActions = KeyboardActions(onAny = { onDone() })
+                )
+
+                TextButton(onClick = onDone) { Text("START") }
             }
-        )
-    }
+        }
+    )
 }
 
 private const val IMAGE_MIME = "image/*"
@@ -188,13 +192,13 @@ private fun FileAnalysisMenu(
 
 @Composable
 private fun FileAnalysisFab(
-    show: Boolean,
+    visible: Boolean,
     progress: Float?,
     onStart: () -> Unit,
     onStop: () -> Unit
 ) {
     when {
-        !show -> Unit
+        !visible -> Unit
         progress == null -> StartFab(onClick = onStart)
         else -> StopFab(progress = progress, onClick = onStop)
     }
