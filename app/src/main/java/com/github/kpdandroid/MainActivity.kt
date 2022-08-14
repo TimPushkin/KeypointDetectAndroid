@@ -4,152 +4,151 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.util.Size
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Build
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.content.ContextCompat
-import com.github.kpdandroid.ui.AppLayout
-import com.github.kpdandroid.ui.BottomMenu
-import com.github.kpdandroid.ui.BottomMenuItem
-import com.github.kpdandroid.ui.SnapshotViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.github.kpdandroid.ui.screens.CameraAnalysisScreen
+import com.github.kpdandroid.ui.screens.FileAnalysisScreen
+import com.github.kpdandroid.ui.screens.MAIN_SCREEN
+import com.github.kpdandroid.ui.screens.NavDestination
+import com.github.kpdandroid.ui.screens.NavScreen
 import com.github.kpdandroid.ui.theme.KeypointDetectAppTheme
-import com.github.kpdandroid.utils.CameraHandler
-import com.github.kpdandroid.utils.KeypointDetectionAlgorithm
+import com.github.kpdandroid.ui.viewmodels.CameraAnalysisViewModel
+import com.github.kpdandroid.ui.viewmodels.FileAnalysisViewModel
 import com.github.kpdandroid.utils.PreferencesManager
-import com.github.kpdandroid.utils.SnapshotAnalyzer
+import com.github.kpdandroid.utils.camera.CameraHandler
 
 private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
-    private val snapshotViewModel by viewModels<SnapshotViewModel>()
-    private lateinit var preferencesManager: PreferencesManager
+    private lateinit var prefs: PreferencesManager
     private lateinit var cameraHandler: CameraHandler
+
+    private val fileViewModel by viewModels<FileAnalysisViewModel>()
+    private val cameraViewModel by viewModels<CameraAnalysisViewModel>()
 
     private val cameraPermissionRequest =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
-                Toast.makeText(this, "Permissions granted.", Toast.LENGTH_SHORT).show()
-                Log.d(TAG, "Permission was granted successfully.")
-                startCameraAnalysisIfNeeded()
+                Log.i(TAG, "Camera permission was granted.")
+                // In Android Q and later permission window triggers onTopResumedActivityChanged()
+                if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+                    tryStartCameraAnalysisIfNeeded()
+                }
             } else {
-                Toast.makeText(this, "Permissions not granted.", Toast.LENGTH_SHORT).show()
-                Log.d(TAG, "Permission was NOT granted.")
+                Log.e(TAG, "Camera permission was NOT granted.")
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        preferencesManager = (application as KeypointDetectApp).preferencesManager
-        cameraHandler = CameraHandler(this, SnapshotAnalyzer(snapshotViewModel))
+        prefs = (application as KeypointDetectApp).prefs
+        cameraHandler = CameraHandler(this, cameraViewModel.analyzer)
 
-        snapshotViewModel.keypointDetector = KeypointDetectionAlgorithm.constructKeypointDetector(
-            algorithmName = preferencesManager.selectedAlgorithmName,
-            context = this,
-            width = snapshotViewModel.keypointDetector?.width ?: 0,
-            height = snapshotViewModel.keypointDetector?.height ?: 0
-        )
-
-        initLayout()
-    }
-
-    private fun initLayout() {
         setContent {
             KeypointDetectAppTheme {
-                snapshotViewModel.painter.pointColor = MaterialTheme.colors.primary
+                val navController = rememberNavController()
 
-                AppLayout(
-                    image = snapshotViewModel.paintedSnapshot,
-                    calcTimeMs = snapshotViewModel.calcTimeMs,
-                    isCameraPermissionGranted = isCameraPermissionGranted(),
-                    bottomMenu = {
-                        BottomMenu {
-                            BottomMenuItem(
-                                options = KeypointDetectionAlgorithm.names,
-                                selectedOption = preferencesManager.selectedAlgorithmName,
-                                onSelected = { algorithmName ->
-                                    preferencesManager.selectedAlgorithmName = algorithmName
-                                    snapshotViewModel.keypointDetector =
-                                        KeypointDetectionAlgorithm.constructKeypointDetector(
-                                            algorithmName = algorithmName,
-                                            context = this@MainActivity,
-                                            width = snapshotViewModel.keypointDetector?.width ?: 0,
-                                            height = snapshotViewModel.keypointDetector?.height ?: 0
-                                        )
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Build,
-                                        contentDescription = "Detection algorithm"
-                                    )
-                                }
-                            )
+                fileViewModel.keypointColor = MaterialTheme.colors.primary
+                cameraViewModel.keypointColor = MaterialTheme.colors.primary
 
-                            BottomMenuItem(
-                                options = cameraHandler.supportedResolutions.map { it.toString() },
-                                selectedOption = preferencesManager.selectedResolution?.toString()
-                                    ?: "Pick resolution",
-                                onSelected = { sizeString ->
-                                    cameraHandler.startImageAnalysis(
-                                        targetResolution = Size.parseSize(sizeString),
-                                        callback = preferencesManager::selectedResolution::set
-                                    )
-                                },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.AccountBox,
-                                        contentDescription = "Camera resolution"
-                                    )
-                                }
-                            )
+                NavHost(navController = navController, startDestination = MAIN_SCREEN) {
+                    composable(MAIN_SCREEN) { NavScreen { navController.navigate(it.name) } }
+                    composable(NavDestination.FILE_ANALYSIS.name) {
+                        FileAnalysisScreen(fileViewModel)
+                    }
+                    composable(NavDestination.CAMERA_ANALYSIS.name) { backStackEntry ->
+                        LaunchedEffect(backStackEntry) {
+                            tieCameraLifecycleTo(backStackEntry)
+                            tryStartCameraAnalysisIfNeeded()
+                        }
+
+                        CameraAnalysisScreen(
+                            vm = cameraViewModel,
+                            supportedResolutions =
+                            cameraHandler.supportedResolutions.map { it.toString() },
+                            onResolutionSelected = this@MainActivity::tryStartCameraAnalysis
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun tieCameraLifecycleTo(owner: LifecycleOwner) {
+        Log.i(TAG, "Tying camera lifecycle to $owner.")
+
+        if (cameraHandler.isAnalyzing()) {
+            Log.d(TAG, "Stopping image analysis first.")
+            cameraHandler.stopImageAnalysis()
+        }
+
+        cameraHandler.tieCameraLifecycleIfNeededTo(
+            owner.apply {
+                lifecycle.addObserver(
+                    object : LifecycleEventObserver {
+                        override fun onStateChanged(owner: LifecycleOwner, event: Lifecycle.Event) {
+                            if (event == Lifecycle.Event.ON_DESTROY) {
+                                Log.i(TAG, "Untying camera lifecycle from $owner.")
+                                cameraHandler.untieCameraLifecycleIfNeededFrom(owner)
+                            }
                         }
                     }
                 )
             }
-        }
+        )
     }
 
-    // Not using onResume to account for changes made in split screen
-    override fun onTopResumedActivityChanged(isTopResumedActivity: Boolean) {
-        if (isTopResumedActivity) startCameraAnalysisIfNeeded()
+    private fun tryStartCameraAnalysisIfNeeded() {
+        if (cameraHandler.run { isCameraLifecycleTied && !isAnalyzing() }) tryStartCameraAnalysis()
     }
 
-    private fun startCameraAnalysisIfNeeded() {
-        if (cameraHandler.isAnalyzing) return
+    private fun tryStartCameraAnalysis() {
+        val isCameraPermissionGranted = isPermissionGranted(Manifest.permission.CAMERA)
+        cameraViewModel.isCameraPermissionGranted = isCameraPermissionGranted
+
+        Log.i(
+            TAG,
+            "Trying to start camera analysis (permissions granted: $isCameraPermissionGranted)."
+        )
 
         when {
-            isCameraPermissionGranted() ->
-                cameraHandler.startImageAnalysis(
-                    targetResolution = preferencesManager.selectedResolution,
-                    callback = preferencesManager::selectedResolution::set
-                )
-            shouldRationalize() -> {
-                Toast.makeText(
-                    this,
-                    "Without camera permission app can't get and display keypoints.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+            isCameraPermissionGranted -> cameraHandler.startImageAnalysis(
+                targetResolution = prefs.resolution,
+                callback = prefs::resolution::set
+            )
+            shouldRationalize(Manifest.permission.CAMERA) -> Toast.makeText(
+                this,
+                "Camera permission is required for camera analysis.",
+                Toast.LENGTH_SHORT
+            ).show()
             else -> cameraPermissionRequest.launch(Manifest.permission.CAMERA)
         }
     }
 
-    private fun isCameraPermissionGranted() = ContextCompat.checkSelfPermission(
-        this,
-        Manifest.permission.CAMERA
-    ) == PackageManager.PERMISSION_GRANTED
+    private fun isPermissionGranted(permission: String) =
+        ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
-    private fun shouldRationalize() =
+    private fun shouldRationalize(permission: String) =
         (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) &&
-            shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
+            shouldShowRequestPermissionRationale(permission)
+
+    // Not using onResume to account for changes made in split screen
+    override fun onTopResumedActivityChanged(isTopResumedActivity: Boolean) {
+        if (isTopResumedActivity) tryStartCameraAnalysisIfNeeded()
+    }
 
     override fun onDestroy() {
         cameraHandler.shutdown()

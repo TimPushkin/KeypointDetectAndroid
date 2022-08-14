@@ -4,11 +4,11 @@ import android.app.Application
 import com.github.kpdandroid.utils.PreferencesManager
 
 class KeypointDetectApp : Application() {
-    lateinit var preferencesManager: PreferencesManager
+    lateinit var prefs: PreferencesManager
         private set
 
     override fun onCreate() {
         super.onCreate()
-        preferencesManager = PreferencesManager(applicationContext)
+        prefs = PreferencesManager(applicationContext)
     }
 }

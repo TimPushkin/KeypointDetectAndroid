@@ -1,4 +1,4 @@
-package com.github.kpdandroid.utils
+package com.github.kpdandroid.utils.camera
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -15,9 +15,14 @@ import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.app.ComponentActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.math.abs
 
 private const val TAG = "CameraHandler"
@@ -41,36 +46,40 @@ class CameraHandler(
 ) {
     private val cameraManager = activity.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private val cameraProviderFuture = ProcessCameraProvider.getInstance(activity)
+    private val cameraLifecycleOwner = AtomicReference<LifecycleOwner>(activity)
     private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val mainExecutor = ContextCompat.getMainExecutor(activity)
-    private val screenRotation = extractScreenRotation()
+
     var cameraSelector = cameraSelector
         set(value) {
-            supportedResolutions = emptyList()
             extractSupportedResolutions()
             field = value
         }
-
-    var isAnalyzing = false
+    val isCameraLifecycleTied: Boolean
+        get() = cameraLifecycleOwner.get() != activity
+    var isAnalyzing = { false }
         private set
-    var supportedResolutions: List<Size> = emptyList()
+    var supportedResolutions by mutableStateOf(emptyList<Size>())
+        private set
+
+    private val screenRotation: Int
 
     init {
-        extractSupportedResolutions()
-    }
-
-    private fun extractScreenRotation(): Int {
+        // Get screen rotation
         val display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             activity.display
         } else {
+            @Suppress("DEPRECATION") // Not deprecated when < Build.VERSION_CODES.R
             (activity.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
         }
-        return if (display != null) {
+        screenRotation = if (display != null) {
             surfaceRotationToDegrees(display.rotation)
         } else {
             Log.w(TAG, "Cannot get current display, assuming rotation is $DEFAULT_SCREEN_ROTATION.")
             DEFAULT_SCREEN_ROTATION
         }
+
+        extractSupportedResolutions()
     }
 
     @Suppress("MagicNumber")
@@ -92,12 +101,12 @@ class CameraHandler(
             val cameraProvider = cameraProviderFuture.get()
 
             val camera = try {
-                cameraProvider.bindToLifecycle(activity, cameraSelector)
+                cameraProvider.bindToLifecycle(cameraLifecycleOwner.get(), cameraSelector)
             } catch (e: IllegalStateException) {
-                Log.e(TAG, "Camera binding failed", e)
+                Log.e(TAG, "Cannot extract supported resolutions: camera binding failed", e)
                 return@addListener
             } catch (e: IllegalArgumentException) {
-                Log.e(TAG, "Camera binding failed", e)
+                Log.e(TAG, "Cannot extract supported resolutions: camera binding failed", e)
                 return@addListener
             }
 
@@ -174,18 +183,19 @@ class CameraHandler(
                 .apply { setAnalyzer(cameraExecutor, analyzer) }
 
             cameraProvider.unbindAll() // Currently only binding image analysis
-            isAnalyzing = false
+            isAnalyzing = { cameraProvider.isBound(imageAnalysis) }
 
             try {
-                cameraProvider.bindToLifecycle(activity, cameraSelector, imageAnalysis)
-                isAnalyzing = true
+                cameraProvider.bindToLifecycle(
+                    cameraLifecycleOwner.get(),
+                    cameraSelector,
+                    imageAnalysis
+                )
             } catch (e: IllegalStateException) {
-                Log.e(TAG, "Camera binding failed", e)
-                callback(null)
+                Log.e(TAG, "Cannot start image analysis: camera binding failed", e)
                 return@addListener
             } catch (e: IllegalArgumentException) {
-                Log.e(TAG, "Camera binding failed", e)
-                callback(null)
+                Log.e(TAG, "Cannot start image analysis: camera binding failed", e)
                 return@addListener
             }
 
@@ -203,17 +213,33 @@ class CameraHandler(
     }
 
     fun stopImageAnalysis() {
-        if (!isAnalyzing) {
-            Log.i(TAG, "Image analysis already stopped.")
-            return
-        }
-
         Log.i(TAG, "Stopping image analysis.")
 
         cameraProviderFuture.addListener({
             cameraProviderFuture.get().unbindAll() // Currently only binding image analysis
             Log.i(TAG, "Stopped image analysis.")
         }, mainExecutor)
+    }
+
+    /**
+     * Atomically ties camera lifecycle to the specified owner, if it's not the owner already. If
+     * image analysis is in progress, it is stopped.
+     */
+    fun tieCameraLifecycleIfNeededTo(owner: LifecycleOwner) {
+        var previousOwner: LifecycleOwner
+        do {
+            previousOwner = cameraLifecycleOwner.get()
+            if (previousOwner == owner) return
+        } while (!cameraLifecycleOwner.compareAndSet(previousOwner, owner))
+    }
+
+    /**
+     * Atomically untie camera lifecycle from the specified owner, if it is the current owner.
+     * If image analysis is in progress, it is stopped. After this the ownership is transferred back
+     * to the activity.
+     */
+    fun untieCameraLifecycleIfNeededFrom(owner: LifecycleOwner) {
+        cameraLifecycleOwner.compareAndSet(owner, activity)
     }
 
     fun shutdown() {
