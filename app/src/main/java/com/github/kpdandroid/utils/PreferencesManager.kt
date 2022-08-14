@@ -21,41 +21,38 @@ private const val RESOLUTION_KEY = "resolution"
 private val RESOLUTION_DEFAULT = null
 
 class PreferencesManager(context: Context) {
-    private val prefs = context.getSharedPreferences(
-        PREFERENCES_FILE_NAME,
-        Context.MODE_PRIVATE
-    )
+    private val prefs = context.getSharedPreferences(PREFERENCES_FILE_NAME, Context.MODE_PRIVATE)
 
-    private var fileAlgoNameState by mutableStateOf(
+    private var _fileAlgoTitle by mutableStateOf(
         prefs.getString(FILE_ALGO_KEY, ALGO_DEFAULT) ?: ALGO_DEFAULT
     )
-    var fileAlgoName: String
-        get() = fileAlgoNameState
+    var fileAlgoTitle: String
+        get() = _fileAlgoTitle
         set(value) {
             prefs.edit { putString(FILE_ALGO_KEY, value) }
-            fileAlgoNameState = value
+            _fileAlgoTitle = value
             Log.i(TAG, "Algorithm $value has been selected for file analysis.")
         }
 
-    private var cameraAlgoNameState by mutableStateOf(
+    private var _cameraAlgoTitle by mutableStateOf(
         prefs.getString(CAMERA_ALGO_KEY, ALGO_DEFAULT) ?: ALGO_DEFAULT
     )
-    var cameraAlgoName: String
-        get() = cameraAlgoNameState
+    var cameraAlgoTitle: String
+        get() = _cameraAlgoTitle
         set(value) {
             prefs.edit { putString(CAMERA_ALGO_KEY, value) }
-            cameraAlgoNameState = value
+            _cameraAlgoTitle = value
             Log.i(TAG, "Algorithm $value has been selected for camera analysis.")
         }
 
-    private var resolutionState by mutableStateOf(
+    private var _resolution by mutableStateOf(
         prefs.getString(RESOLUTION_KEY, RESOLUTION_DEFAULT)?.let { Size.parseSize(it) }
     )
     var resolution: Size?
-        get() = resolutionState
+        get() = _resolution
         set(value) {
             prefs.edit { putString(RESOLUTION_KEY, value?.toString()) }
-            resolutionState = value
+            _resolution = value
             Log.i(TAG, "Resolution $value has been selected.")
         }
 }

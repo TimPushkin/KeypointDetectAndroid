@@ -26,17 +26,13 @@ enum class DetectionAlgo(val title: String) {
             else -> null
         }
 
-        fun constructDetectorFrom(
-            context: Context,
-            algorithmName: String,
-            width: Int,
-            height: Int
-        ) = when (algorithmName) {
-            SIFT.title -> Sift(width, height)
-            SURF.title -> Surf(width, height)
-            ORB.title -> Orb(width, height)
-            SUPERPOINT.title -> SuperPoint.Builder(context, width, height).build()
-            else -> null
-        }
+        fun constructDetectorFrom(context: Context, algoTitle: String, width: Int, height: Int) =
+            when (algoTitle) {
+                SIFT.title -> Sift(width, height)
+                SURF.title -> Surf(width, height)
+                ORB.title -> Orb(width, height)
+                SUPERPOINT.title -> SuperPoint.Builder(context, width, height).build()
+                else -> null
+            }
     }
 }

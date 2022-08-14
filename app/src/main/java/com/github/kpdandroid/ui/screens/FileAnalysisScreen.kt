@@ -65,11 +65,11 @@ fun FileAnalysisScreen(vm: FileAnalysisViewModel) {
             FileAnalysisMenu(
                 algorithmsItem = ExpandableBottomMenuItemContent(
                     options = DetectionAlgo.titles,
-                    selectedOption = vm.prefs.fileAlgoName,
-                    onSelected = { algorithmName ->
-                        vm.prefs.fileAlgoName = algorithmName
+                    selectedOption = vm.prefs.fileAlgoTitle,
+                    onSelected = { algoTitle ->
+                        vm.prefs.fileAlgoTitle = algoTitle
                         vm.keypointDetector = DetectionAlgo.constructDetectorFrom(
-                            algorithmName = algorithmName,
+                            algoTitle = algoTitle,
                             context = context,
                             width = vm.keypointDetector?.width ?: 0,
                             height = vm.keypointDetector?.height ?: 0
@@ -83,7 +83,7 @@ fun FileAnalysisScreen(vm: FileAnalysisViewModel) {
         floatingActionButton = {
             val scope = rememberCoroutineScope { Dispatchers.Default }
             FileAnalysisFab(
-                show = vm.imageLayers != null && vm.prefs.fileAlgoName != DetectionAlgo.NONE.title,
+                show = vm.imageLayers != null && vm.prefs.fileAlgoTitle != DetectionAlgo.NONE.title,
                 progress = vm.detectionProgress,
                 onStart = { openDialog = true },
                 onStop = { scope.launch { vm.stopDetection() } }

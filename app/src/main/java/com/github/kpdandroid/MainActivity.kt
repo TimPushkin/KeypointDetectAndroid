@@ -73,8 +73,8 @@ class MainActivity : ComponentActivity() {
         cameraHandler = CameraHandler(this, cameraViewModel.analyzer)
 
         // In case starting for the first time
-        fileViewModel ensureUsesDetectorNamed prefs.fileAlgoName
-        cameraViewModel ensureUsesDetectorNamed prefs.cameraAlgoName
+        fileViewModel ensureUsesDetectorTitled prefs.fileAlgoTitle
+        cameraViewModel ensureUsesDetectorTitled prefs.cameraAlgoTitle
 
         setContent {
             KeypointDetectAppTheme {
@@ -106,10 +106,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private infix fun ImageAnalysisViewModel.ensureUsesDetectorNamed(algoName: String) {
-        if (DetectionAlgo.from(keypointDetector)?.title != algoName) {
+    private infix fun ImageAnalysisViewModel.ensureUsesDetectorTitled(algoTitle: String) {
+        if (DetectionAlgo.from(keypointDetector)?.title != algoTitle) {
             keypointDetector = DetectionAlgo.constructDetectorFrom(
-                algorithmName = algoName,
+                algoTitle = algoTitle,
                 context = this@MainActivity,
                 width = keypointDetector?.width ?: 0,
                 height = keypointDetector?.height ?: 0

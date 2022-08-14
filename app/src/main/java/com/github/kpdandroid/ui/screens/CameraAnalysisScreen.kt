@@ -39,11 +39,11 @@ fun CameraAnalysisScreen(
             CameraAnalysisMenu(
                 algorithmsItem = ExpandableBottomMenuItemContent(
                     options = DetectionAlgo.titles,
-                    selectedOption = vm.prefs.cameraAlgoName,
-                    onSelected = { algorithmName ->
-                        vm.prefs.cameraAlgoName = algorithmName
+                    selectedOption = vm.prefs.cameraAlgoTitle,
+                    onSelected = { algoTitle ->
+                        vm.prefs.cameraAlgoTitle = algoTitle
                         vm.keypointDetector = DetectionAlgo.constructDetectorFrom(
-                            algorithmName = algorithmName,
+                            algoTitle = algoTitle,
                             context = context,
                             width = vm.keypointDetector?.width ?: 0,
                             height = vm.keypointDetector?.height ?: 0
