@@ -72,7 +72,6 @@ jobs:
                     -D CMAKE_CXX_COMPILER="$NDK/$CXX_COMPILER_SUBPATH" \
                     -D ANDROID_ABI=$ABI \
                     -D BUILD_DIR_SUFFIX=$ABI \
-                    -D ADD_ANDROID_ABI_CHECK=ON \
                     -P BuildOpenCV.cmake
             else
               echo "OpenCV for $ABI already prepared"

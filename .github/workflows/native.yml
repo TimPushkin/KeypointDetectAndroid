@@ -33,7 +33,7 @@ jobs:
           key: ${{runner.os}}-native
 
       - name: Prepare OpenCV
-        run: cmake -P BuildOpenCV.cmake
+        run: cmake -D NEED_EXAMPLES=ON -P BuildOpenCV.cmake
 
       - name: Configure CMake
         run: |
