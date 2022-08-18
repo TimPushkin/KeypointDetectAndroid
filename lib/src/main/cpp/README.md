@@ -60,17 +60,18 @@ if you plan to build the project for some other platform, you might need to spec
 options in the form of `-D<variable>=<value>`:
 
 - `BUILD_DIR_SUFFIX` -- suffix to append to OpenCV build directory name (defaults to none)
+- `NEED_EXAMPLES` -- whether to include extra modules required to build examples, see *Usage examples* below (`ON` or
+  `OFF`, disabled by default)
 - `CMAKE_GENERATOR` -- a generator to use (for example, `Ninja`, defaults to system default)
-- `CMAKE_TOOLCHAIN_FILE` -- path to a CMake toolchain file (defaults to none)
+- `CMAKE_TOOLCHAIN_FILE` -- path to a CMake toolchain file (not set by default)
 - `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER` -- C/C++ compiler to use (for example, `clang`
   /`clang++` or a path to a compiler, defaults to system default)
 - `ANDROID_ABI` -- if building for Android, for which ABI to build (should be one of
-  the [supported ABIs](https://developer.android.com/ndk/guides/abis), defaults to the ABI from the
-  selected toolchain if any)
+  the [supported ABIs](https://developer.android.com/ndk/guides/abis), not set by default)
 - `ADD_ANDROID_ABI_CHECK` -- whether to modify `OpenCVConfig-version.cmake` with an additional check
-  for Android ABI compatibility (`ON` or `OFF`, disabled by default)
+  for Android ABI compatibility (`ON` or `OFF`, enabled by default when `ANDROID_ABI` is set)
 - `ANDROID_ARM_NEON` -- if building for Android, whether to let OpenCV make use of Neon or not (`ON`
-  or `OFF`, disabled by default)
+  or `OFF`, enabled by default when `ANDROID_ABI` is set)
 
 The toolchain file specified can influence the other variables default values.
 
@@ -106,6 +107,9 @@ The interface will be placed in the corresponding subdirectory of `generated` di
 build.
 
 ## Usage examples
+
+**Note**: if you use `BuildOpenCV.cmake` to build OpenCV, `NEED_EXAMPLES` must be set to `ON` to be able to build these
+examples.
 
 Files in `examples` directory demonstrate how to use this project for depth estimation. Specify
 `-DBUILD_EXAMPLES=ON` to build them.

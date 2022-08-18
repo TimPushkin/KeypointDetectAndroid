@@ -1,7 +1,8 @@
 set(PROJECT_BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
 
 set(OPENCV_VERSION 4.6.0)
-set(OPENCV_MODULES core,imgproc,imgcodecs,features2d,xfeatures2d)
+set(OPENCV_MODULES core,imgproc,features2d,xfeatures2d)
+set(OPENCV_EXAMPLES_MODULES imgcodecs)
 
 set(OPENCV_DOWNLOAD_DIR ${PROJECT_BUILD_DIR}/opencv-download)
 set(OPENCV_BUILD_DIR ${PROJECT_BUILD_DIR}/opencv-build)
@@ -43,6 +44,11 @@ endif ()
 GET_OPENCV(opencv)
 GET_OPENCV(opencv_contrib)
 
+# Add modules required to build examples
+if (NEED_EXAMPLES)
+    string(APPEND OPENCV_MODULES ",${OPENCV_EXAMPLES_MODULES}")
+endif ()
+
 # Set toolchain-related flags
 if (CMAKE_GENERATOR)
     list(APPEND TOOLCHAIN_ARGS -DCMAKE_GENERATOR=${CMAKE_GENERATOR})
@@ -61,6 +67,12 @@ endif ()
 if (ANDROID_ABI)
     list(APPEND ANDROID_ARGS -DANDROID_ABI=${ANDROID_ABI})
 endif ()
+if (ANDROID_ABI AND NOT DEFINED ADD_ANDROID_ABI_CHECK)
+    set(ADD_ANDROID_ABI_CHECK ON)
+endif ()
+if (ANDROID_ABI AND NOT DEFINED ANDROID_ARM_NEON)
+    set(ANDROID_ARM_NEON ON)
+endif ()
 if (ANDROID_ARM_NEON)
     list(APPEND ANDROID_ARGS -DANDROID_ARM_NEON=${ANDROID_ARM_NEON})
 endif ()
@@ -69,13 +81,12 @@ endif ()
 message(STATUS "Configuring OpenCV build")
 set(
         OPENCV_CMAKE_ARGS  # https://docs.opencv.org/4.6.0/db/d05/tutorial_config_reference.html
-        # General
+        # General configuration
         -DBUILD_LIST=${OPENCV_MODULES}
         -DOPENCV_EXTRA_MODULES_PATH=${OPENCV_DOWNLOAD_DIR}/opencv_contrib-${OPENCV_VERSION}/modules
         -DOPENCV_ENABLE_NONFREE=ON
-        # Bundled components               # TODO: disable the unwanted dependencies(1)
-        -DWITH_GTK=OFF
-        -DWITH_WIN32UI=OFF
+        # Unused components and dependencies
+        -DBUILD_opencv_apps=OFF
         -DBUILD_TESTS=OFF
         -DBUILD_PERF_TESTS=OFF
         -DBUILD_ANDROID_PROJECTS=OFF
@@ -87,31 +98,47 @@ set(
         -DBUILD_OBJC=OFF
         -DBUILD_opencv_python2=OFF
         -DBUILD_opencv_python3=OFF
-        # Disabled dependencies            # TODO: enable  dependencies which will be needed
-        #        -DWITH_1394=OFF
-        #        -DWITH_AVFOUNDATION=OFF
-        #        -DWITH_CAP_IOS=OFF
-        #        -DWITH_VTK=OFF
-        #        -DWITH_GSTREAMER=OFF
-        #        -DWITH_GTK=OFF
-        #        -DWITH_WIN32UI=OFF
-        #        -DWITH_FFMPEG=OFF
-        #        -DWITH_V4L=OFF
-        #        -DWITH_DSHOW=OFF
-        #        -DWITH_MSMF=OFF
-        #        -DWITH_DIRECTX=OFF
-        #        -DWITH_VA=OFF
-        #        -DWITH_VA_INTEL=OFF
-        #        -DWITH_LAPACK=OFF
-        #        -DWITH_PROTOBUF=OFF
-        #        -DWITH_QUIRC=OFF
-        #        -DWITH_ANDROID_MEDIANDK=OFF
-        #        -DWITH_ANDROID_NATIVE_CAMERA=OFF
-        # Enabled dependencies             # TODO: disable the unwanted dependencies(2)
-        #        -DWITH_OPENCL=ON
-        #        -DWITH_OPENVX=ON          # TODO: install OpenVX and set OPENVX_ROOT
-        #        -DWITH_EIGEN=ON           # TODO: install Eigen (and probably use EIGEN_INCLUDE_PATH)
-        #        -DWITH_IPP=ON
+        -DWITH_GTK=OFF
+        -DWITH_WIN32UI=OFF
+        -DWITH_1394=OFF
+        -DWITH_AVFOUNDATION=OFF
+        -DWITH_CAP_IOS=OFF
+        -DWITH_VTK=OFF
+        -DWITH_GSTREAMER=OFF
+        -DWITH_GTK=OFF
+        -DWITH_WIN32UI=OFF
+        -DWITH_FFMPEG=OFF
+        -DWITH_V4L=OFF
+        -DWITH_DSHOW=OFF
+        -DWITH_MSMF=OFF
+        -DWITH_DIRECTX=OFF
+        -DWITH_VA=OFF
+        -DWITH_VA_INTEL=OFF
+        -DWITH_LAPACK=OFF
+        -DWITH_PROTOBUF=OFF
+        -DWITH_QUIRC=OFF
+        -DWITH_ANDROID_MEDIANDK=OFF
+        -DWITH_ANDROID_NATIVE_CAMERA=OFF
+        -DWITH_EIGEN=OFF
+        -DWITH_OBSENSOR=OFF
+        -DWITH_PNG=OFF
+        -DWITH_JPEG=${NEED_EXAMPLES}  # JPEG image is read in examples
+        -DWITH_TIFF=OFF
+        -DWITH_WEBP=OFF
+        -DWITH_OPENJPEG=OFF
+        -DWITH_JASPER=OFF
+        -DWITH_OPENEXR=OFF
+        -DWITH_IMGCODEC_HDR=OFF
+        -DWITH_IMGCODEC_SUNRASTER=OFF
+        -DWITH_IMGCODEC_PXM=OFF
+        -DWITH_IMGCODEC_PFM=OFF
+        -DVIDEOIO_ENABLE_PLUGINS=OFF
+        -DHIGHGUI_ENABLE_PLUGINS=OFF
+        # Useful components, dependencies, and optimizations
+        -DWITH_OPENCL=ON
+        -DWITH_OPENVX=ON  # TODO: install OpenVX and set OPENVX_ROOT
+        # -DENABLE_LTO=ON  # TODO: look into WITH_JPEG conflict
+        # -DENABLE_THIN_LTO=ON  # TODO: look into WITH_JPEG conflict
         # Cross-compilation handling
         -DCMAKE_TRY_COMPILE_TARGET_TYPE=STATIC_LIBRARY
         ${TOOLCHAIN_ARGS}

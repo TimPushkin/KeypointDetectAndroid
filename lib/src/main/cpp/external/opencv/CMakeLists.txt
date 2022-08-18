@@ -17,7 +17,10 @@ if (ANDROID)
     foreach (OPENCV_BUILD_DIR ${OPENCV_BUILD_DIRS})
         message(STATUS "Manually considering OpenCV directory: ${OPENCV_BUILD_DIR}")
         set(OpenCV_DIR ${OPENCV_BUILD_DIR})
-        find_package(OpenCV ${OPENCV_VERSION} COMPONENTS ${OPENCV_PUBLIC_LIBRARIES} ${OPENCV_PRIVATE_LIBRARIES})
+        find_package(
+                OpenCV ${OPENCV_VERSION}
+                COMPONENTS ${OPENCV_PUBLIC_LIBRARIES} ${OPENCV_PRIVATE_LIBRARIES} ${OPENCV_EXAMPLES_LIBRARIES}
+        )
         if (OpenCV_FOUND)
             break()
         endif ()
