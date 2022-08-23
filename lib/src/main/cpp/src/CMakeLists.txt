@@ -2,6 +2,7 @@ set(
         SOURCE_FILES
         stripped_keypoint.cpp
         detection_result.cpp
+        logging.cpp
         conversions.cpp
         keypoint_detector.cpp
         sift_detector.cpp
