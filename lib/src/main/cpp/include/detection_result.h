@@ -46,9 +46,9 @@ class DetectionResult : public internal::base_object<DetectionResult> {
   DetectionResult(std::vector<std::shared_ptr<StrippedKeypoint>> keypoints,
                   std::vector<std::vector<uint8_t>> descriptors);
 
-  std::vector<std::shared_ptr<StrippedKeypoint>> getKeypoints();
+  std::vector<std::shared_ptr<StrippedKeypoint>> getKeypoints() const;
 
-  std::vector<std::vector<uint8_t>> getDescriptors();
+  std::vector<std::vector<uint8_t>> getDescriptors() const;
 
  private:
   std::vector<std::shared_ptr<StrippedKeypoint>> keypoints_;
