@@ -46,9 +46,11 @@ python save_for_mobile.py    # Converts SuperPoint to mobile and saves it to lib
 
 The app is very easy to use in both of its modes, no configuration needed.
 
-|                   Main menu                   |                   File analysis                   |                   Camera analysis                   |
-|:---------------------------------------------:|:-------------------------------------------------:|:---------------------------------------------------:|
-| ![Main menu](https://i.imgur.com/uqOe4yv.png) | ![File analysis](https://i.imgur.com/RRkq81W.png) | ![Camera analysis](https://i.imgur.com/1uz2DaF.png) |
+[Comment: "Main menu" below has two invisible U+2800 characters (one before and one after) to make the column have the same size as the other ones]: #
+
+|                  ⠀Main menu⠀                   |                   File analysis                   |                   Camera analysis                   |
+|:----------------------------------------------:|:-------------------------------------------------:|:---------------------------------------------------:|
+| ![Main menu](https://i.imgur.com/kvBHayN.png)  | ![File analysis](https://i.imgur.com/RRkq81W.png) | ![Camera analysis](https://i.imgur.com/1uz2DaF.png) |
 
 ### File analysis
 
