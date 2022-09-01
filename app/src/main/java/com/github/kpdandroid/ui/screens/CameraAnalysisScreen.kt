@@ -1,19 +1,25 @@
 package com.github.kpdandroid.ui.screens
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import android.util.Size
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.github.kpdandroid.ui.DetectionResultColumn
 import com.github.kpdandroid.ui.ExpandableBottomMenuItem
 import com.github.kpdandroid.ui.ExpandableBottomMenuItemContent
@@ -50,28 +56,41 @@ fun CameraAnalysisScreen(
             )
         }
     ) { paddingValues ->
-        if (!vm.isCameraPermissionGranted) {
-            Box(
+        if (vm.isCameraPermissionGranted) {
+            DetectionResultColumn(
+                imageLayers = vm.imageLayers?.toList() ?: emptyList(),
+                altText = "Snapshot cannot be displayed",
+                captions = listOf(
+                    vm.calcTimeMs?.let { "Latest detection time: $it ms" }
+                        ?: "Pick an algorithm to see detection time"
+                ),
+                modifier = Modifier.padding(paddingValues)
+            )
+        } else {
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                contentAlignment = Alignment.Center
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val context = LocalContext.current
                 Text("Camera permission required")
+                TextButton(onClick = { showAppSettingsScreen(context) }) {
+                    Text("Open settings")
+                }
             }
-            return@Scaffold
         }
-
-        DetectionResultColumn(
-            imageLayers = vm.imageLayers?.toList() ?: emptyList(),
-            altText = "Snapshot cannot be displayed",
-            captions = listOf(
-                vm.calcTimeMs?.let { "Latest detection time: $it ms" }
-                    ?: "Pick an algorithm to see detection time"
-            ),
-            modifier = Modifier.padding(paddingValues)
-        )
     }
+}
+
+private fun showAppSettingsScreen(context: Context) {
+    context.startActivity(
+        Intent(
+            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+            Uri.fromParts("package", context.packageName, null)
+        )
+    )
 }
 
 @Composable
