@@ -98,14 +98,12 @@ class MainActivity : ComponentActivity() {
         cameraHandler.tieCameraLifecycleIfNeededTo(
             owner.apply {
                 lifecycle.addObserver(
-                    object : LifecycleEventObserver {
-                        override fun onStateChanged(owner: LifecycleOwner, event: Lifecycle.Event) {
-                            if (event == Lifecycle.Event.ON_DESTROY) {
-                                Log.i(TAG, "Untying camera lifecycle from $owner.")
-                                cameraHandler.untieCameraLifecycleIfNeededFrom(owner)
-                            }
+                    { owner: LifecycleOwner, event: Lifecycle.Event ->
+                        if (event == Lifecycle.Event.ON_DESTROY) {
+                            Log.i(TAG, "Untying camera lifecycle from $owner.")
+                            cameraHandler.untieCameraLifecycleIfNeededFrom(owner)
                         }
-                    }
+                    } as LifecycleEventObserver
                 )
             }
         )
