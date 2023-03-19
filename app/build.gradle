@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+    namespace 'com.github.kpdandroid'
     compileSdk 33
 
     defaultConfig {
