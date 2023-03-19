@@ -30,15 +30,11 @@ fun rgbaBytesToRgbBytes(
     rowStride: Int,
     pixelStride: Int
 ): ByteArray {
-    if (pixelStride < RGBA_CHANNELS_NUM) {
-        throw IllegalArgumentException(
-            "Pixel stride $pixelStride is less than pixel size $RGBA_CHANNELS_NUM."
-        )
+    require(pixelStride >= RGBA_CHANNELS_NUM) {
+        "Pixel stride $pixelStride is less than pixel size $RGBA_CHANNELS_NUM."
     }
-    if (rowStride < width * pixelStride) {
-        throw IllegalArgumentException(
-            "Row stride $rowStride is less than width * pixel stride = ${width * pixelStride}."
-        )
+    require(rowStride >= width * pixelStride) {
+        "Row stride $rowStride is less than width * pixel stride = ${width * pixelStride}."
     }
 
     val rgbBytes = ByteArray(width * height * RGB_CHANNELS_NUM)
@@ -96,15 +92,11 @@ fun rgbaBytesToBitmap(
     rowStride: Int,
     pixelStride: Int
 ): Bitmap {
-    if (pixelStride < RGBA_CHANNELS_NUM) {
-        throw IllegalArgumentException(
-            "Pixel stride $pixelStride is less than pixel size $RGBA_CHANNELS_NUM."
-        )
+    require(pixelStride >= RGBA_CHANNELS_NUM) {
+        "Pixel stride $pixelStride is less than pixel size $RGBA_CHANNELS_NUM."
     }
-    if (rowStride < width * pixelStride) {
-        throw IllegalArgumentException(
-            "Row stride $rowStride is less than width * pixel stride = ${width * pixelStride}."
-        )
+    require(rowStride >= width * pixelStride) {
+        "Row stride $rowStride is less than width * pixel stride = ${width * pixelStride}."
     }
 
     val pixels = IntArray(width * height)
