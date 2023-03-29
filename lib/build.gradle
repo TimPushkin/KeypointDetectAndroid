@@ -5,12 +5,13 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    namespace 'com.github.kpdlib'
+    compileSdk 33
     ndkVersion '25.1.8937393'
 
     defaultConfig {
         minSdk 21
-        targetSdk 32
+        targetSdk 33
 
         consumerProguardFiles 'consumer-rules.pro'
 
@@ -31,11 +32,11 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     externalNativeBuild {
         cmake {
@@ -61,13 +62,13 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
 
-    def pytorch_version = '1.12.2'
+    def pytorch_version = '1.13.0'
     implementation "org.pytorch:pytorch_android_lite:$pytorch_version"
     implementation "org.pytorch:pytorch_android_torchvision_lite:$pytorch_version"
 
-    detektPlugins 'io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0'
+    detektPlugins 'io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0'
 }
 
 detekt {

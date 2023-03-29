@@ -43,11 +43,11 @@ import com.github.kpdandroid.utils.detection.DetectionAlgo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Composable
 // - Not using `vm = viewModel()` as we need to use exactly the same instance as the MainActivity
 // does.
 // - Not using `vm = viewModel(LocalContext.current as ViewModelStoreOwner)` as it may cause
 // unexpected cast exceptions.
+@Composable
 fun FileAnalysisScreen(vm: FileAnalysisViewModel) {
     var openDialog by rememberSaveable { mutableStateOf(false) }
     RunConfigurationDialog(

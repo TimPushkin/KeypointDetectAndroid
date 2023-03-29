@@ -27,11 +27,11 @@ import com.github.kpdandroid.ui.UnitedBottomMenu
 import com.github.kpdandroid.ui.viewmodels.CameraAnalysisViewModel
 import com.github.kpdandroid.utils.detection.DetectionAlgo
 
-@Composable
 // - Not using `vm = viewModel()` as we need to use exactly the same instance as the MainActivity
 // does.
 // - Not using `vm = viewModel(LocalContext.current as ViewModelStoreOwner)` as it may cause
 // unexpected cast exceptions.
+@Composable
 fun CameraAnalysisScreen(
     vm: CameraAnalysisViewModel,
     supportedResolutions: List<String>,
